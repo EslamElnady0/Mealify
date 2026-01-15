@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "119611139045",
+    "project_id": "mealify-17358",
+    "storage_bucket": "mealify-17358.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119611139045:android:4d9d9d226451618e98850c",
+        "android_client_info": {
+          "package_name": "com.mealify.mealify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl1m0Tv1bC3ZXJZ_X6k7yQhKJVi6t0l9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
