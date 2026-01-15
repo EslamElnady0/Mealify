@@ -12,7 +12,20 @@
           "package_name": "com.mealify.mealify"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "119611139045-c43s22eo25sr73en9g77s861smoranua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mealify.mealify",
+            "certificate_hash": "c3fb206026927f0e8449f4b986018fec685d5975"
+          }
+        },
+        {
+          "client_id": "119611139045-k5dmbifdkopdgv9lbgh4g9m81o62ljbk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBl1m0Tv1bC3ZXJZ_X6k7yQhKJVi6t0l9A"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119611139045-k5dmbifdkopdgv9lbgh4g9m81o62ljbk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
