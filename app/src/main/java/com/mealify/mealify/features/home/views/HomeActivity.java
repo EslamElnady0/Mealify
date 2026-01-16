@@ -1,4 +1,4 @@
-package com.mealify.mealify;
+package com.mealify.mealify.features.home.views;
 
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mealify.mealify.R;
 
 public class HomeActivity extends AppCompatActivity {
 

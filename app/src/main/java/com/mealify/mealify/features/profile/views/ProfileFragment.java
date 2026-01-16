@@ -1,4 +1,4 @@
-package com.mealify.mealify;
+package com.mealify.mealify.features.profile.views;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.mealify.mealify.R;
 
 /**
  * A simple {@link Fragment} subclass.

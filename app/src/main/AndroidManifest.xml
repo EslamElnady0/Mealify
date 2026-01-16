@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mealify">
         <activity
-            android:name=".HomeActivity"
+            android:name=".features.home.views.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
