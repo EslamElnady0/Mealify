@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Meal of the Day Title -->
+        <TextView
+            android:id="@+id/mealOfTheDayTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Meal of the Day"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Meal of the Day Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mealOfTheDayCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Meal Image -->
+                <ImageView
+                    android:id="@+id/mealImage"
+                    android:layout_width="0dp"
+                    android:layout_height="280dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Meal Image"
+                    android:src="@drawable/meal_cream_cheese_tart"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Meal Name -->
+                <TextView
+                    android:id="@+id/mealName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Cream Cheese Tart"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/mealImage"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Category Chip -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/categoryChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="American"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/white"
+                    app:chipStrokeColor="@color/gray"
+                    app:chipStrokeWidth="1dp"
+                    app:chipMinHeight="28dp"
+                    app:layout_constraintTop_toBottomOf="@id/mealName"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Type Chip -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/typeChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Starter"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/white"
+                    app:chipStrokeColor="@color/gray"
+                    app:chipStrokeWidth="1dp"
+                    app:chipMinHeight="28dp"
+                    app:layout_constraintTop_toTopOf="@id/categoryChip"
+                    app:layout_constraintBottom_toBottomOf="@id/categoryChip"
+                    app:layout_constraintStart_toEndOf="@id/categoryChip" />
+
+                <!-- View Details Button -->
+                <TextView
+                    android:id="@+id/viewDetailsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="View Details →"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:layout_constraintTop_toBottomOf="@id/categoryChip"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Browse Categories Title -->
+        <TextView
+            android:id="@+id/browseCategoriesTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Browse Categories"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/seeAllButton" />
+
+        <!-- See All Button -->
+        <TextView
+            android:id="@+id/seeAllButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="See All →"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toTopOf="@id/browseCategoriesTitle"
+            app:layout_constraintBottom_toBottomOf="@id/browseCategoriesTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Categories RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoriesRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/browseCategoriesTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/item_category" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
