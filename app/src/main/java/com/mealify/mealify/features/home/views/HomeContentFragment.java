@@ -59,6 +59,10 @@ public class HomeContentFragment extends Fragment {
         List<Category> categories = new ArrayList<>();
         categories.add(new Category("Beef", R.drawable.category_beef));
         categories.add(new Category("Chicken", R.drawable.category_chicken));
+        categories.add(new Category("Beef", R.drawable.category_beef));
+        categories.add(new Category("Chicken", R.drawable.category_chicken));
+        categories.add(new Category("Beef", R.drawable.category_beef));
+        categories.add(new Category("Chicken", R.drawable.category_chicken));
 
         categoryAdapter = new CategoryAdapter(categories, category -> {
             // TODO: Navigate to category details or filter meals
