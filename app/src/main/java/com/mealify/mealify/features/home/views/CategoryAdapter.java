@@ -5,27 +5,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
-import com.mealify.mealify.features.home.views.models.Category;
+import com.mealify.mealify.features.home.data.model.category.CategoryDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    private List<Category> categories;
-    private OnCategoryClickListener listener;
+    private List<CategoryDto> categories = new ArrayList<CategoryDto>();
+    private CategoryOnClickListener listener;
 
-    public interface OnCategoryClickListener {
-        void onCategoryClick(Category category);
-    }
-
-    public CategoryAdapter(List<Category> categories, OnCategoryClickListener listener) {
-        this.categories = categories;
+    public CategoryAdapter(CategoryOnClickListener listener) {
         this.listener = listener;
+    }
+    public void setCategories(List<CategoryDto> categories) {
+        this.categories = categories;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,8 +37,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        Category category = categories.get(position);
-        holder.bind(category, listener);
+        CategoryDto category = categories.get(position);
+        holder.bind(category);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         return categories.size();
     }
 
-    static class CategoryViewHolder extends RecyclerView.ViewHolder {
+    class CategoryViewHolder extends RecyclerView.ViewHolder {
         private View convertView;
         private ImageView categoryImage;
         private TextView categoryName;
@@ -58,9 +57,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             categoryName = convertView.findViewById(R.id.category_name);
         }
 
-        public void bind(Category category, OnCategoryClickListener listener) {
-            categoryImage.setImageResource(category.getImageResourceId());
-            categoryName.setText(category.getName());
+        public void bind(CategoryDto category) {
+            Glide.with(convertView).load(category.thumbnail).into(categoryImage);
+            categoryName.setText(category.name);
             
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

@@ -1,14 +1,6 @@
 package com.mealify.mealify.features.home.data.network;
 
-import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
-import com.mealify.mealify.features.home.data.model.meal.MealDto;
-import com.mealify.mealify.features.home.data.model.meal.MealsResponse;
 
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

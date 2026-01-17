@@ -1,23 +1,23 @@
 package com.mealify.mealify.features.home.views;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.mealify.mealify.R;
-import com.mealify.mealify.features.home.views.models.Category;
+import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
+import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.features.home.data.datasource.remote.HomeRemoteDataSource;
+import com.mealify.mealify.features.home.data.model.category.CategoryDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class HomeContentFragment extends Fragment {
+    private HomeRemoteDataSource homeRemoteDataSource;
 
     private RecyclerView categoriesRecyclerView;
     private CategoryAdapter categoryAdapter;
@@ -38,7 +38,7 @@ public class HomeContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        homeRemoteDataSource = new HomeRemoteDataSource();
         View view = inflater.inflate(R.layout.fragment_home_content, container, false);
 
         categoriesRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
@@ -54,18 +54,24 @@ public class HomeContentFragment extends Fragment {
                 false
         );
         categoriesRecyclerView.setLayoutManager(layoutManager);
-
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category("Beef", R.drawable.category_beef));
-        categories.add(new Category("Chicken", R.drawable.category_chicken));
-        categories.add(new Category("Beef", R.drawable.category_beef));
-        categories.add(new Category("Chicken", R.drawable.category_chicken));
-        categories.add(new Category("Beef", R.drawable.category_beef));
-        categories.add(new Category("Chicken", R.drawable.category_chicken));
-
-        categoryAdapter = new CategoryAdapter(categories, category -> {
-            // TODO: Navigate to category details or filter meals
+        categoryAdapter = new CategoryAdapter( category -> {
+            CustomToast.show(requireContext(), "Clicked on category: " + category.name);
         });
+
+        categoriesRecyclerView.setAdapter(categoryAdapter);
+        homeRemoteDataSource.getCategories(new ApiResponse<List<CategoryDto>>() {
+            @Override
+            public void onSuccess(List<CategoryDto> data) {
+                categoryAdapter.setCategories(data);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
+
+
         categoriesRecyclerView.setAdapter(categoryAdapter);
     }
 }

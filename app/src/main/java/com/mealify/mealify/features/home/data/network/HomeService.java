@@ -5,7 +5,7 @@ import com.mealify.mealify.features.home.data.model.meal.MealsResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
-public abstract class HomeService {
+public interface HomeService {
     @GET("random.php")
     public abstract Call<MealsResponse> getRandomMeal();
 
