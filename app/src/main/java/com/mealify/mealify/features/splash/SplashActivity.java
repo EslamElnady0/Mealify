@@ -9,12 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.mealify.mealify.MainActivity;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomLogger;
 
-import java.util.logging.Logger;
 
 public class SplashActivity extends AppCompatActivity {
 
