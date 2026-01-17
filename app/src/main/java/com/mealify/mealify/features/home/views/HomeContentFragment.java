@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mealify.mealify.R;
-import com.mealify.mealify.features.home.adapters.CategoryAdapter;
-import com.mealify.mealify.features.home.models.Category;
+import com.mealify.mealify.features.home.views.models.Category;
 
 import java.util.ArrayList;
 import java.util.List;

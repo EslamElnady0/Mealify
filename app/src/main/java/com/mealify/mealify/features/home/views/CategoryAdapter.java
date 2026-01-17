@@ -1,4 +1,4 @@
-package com.mealify.mealify.features.home.adapters;
+package com.mealify.mealify.features.home.views;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mealify.mealify.R;
-import com.mealify.mealify.features.home.models.Category;
+import com.mealify.mealify.features.home.views.models.Category;
 
 import java.util.List;
 

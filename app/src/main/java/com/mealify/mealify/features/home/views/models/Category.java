@@ -1,4 +1,4 @@
-package com.mealify.mealify.features.home.models;
+package com.mealify.mealify.features.home.views.models;
 
 public class Category {
     private String name;
