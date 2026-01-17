@@ -19,28 +19,28 @@ public class HomeRemoteDataSource {
     private final HomeService homeService = homeNetwork.getHomeService();
 
     public void getRandomMeal(ApiResponse<List<MealDto>> apiResponse){
-        homeService.getRandomMeal().enqueue(new Callback<MealsResponse>() {
-            @Override
-            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
-                if (response.isSuccessful()){
-                    apiResponse.onSuccess(response.body().meals);
-                } else {
-                    apiResponse.onError("Something went wrong");
-                }
-            }
+                homeService.getRandomMeal().enqueue(new Callback<MealsResponse>() {
+                    @Override
+                    public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+                        if (response.isSuccessful()){
+                            apiResponse.onSuccess(response.body().meals);
+                        } else {
+                            apiResponse.onError("Something went wrong");
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<MealsResponse> call, Throwable t) {
-                apiResponse.onError("Error: "+ t.getMessage());
-            }
-        });
+                    @Override
+                    public void onFailure(Call<MealsResponse> call, Throwable t) {
+                        apiResponse.onError("Error: "+ t.getMessage());
+                    }
+                });
     }
 
-    public void getCategories(ApiResponse<List<CategoryDto>> apiResponse){
+    public void getCategories(ApiResponse<List<CategoryDto>> apiResponse) {
         homeService.getCategories().enqueue(new Callback<CategoriesResponse>() {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     apiResponse.onSuccess(response.body().categories);
                 } else {
                     apiResponse.onError("Something went wrong");
@@ -49,8 +49,10 @@ public class HomeRemoteDataSource {
 
             @Override
             public void onFailure(Call<CategoriesResponse> call, Throwable t) {
-                apiResponse.onError("Error: "+ t.getMessage());
+                apiResponse.onError("Error: " + t.getMessage());
             }
         });
+
     }
+
 }
