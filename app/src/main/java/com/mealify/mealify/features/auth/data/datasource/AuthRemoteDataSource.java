@@ -23,8 +23,8 @@ public class AuthRemoteDataSource {
         authService.login(email, password, apiResponse);
     }
 
-    public void register(String email, String password, ApiResponse<String> apiResponse) {
-        authService.register(email, password, apiResponse);
+    public void register(String email, String password, String name,ApiResponse<String> apiResponse) {
+        authService.register(email, password, name ,apiResponse);
     }
 
     public void googleSignIn(ApiResponse<String> apiResponse) {

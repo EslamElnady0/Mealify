@@ -19,6 +19,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
+import com.mealify.mealify.core.helper.AuthValidator;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.features.auth.data.datasource.AuthRemoteDataSource;
 import com.mealify.mealify.features.home.views.HomeActivity;
@@ -35,6 +36,7 @@ public class LoginFragment extends Fragment {
     private MaterialButton guestLoginButton;
     private TextView signUpText;
     private ProgressBar loading;
+    private View loadingOverlay;
     private AuthRemoteDataSource remoteDs;
 
     public LoginFragment() {
@@ -64,6 +66,7 @@ public class LoginFragment extends Fragment {
         guestLoginButton = view.findViewById(R.id.guestLoginButton);
         signUpText = view.findViewById(R.id.signUpText);
         loading = view.findViewById(R.id.loading);
+        loadingOverlay = view.findViewById(R.id.loadingOverlay);
 
         // Initialize data source
         remoteDs = AuthRemoteDataSource.getInstance(getContext());
@@ -80,59 +83,88 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void handleEmailLogin() {
-        String email = emailInput.getText() != null ? emailInput.getText().toString().trim() : "";
-        String password = passwordInput.getText() != null ? passwordInput.getText().toString().trim() : "";
+    private void showLoading(boolean isLoading) {
+            loading.setVisibility(isLoading? View.VISIBLE : View.GONE);
+            loadingOverlay.setVisibility(isLoading? View.VISIBLE : View.GONE);
+            loginButton.setEnabled(!isLoading);
+            googleSignInButton.setEnabled(!isLoading);
+            guestLoginButton.setEnabled(!isLoading);
+            signUpText.setEnabled(!isLoading);
 
-        if (email.isEmpty()) {
-            emailInput.setError("Email is required");
+    }
+
+    private void handleEmailLogin() {
+        String email = String.valueOf(emailInput.getText()).trim();
+        String password = String.valueOf(passwordInput.getText()).trim();
+
+        String emailError = AuthValidator.validateEmail(email);
+        String passwordError = AuthValidator.validatePassword(password);
+
+        if (emailError != null) {
+            emailInput.setError(emailError);
             emailInput.requestFocus();
             return;
         }
 
-        if (password.isEmpty()) {
-            passwordInput.setError("Password is required");
+        if (passwordError != null) {
+            passwordInput.setError(passwordError);
             passwordInput.requestFocus();
             return;
         }
+        showLoading(true);
 
+        remoteDs.login(email, password, new ApiResponse<String>() {
+            @Override
+            public void onSuccess(String data) {
+                showLoading(false);
+                CustomToast.show(getContext(), "Login successful: " + data);
+                navigateToHome();
+            }
 
-        loading.setVisibility(View.VISIBLE);
-        loginButton.setEnabled(false);
+            @Override
+            public void onError(String errorMessage) {
+                showLoading(false);
+                CustomToast.show(getContext(),  errorMessage);
+            }
+        });
 
-        // TODO: Implement Firebase Authentication
-        Toast.makeText(getContext(), "Email login will be implemented with Firebase", Toast.LENGTH_SHORT).show();
-
-//        overlay.postDelayed(() -> {
-//            loading.setVisibility(View.GONE);
-//            loginButton.setEnabled(true);
-//        }, 1500);
     }
 
     private void handleGoogleSignIn() {
-        loading.setVisibility(View.VISIBLE);
+        showLoading(true);
         remoteDs.googleSignIn(new ApiResponse<String>() {
             @Override
             public void onSuccess(String data) {
+                showLoading(false);
                 CustomToast.show(getContext(), "Google Sign-In successful: " + data);
                 navigateToHome();
             }
 
             @Override
             public void onError(String errorMessage) {
+                showLoading(false);
                 CustomToast.show(getContext(),  errorMessage);
             }
         });
-        loading.setVisibility(View.GONE);
     }
 
     private void handleGuestLogin() {
-        loading.setVisibility(View.VISIBLE);
+        showLoading(true);
         
-        // TODO: Implement Guest Login
-        Toast.makeText(getContext(), "Guest login will be implemented", Toast.LENGTH_SHORT).show();
-        
-        loading.setVisibility(View.GONE);
+        remoteDs.signInAnonymously(new ApiResponse<String>() {
+            @Override
+            public void onSuccess(String data) {
+                showLoading(false);
+                CustomToast.show(getContext(), "Guest login successful: " + data);
+                navigateToHome();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                showLoading(false);
+                CustomToast.show(getContext(),  errorMessage);
+            }
+        });
     }
 
     private void navigateToHome() {

@@ -20,6 +20,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
 import com.mealify.mealify.core.helper.CustomLogger;
@@ -68,7 +69,7 @@ public class FirebaseAuthService {
                 });
     }
 
-    public void register(String email, String password, ApiResponse<String> apiResponse) {
+    public void register(String email, String password, String name,ApiResponse<String> apiResponse) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
@@ -88,7 +89,7 @@ public class FirebaseAuthService {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
-                        apiResponse.onSuccess(user.getUid());
+                        apiResponse.onSuccess("guest_" + user.getUid());
                     } else {
                         apiResponse.onError("Anonymous sign-in failed: User not found");
                     }
