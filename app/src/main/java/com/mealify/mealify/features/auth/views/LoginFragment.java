@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
+import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.features.auth.data.datasource.AuthRemoteDataSource;
 
 /**
  * Login Fragment with Firebase Authentication support
@@ -30,6 +33,7 @@ public class LoginFragment extends Fragment {
     private MaterialButton guestLoginButton;
     private TextView signUpText;
     private ProgressBar loading;
+    private AuthRemoteDataSource remoteDs;
 
     public LoginFragment() {
 
@@ -59,6 +63,9 @@ public class LoginFragment extends Fragment {
         signUpText = view.findViewById(R.id.signUpText);
         loading = view.findViewById(R.id.loading);
 
+        // Initialize data source
+        remoteDs = AuthRemoteDataSource.getInstance(getContext());
+
         // Set up click listeners
         loginButton.setOnClickListener(v -> handleEmailLogin());
         
@@ -67,7 +74,6 @@ public class LoginFragment extends Fragment {
         guestLoginButton.setOnClickListener(v -> handleGuestLogin());
         
         signUpText.setOnClickListener(v -> {
-            // Navigate to Register Fragment
             Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment);
         });
     }
@@ -103,10 +109,17 @@ public class LoginFragment extends Fragment {
 
     private void handleGoogleSignIn() {
         loading.setVisibility(View.VISIBLE);
-        
-        // TODO: Implement Google Sign-In with Firebase
-        Toast.makeText(getContext(), "Google Sign-In will be implemented with Firebase", Toast.LENGTH_SHORT).show();
-        
+        remoteDs.googleSignIn(new ApiResponse<String>() {
+            @Override
+            public void onSuccess(String data) {
+                CustomToast.show(getContext(), "Google Sign-In successful: " + data);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                CustomToast.show(getContext(),  errorMessage);
+            }
+        });
         loading.setVisibility(View.GONE);
     }
 

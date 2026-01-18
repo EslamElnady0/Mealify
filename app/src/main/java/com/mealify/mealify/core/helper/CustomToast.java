@@ -4,7 +4,12 @@ import android.content.Context;
 import android.widget.Toast;
 
 public class CustomToast {
-    public static void show(Context ctx, String msg){
-        Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+
+    public static void show(Context context, String message) {
+        if (context == null) return;
+
+        new android.os.Handler(android.os.Looper.getMainLooper())
+                .post(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
     }
 }
+
