@@ -1,5 +1,6 @@
 package com.mealify.mealify.features.auth.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.mealify.mealify.R;
 import com.mealify.mealify.core.datasource.remote.response.ApiResponse;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.features.auth.data.datasource.AuthRemoteDataSource;
+import com.mealify.mealify.features.home.views.HomeActivity;
 
 /**
  * Login Fragment with Firebase Authentication support
@@ -113,6 +115,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onSuccess(String data) {
                 CustomToast.show(getContext(), "Google Sign-In successful: " + data);
+                navigateToHome();
             }
 
             @Override
@@ -130,5 +133,13 @@ public class LoginFragment extends Fragment {
         Toast.makeText(getContext(), "Guest login will be implemented", Toast.LENGTH_SHORT).show();
         
         loading.setVisibility(View.GONE);
+    }
+
+    private void navigateToHome() {
+        if(getActivity() != null) {
+            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 }
