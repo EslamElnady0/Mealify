@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mealify">
         <activity
-            android:name=".presentation.auth.views.AuthActivity"
+            android:name=".presentation.auth.AuthActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
