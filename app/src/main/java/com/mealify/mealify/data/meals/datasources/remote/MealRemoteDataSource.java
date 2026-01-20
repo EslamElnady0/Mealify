@@ -8,9 +8,7 @@ import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.data.meals.model.meal.MealsResponse;
 import com.mealify.mealify.network.Network;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

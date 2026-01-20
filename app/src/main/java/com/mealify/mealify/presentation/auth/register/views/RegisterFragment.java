@@ -1,29 +1,28 @@
-package com.mealify.mealify.presentation.auth.views;
+package com.mealify.mealify.presentation.auth.register.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.response.ApiResponse;
 import com.mealify.mealify.core.helper.AuthValidator;
 import com.mealify.mealify.core.helper.CustomToast;
-import com.mealify.mealify.data.auth.datasources.AuthRemoteDataSource;
+import com.mealify.mealify.presentation.auth.register.presenter.RegisterPresenter;
+import com.mealify.mealify.presentation.auth.register.presenter.RegisterPresenterImpl;
 import com.mealify.mealify.presentation.home.views.HomeActivity;
 
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends Fragment implements RegisterView {
 
     private TextInputEditText nameInput;
     private TextInputEditText emailInput;
@@ -38,7 +37,7 @@ public class RegisterFragment extends Fragment {
     private ProgressBar loading;
     private View loadingOverlay;
 
-    private AuthRemoteDataSource remoteDs;
+    private RegisterPresenter presenter;
 
     public RegisterFragment() {}
 
@@ -48,7 +47,7 @@ public class RegisterFragment extends Fragment {
 
     @Override
     public View onCreateView(
-            LayoutInflater inflater,
+            @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState
     ) {
@@ -62,7 +61,13 @@ public class RegisterFragment extends Fragment {
     ) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Views
+        initViews(view);
+
+        presenter = new RegisterPresenterImpl(requireContext(),this);
+        setupButtonListeners();
+    }
+
+    private void initViews(View view) {
         nameInput = view.findViewById(R.id.nameInput);
         emailInput = view.findViewById(R.id.emailInput);
         passwordInput = view.findViewById(R.id.passwordInput);
@@ -75,28 +80,23 @@ public class RegisterFragment extends Fragment {
 
         loading = view.findViewById(R.id.loading);
         loadingOverlay = view.findViewById(R.id.loadingOverlay);
+    }
 
-        // Data source
-        remoteDs = AuthRemoteDataSource.getInstance(requireContext());
-
-        // Click listeners
+    private void setupButtonListeners() {
         registerButton.setOnClickListener(v -> handleEmailRegister());
-        googleSignUpButton.setOnClickListener(v -> handleGoogleSignUp());
-        guestLoginButton.setOnClickListener(v -> handleGuestLogin());
+
+        googleSignUpButton.setOnClickListener(v ->
+                presenter.googleSignIn()
+        );
+
+        guestLoginButton.setOnClickListener(v ->
+                presenter.signInAnonymously()
+        );
 
         signInText.setOnClickListener(v ->
                 Navigation.findNavController(v)
                         .navigate(R.id.action_registerFragment_to_loginFragment)
         );
-    }
-
-    private void showLoading(boolean isLoading) {
-        loading.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        registerButton.setEnabled(!isLoading);
-        googleSignUpButton.setEnabled(!isLoading);
-        guestLoginButton.setEnabled(!isLoading);
-        signInText.setEnabled(!isLoading);
     }
 
     private void handleEmailRegister() {
@@ -138,60 +138,30 @@ public class RegisterFragment extends Fragment {
             return;
         }
 
-        showLoading(true);
-
-        remoteDs.register(email, password, name,new ApiResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                showLoading(false);
-                CustomToast.show(getContext(),"registration successful for: "+ data);
-                navigateToHome();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                showLoading(false);
-                CustomToast.show(getContext(), errorMessage);
-            }
-        });
+        presenter.register(email, password, name);
     }
 
-    private void handleGoogleSignUp() {
-        showLoading(true);
 
-        remoteDs.googleSignIn(new ApiResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                showLoading(false);
-                CustomToast.show(getContext(), "Google Sign-Up successful");
-                navigateToHome();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                showLoading(false);
-                CustomToast.show(getContext(), errorMessage);
-            }
-        });
+    @Override
+    public void onSuccessRegister(String message) {
+        CustomToast.show(getContext(), message);
+        navigateToHome();
     }
 
-    private void handleGuestLogin() {
-        showLoading(true);
+    @Override
+    public void onFailureRegister(String errorMessage) {
+        CustomToast.show(getContext(), errorMessage);
+    }
 
-        remoteDs.signInAnonymously(new ApiResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                showLoading(false);
-                CustomToast.show(getContext(), "Guest login successful");
-                navigateToHome();
-            }
+    @Override
+    public void toggleLoading(boolean isLoading) {
+        loading.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
 
-            @Override
-            public void onError(String errorMessage) {
-                showLoading(false);
-                CustomToast.show(getContext(), errorMessage);
-            }
-        });
+        registerButton.setEnabled(!isLoading);
+        googleSignUpButton.setEnabled(!isLoading);
+        guestLoginButton.setEnabled(!isLoading);
+        signInText.setEnabled(!isLoading);
     }
 
     private void clearErrors() {

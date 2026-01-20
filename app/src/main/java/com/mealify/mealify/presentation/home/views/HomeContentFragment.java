@@ -51,7 +51,7 @@ public class HomeContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mealRemoteDataSource = new MealRemoteDataSource();
+        mealRemoteDataSource = new MealRemoteDataSource(requireContext());
         View view = inflater.inflate(R.layout.fragment_home_content, container, false);
 
         categoriesRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
