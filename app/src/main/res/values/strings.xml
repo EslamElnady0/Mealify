@@ -31,4 +31,13 @@
     <string name="sign_up_to_get_started">Sign up to get started</string>
     <string name="full_name">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="meal_of_the_day">Meal of the Day</string>
+    <string name="meal_image">Meal Image</string>
+    <string name="cream_cheese_tart">Cream Cheese Tart</string>
+    <string name="american">American</string>
+    <string name="starter">Starter</string>
+    <string name="view_details">View Details →</string>
+    <string name="browse_categories">Browse Categories</string>
+    <string name="see_all">See All →</string>
+    <string name="category_name">Category Name</string>
 </resources>

@@ -19,12 +19,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Meal of the Day"
+            android:text="@string/meal_of_the_day"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Upper Half Loading Container -->
+        <FrameLayout
+            android:id="@+id/mealOfTheDayLoading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayTitle"
+            app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primary"/>
+
+        </FrameLayout>
 
         <!-- Meal of the Day Card -->
         <com.google.android.material.card.MaterialCardView
@@ -33,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
+            app:cardElevation="3dp"
             android:visibility="gone"
             android:backgroundTint="@color/white"
             app:layout_constraintTop_toBottomOf="@id/mealOfTheDayTitle"
@@ -50,7 +69,7 @@
                     android:layout_width="0dp"
                     android:layout_height="280dp"
                     android:scaleType="centerCrop"
-                    android:contentDescription="Meal Image"
+                    android:contentDescription="@string/meal_image"
                     android:src="@drawable/meal_cream_cheese_tart"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +83,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:text="Cream Cheese Tart"
+                    android:text="@string/cream_cheese_tart"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -79,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="American"
+                    android:text="@string/american"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:chipBackgroundColor="@color/white"
@@ -95,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Starter"
+                    android:text="@string/starter"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:chipBackgroundColor="@color/white"
@@ -114,7 +133,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="16dp"
-                    android:text="View Details →"
+                    android:text="@string/view_details"
                     android:textColor="@color/primary"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -128,26 +147,37 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Horizontal Guideline at 50% of screen -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
         <!-- Browse Categories Title -->
+
+        <!-- See All Button -->
+
         <TextView
             android:id="@+id/browseCategoriesTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Browse Categories"
+            android:text="@string/browse_categories"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayCard"
+            app:layout_constraintEnd_toStartOf="@id/seeAllButton"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/seeAllButton" />
+            app:layout_constraintTop_toBottomOf="@+id/mealOfTheDayCard" />
 
-        <!-- See All Button -->
         <TextView
             android:id="@+id/seeAllButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="See All →"
+            android:text="@string/see_all"
             android:textColor="@color/primary"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -156,6 +186,25 @@
             app:layout_constraintTop_toTopOf="@id/browseCategoriesTitle"
             app:layout_constraintBottom_toBottomOf="@id/browseCategoriesTitle"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Lower Half Loading Container -->
+        <FrameLayout
+            android:id="@+id/categoriesLoading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primary"/>
+
+        </FrameLayout>
 
         <!-- Categories RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
