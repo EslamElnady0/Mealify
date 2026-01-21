@@ -21,7 +21,7 @@ public interface MealService {
     public abstract Call<CategoriesResponse> getCategories();
 
     @GET("lookup.php")
-    public abstract Call<CategoriesResponse> getMealDetails(@Query("i") String mealId);
+    public abstract Call<MealsResponse> getMealDetails(@Query("i") String mealId);
 
     @GET("list.php?i=list")
     public abstract Call<IngredientsResponse> listIngredients();

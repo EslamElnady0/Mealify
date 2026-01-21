@@ -64,19 +64,19 @@ public class MealRemoteDataSource {
         });
     }
 
-    public void getMealDetails(String mealId, ApiResponse<List<CategoryDto>> apiResponse) {
-        mealService.getMealDetails(mealId).enqueue(new Callback<CategoriesResponse>() {
+    public void getMealDetails(String mealId, ApiResponse<List<MealDto>> apiResponse) {
+        mealService.getMealDetails(mealId).enqueue(new Callback<MealsResponse>() {
             @Override
-            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
+            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
                 if (response.isSuccessful()) {
-                    apiResponse.onSuccess(response.body().categories);
+                    apiResponse.onSuccess(response.body().meals);
                 } else {
                     apiResponse.onError("Something went wrong");
                 }
             }
 
             @Override
-            public void onFailure(Call<CategoriesResponse> call, Throwable t) {
+            public void onFailure(Call<MealsResponse> call, Throwable t) {
                 apiResponse.onError("Error: " + t.getMessage());
             }
         });
