@@ -1,21 +1,24 @@
 package com.mealify.mealify.data.meals.model.category;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class CategoriesStrResponse {
-    private List<CategoryStrDto> meals;
+   @SerializedName
+  ("meals") private List<CategoryStrDto> categoriesStr;
 
 
 
     public CategoriesStrResponse(List<CategoryStrDto> meals) {
-        this.meals = meals;
+        this.categoriesStr = meals;
     }
 
-    public List<CategoryDto> getMeals() {
-        return meals;
+    public List<CategoryStrDto> getCategoriesStr() {
+        return categoriesStr;
     }
 
-    public void setMeals(List<CategoryStrDto> meals) {
-        this.meals = meals;
+    public void setCategoriesStr(List<CategoryStrDto> meals) {
+        this.categoriesStr = meals;
     }
 }

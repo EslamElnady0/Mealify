@@ -1,16 +1,18 @@
 package com.mealify.mealify.data.meals.model.ingredient;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class IngredientsResponse {
 
-    private List<IngredientDto> meals;
+    @SerializedName("meals")  private List<IngredientDto> ingredients;
 
     public List<IngredientDto> getIngredients() {
-        return meals;
+        return ingredients;
     }
 
     public void setIngredients(List<IngredientDto> meals) {
-        this.meals = meals;
+        this.ingredients = meals;
     }
 }
