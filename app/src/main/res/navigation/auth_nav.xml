@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.mealify.mealify.features.auth.views.LoginFragment"
+        android:name="com.mealify.mealify.presentation.auth.login.views.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.mealify.mealify.features.auth.views.RegisterFragment"
+        android:name="com.mealify.mealify.presentation.auth.register.views.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action

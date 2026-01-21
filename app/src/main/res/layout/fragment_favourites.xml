@@ -5,7 +5,8 @@
     android:id="@+id/frameLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.favourite.views.FavouritesFragment">
+    android:background="@color/background"
+    tools:context=".presentation.fav.views.FavouritesFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

@@ -5,7 +5,8 @@
     android:id="@+id/frameLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.meals.views.SearchFragment">
+    android:background="@color/background"
+    tools:context=".presentation.meals.views.SearchFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

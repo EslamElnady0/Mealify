@@ -5,7 +5,8 @@
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.plan.views.PlanFragment">
+    android:background="@color/background"
+    tools:context=".presentation.plan.views.PlanFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
