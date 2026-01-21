@@ -15,10 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
@@ -28,7 +25,6 @@ import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.presentation.home.presenter.HomePresenter;
 import com.mealify.mealify.presentation.home.presenter.HomePresenterImpl;
-
 import java.util.List;
 
 
@@ -86,7 +82,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
     private void bindMealOfTheDay(MealDto meal) {
         if (!isAdded()) return;
 
-        mealOfTheDayCard.setVisibility(VISIBLE);
+
         TextView title = mealOfTheDayCard.findViewById(R.id.mealName);
         Chip category = mealOfTheDayCard.findViewById(R.id.categoryChip);
         Chip area = mealOfTheDayCard.findViewById(R.id.typeChip);
@@ -99,7 +95,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
         Glide.with(this)
                 .load(meal.thumbnail)
                 .into(mealImage);
-
+        mealOfTheDayCard.setVisibility(VISIBLE);
         mealOfTheDayCard.setOnClickListener(v -> {
             if (!isAdded()) return;
             CustomToast.show(getContext(), "Clicked on Meal of the Day: " + meal.name);
