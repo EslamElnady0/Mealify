@@ -3,6 +3,7 @@ package com.mealify.mealify.data.meals.datasources.remote;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.data.meals.mapper.MealMapper;
 import com.mealify.mealify.data.meals.model.category.CategoriesResponse;
 import com.mealify.mealify.data.meals.model.category.CategoriesStrResponse;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
@@ -12,6 +13,7 @@ import com.mealify.mealify.data.meals.model.country.CountryDto;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientsResponse;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
+import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.model.meal.MealsResponse;
 import com.mealify.mealify.network.Network;
 import java.util.List;
@@ -64,12 +66,14 @@ public class MealRemoteDataSource {
         });
     }
 
-    public void getMealDetails(String mealId, ApiResponse<List<MealDto>> apiResponse) {
+    public void getMealDetails(String mealId, ApiResponse<MealEntity> apiResponse) {
         mealService.getMealDetails(mealId).enqueue(new Callback<MealsResponse>() {
             @Override
             public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
                 if (response.isSuccessful()) {
-                    apiResponse.onSuccess(response.body().meals);
+                    MealDto mealDto= response.body().meals.get(0);
+                    MealEntity meal = MealMapper.toEntity(mealDto);
+                    apiResponse.onSuccess(meal);
                 } else {
                     apiResponse.onError("Something went wrong");
                 }
