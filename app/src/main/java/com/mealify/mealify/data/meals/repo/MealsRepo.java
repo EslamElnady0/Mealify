@@ -10,6 +10,7 @@ import com.mealify.mealify.data.meals.model.category.CategoryStrDto;
 import com.mealify.mealify.data.meals.model.country.CountryDto;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
+import com.mealify.mealify.data.meals.model.meal.MealEntity;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class MealsRepo {
         remoteDataSource.getCategories(apiResponse);
     }
 
-    public void getMealDetails(String mealId, ApiResponse<List<MealDto>> apiResponse) {
+    public void getMealDetails(String mealId, ApiResponse<MealEntity> apiResponse) {
         remoteDataSource.getMealDetails(mealId, apiResponse);
     }
 
