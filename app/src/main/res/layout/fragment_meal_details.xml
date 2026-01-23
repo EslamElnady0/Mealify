@@ -29,125 +29,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <androidx.core.widget.NestedScrollView
+
+    <include
         android:id="@+id/contentScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-43dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <include
-                android:id="@+id/mealHeader"
-                layout="@layout/view_meal_header"
-                android:layout_marginTop="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                 />
-
-            <TextView
-                android:id="@+id/ing_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="@color/darkBlue"
-                android:text="@string/ingredients"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mealHeader" />
-
-            <TextView
-                android:id="@+id/ing_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:textColor="@color/primary"
-                android:textSize="12sp"
-                android:paddingVertical="3dp"
-                android:paddingHorizontal="10dp"
-                android:background="@drawable/items_text_bg"
-                android:text="0 items"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/ing_text"
-                app:layout_constraintStart_toEndOf="@+id/ing_text"
-                app:layout_constraintTop_toTopOf="@+id/ing_text"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ingredientsRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="4dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_ingredient"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ing_text" />
-
-            <TextView
-                android:id="@+id/cooking_ins_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/darkBlue"
-                android:text="@string/cooking_instructions"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ingredientsRecycler" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/stepsRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_step"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cooking_ins_text" />
-
-            <TextView
-                android:id="@+id/watch_tut_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/darkBlue"
-                android:text="@string/watch_tutorial"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/stepsRecycler" />
-                
-            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                android:id="@+id/youtube_player_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:layout_marginBottom="32dp"
-                app:layout_constraintTop_toBottomOf="@+id/watch_tut_text"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:autoPlay="false"
-                 />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
+        layout="@layout/meal_details_scroll_view"
+        />
 
     <ImageButton
         android:id="@+id/back_button"
@@ -159,8 +47,37 @@
         android:clickable="true"
         android:elevation="4dp"
         android:src="@drawable/arrow_back"
-        android:tint="@android:color/white"
+        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/fav_btn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/fab_btn_bg"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:src="@drawable/fav_24"
+        app:tint="@color/primary"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/weekly_plan_btn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/fab_btn_bg"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/event"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toTopOf="@+id/fav_btn"
+        app:layout_constraintEnd_toEndOf="@+id/fav_btn"
+        app:layout_constraintStart_toStartOf="@+id/fav_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
