@@ -23,6 +23,9 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private ProgressBar progressBar;
@@ -33,10 +36,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private TextView categoryText;
     private TextView ingCountText;
     private RecyclerView ingredientsRecycler;
-    private TextView instructionsText;
+    private RecyclerView stepsRecycler;
     private ImageButton backButton;
 
     private IngredientAdapter ingredientAdapter;
+    private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
 
     private int mealId;
@@ -86,12 +90,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         ingCountText = view.findViewById(R.id.ing_count);
         ingredientsRecycler = view.findViewById(R.id.ingredientsRecycler);
-        instructionsText = view.findViewById(R.id.instructions);
+        stepsRecycler = view.findViewById(R.id.stepsRecycler);
     }
 
     private void setupRecyclerView() {
         ingredientAdapter = new IngredientAdapter();
         ingredientsRecycler.setAdapter(ingredientAdapter);
+
+        stepAdapter = new StepAdapter();
+        stepsRecycler.setAdapter(stepAdapter);
     }
 
     @Override
@@ -112,7 +119,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             areaText.setText(mealDetails.getArea());
             mealNameText.setText(mealDetails.getName());
             categoryText.setText(mealDetails.getCategory());
-            instructionsText.setText(mealDetails.getInstructions());
+
+            if (mealDetails.getInstructions() != null) {
+                stepAdapter.setSteps(parseInstructions(mealDetails.getInstructions()));
+            }
 
             if (mealDetails.getIngredients() != null) {
                 ingCountText.setText(mealDetails.getIngredients().size() + " items");
@@ -126,5 +136,44 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         if (getContext() != null) {
             Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private java.util.List<String> parseInstructions(String str) {
+        if (str == null || str.isEmpty())
+            return new ArrayList<>();
+
+        String normalized = str.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
+
+        String[] lines = normalized.split("\n");
+        List<String> steps = new ArrayList<>();
+
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty())
+                continue;
+
+            String cleaned = trimmed.replaceAll("(?i)^step\\s+\\d+(\\s+|:|,|.|\\b)", "").trim();
+
+            if (!cleaned.isEmpty()) {
+                steps.add(cleaned);
+            }
+        }
+
+        if (steps.size() <= 1 && str.contains(". ")) {
+            String[] sentences = str.split("\\.\\s+");
+            if (sentences.length > 1) {
+                steps.clear();
+                for (String s : sentences) {
+                    String trimmed = s.trim();
+                    if (!trimmed.isEmpty()) {
+                        if (!trimmed.endsWith("."))
+                            trimmed += ".";
+                        steps.add(trimmed);
+                    }
+                }
+            }
+        }
+
+        return steps;
     }
 }
