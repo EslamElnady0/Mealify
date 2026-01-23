@@ -18,23 +18,25 @@ public class MealEntity {
     private String area;
     private String instructions;
     private String thumbnail;
+    private String youtubeUrl;
 
     @TypeConverters(IngredientListConverter.class)
     private List<Ingredient> ingredients;
 
     public MealEntity(@NonNull String id, String name, String category, String area,
-                      String instructions, String thumbnail, List<Ingredient> ingredients) {
+            String instructions, String thumbnail, String youtubeUrl, List<Ingredient> ingredients) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.area = area;
         this.instructions = instructions;
         this.thumbnail = thumbnail;
+        this.youtubeUrl = youtubeUrl;
         this.ingredients = ingredients;
     }
+
     public MealEntity() {
     }
-
 
     @NonNull
     public String getId() {
@@ -84,12 +86,21 @@ public class MealEntity {
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
+
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
     public List<Ingredient> getIngredients() {
         return ingredients;
     }
+
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
 }
-

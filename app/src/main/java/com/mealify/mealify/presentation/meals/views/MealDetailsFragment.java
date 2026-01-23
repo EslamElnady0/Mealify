@@ -19,9 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private TextView ingCountText;
     private RecyclerView ingredientsRecycler;
     private RecyclerView stepsRecycler;
+    private YouTubePlayerView youtubePlayerView;
     private ImageButton backButton;
 
     private IngredientAdapter ingredientAdapter;
@@ -91,6 +96,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         ingCountText = view.findViewById(R.id.ing_count);
         ingredientsRecycler = view.findViewById(R.id.ingredientsRecycler);
         stepsRecycler = view.findViewById(R.id.stepsRecycler);
+        youtubePlayerView = view.findViewById(R.id.youtube_player_view);
+        getLifecycle().addObserver(youtubePlayerView);
     }
 
     private void setupRecyclerView() {
@@ -121,7 +128,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             categoryText.setText(mealDetails.getCategory());
 
             if (mealDetails.getInstructions() != null) {
-                stepAdapter.setSteps(parseInstructions(mealDetails.getInstructions()));
+                stepAdapter.setSteps(MealDetailsUtils.parseInstructions(mealDetails.getInstructions()));
+            }
+
+            if (mealDetails.getYoutubeUrl() != null && !mealDetails.getYoutubeUrl().isEmpty()) {
+                loadYoutubeVideo(mealDetails.getYoutubeUrl());
+            } else {
+                youtubePlayerView.setVisibility(View.GONE);
+                getView().findViewById(R.id.watch_tut_text).setVisibility(View.GONE);
             }
 
             if (mealDetails.getIngredients() != null) {
@@ -138,42 +152,20 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
     }
 
-    private java.util.List<String> parseInstructions(String str) {
-        if (str == null || str.isEmpty())
-            return new ArrayList<>();
-
-        String normalized = str.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
-
-        String[] lines = normalized.split("\n");
-        List<String> steps = new ArrayList<>();
-
-        for (String line : lines) {
-            String trimmed = line.trim();
-            if (trimmed.isEmpty())
-                continue;
-
-            String cleaned = trimmed.replaceAll("(?i)^step\\s+\\d+(\\s+|:|,|.|\\b)", "").trim();
-
-            if (!cleaned.isEmpty()) {
-                steps.add(cleaned);
-            }
-        }
-
-        if (steps.size() <= 1 && str.contains(". ")) {
-            String[] sentences = str.split("\\.\\s+");
-            if (sentences.length > 1) {
-                steps.clear();
-                for (String s : sentences) {
-                    String trimmed = s.trim();
-                    if (!trimmed.isEmpty()) {
-                        if (!trimmed.endsWith("."))
-                            trimmed += ".";
-                        steps.add(trimmed);
-                    }
+    private void loadYoutubeVideo(String videoUrl) {
+        String videoId = MealDetailsUtils.extractVideoId(videoUrl);
+        if (videoId != null) {
+            youtubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady(@NonNull YouTubePlayer youtubePlayer) {
+                    youtubePlayer.cueVideo(videoId, 0);
                 }
+            });
+        } else {
+            youtubePlayerView.setVisibility(View.GONE);
+            if (getView() != null) {
+                getView().findViewById(R.id.watch_tut_text).setVisibility(View.GONE);
             }
         }
-
-        return steps;
     }
 }
