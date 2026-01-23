@@ -20,7 +20,6 @@
             android:id="@+id/imageContainer"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            app:cardBackgroundColor="#FFF0E0"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +32,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_launcher_foreground"
-                app:tint="#D2691E"
                 tools:ignore="ContentDescription" />
 
         </androidx.cardview.widget.CardView>

@@ -67,18 +67,6 @@
         app:layout_constraintStart_toStartOf="@+id/meal_name"
         app:layout_constraintTop_toBottomOf="@+id/meal_name" />
 
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="36dp"
-        android:background="@drawable/back_button_background"
-        android:clickable="true"
-        android:elevation="2dp"
-        android:src="@drawable/arrow_back"
-        android:tint="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
