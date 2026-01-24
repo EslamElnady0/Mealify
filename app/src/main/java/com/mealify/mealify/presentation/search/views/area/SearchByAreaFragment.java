@@ -11,13 +11,17 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.data.meals.model.country.CountryDto;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.presentation.search.presenter.area.SearchAreaPresenter;
 import com.mealify.mealify.presentation.search.presenter.area.SearchAreaPresenterImpl;
 
@@ -68,7 +72,12 @@ public class SearchByAreaFragment extends Fragment implements SearchAreaView {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnAreaClickListener(area -> {
-            CustomToast.show(getContext(), "Clicked: " + area.getStrArea());
+            InnerAppFragmentDirections.ActionInnerAppFragmentToMealSearchResultFragment action =
+                    InnerAppFragmentDirections.actionInnerAppFragmentToMealSearchResultFragment(FilterType.AREA, area.getStrArea());
+            NavHostFragment navHostFragment = (NavHostFragment)
+                    getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+            NavController navController = navHostFragment.getNavController();
+            navController.navigate(action);
         });
     }
 

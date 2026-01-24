@@ -9,7 +9,7 @@
         android:id="@+id/mealDetailsFragment"
         android:name="com.mealify.mealify.presentation.meals.views.MealDetailsFragment"
         android:label="fragment_meal_details"
-        tools:layout="@layout/fragment_meal_details" >
+        tools:layout="@layout/fragment_meal_details">
         <argument
             android:name="mealId"
             app:argType="integer" />
@@ -18,7 +18,7 @@
         android:id="@+id/innerAppFragment"
         android:name="com.mealify.mealify.InnerAppFragment"
         android:label="fragment_inner_app"
-        tools:layout="@layout/fragment_inner_app" >
+        tools:layout="@layout/fragment_inner_app">
         <action
             android:id="@+id/action_innerAppFragment_to_mealDetailsFragment"
             app:destination="@id/mealDetailsFragment"
@@ -26,5 +26,24 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_innerAppFragment_to_mealSearchResultFragment"
+            app:destination="@id/mealSearchResultFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/mealSearchResultFragment"
+        android:name="com.mealify.mealify.presentation.search.views.searchresults.MealSearchResultFragment"
+        android:label="fragment_meal_search_result"
+        tools:layout="@layout/fragment_meal_search_result">
+        <argument
+            android:name="filterType"
+            app:argType="com.mealify.mealify.data.meals.model.filteredmeals.FilterType" />
+        <argument
+            android:name="query"
+            app:argType="string" />
     </fragment>
 </navigation>
