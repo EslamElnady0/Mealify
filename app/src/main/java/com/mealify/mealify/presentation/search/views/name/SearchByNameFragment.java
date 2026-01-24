@@ -1,4 +1,4 @@
-package com.mealify.mealify.presentation.search.views;
+package com.mealify.mealify.presentation.search.views.name;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,7 +20,7 @@ public class SearchByNameFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_search_by_name, container, false);
     }
 }
