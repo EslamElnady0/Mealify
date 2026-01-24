@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,7 +68,7 @@ public class SearchByAreaFragment extends Fragment implements SearchAreaView {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnAreaClickListener(area -> {
-            Toast.makeText(getContext(), "Clicked: " + area.getStrArea(), Toast.LENGTH_SHORT).show();
+            CustomToast.show(getContext(), "Clicked: " + area.getStrArea());
         });
     }
 
