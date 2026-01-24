@@ -16,6 +16,7 @@ public class MealMapper {
         entity.setArea(dto.area);
         entity.setInstructions(dto.instructions);
         entity.setThumbnail(dto.thumbnail);
+        entity.setYoutubeUrl(dto.strYoutube);
         entity.setIngredients(dto.getIngredients());
 
         return entity;

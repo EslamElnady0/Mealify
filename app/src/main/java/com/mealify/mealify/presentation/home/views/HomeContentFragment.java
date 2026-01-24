@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
+import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
@@ -39,6 +42,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
     private TextView mealOfTheDayText;
     private TextView browseCats;
     private TextView seeAll;
+    private NavController navController;
 
 
     public HomeContentFragment() {
@@ -98,7 +102,13 @@ public class HomeContentFragment extends Fragment implements HomeView {
         mealOfTheDayCard.setVisibility(VISIBLE);
         mealOfTheDayCard.setOnClickListener(v -> {
             if (!isAdded()) return;
-            CustomToast.show(getContext(), "Clicked on Meal of the Day: " + meal.name);
+            int mealId = Integer.parseInt(meal.id);
+            InnerAppFragmentDirections.ActionInnerAppFragmentToMealDetailsFragment action =
+                    InnerAppFragmentDirections.actionInnerAppFragmentToMealDetailsFragment(mealId);
+            NavHostFragment navHostFragment = (NavHostFragment)
+                    getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+            navController = navHostFragment.getNavController();
+            navController.navigate(action);
         });
     }
 

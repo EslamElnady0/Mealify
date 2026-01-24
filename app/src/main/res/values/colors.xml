@@ -9,4 +9,6 @@
     <color name="lightGray">#DDDDDD</color>
     <color name="darkerGray">#999999</color>
     <color name="background">#f7fafc</color>
+    <color name="grayWhitish">#CBD5E1</color>
+    <color name="darkBlue">#0F172A</color>
 </resources>
