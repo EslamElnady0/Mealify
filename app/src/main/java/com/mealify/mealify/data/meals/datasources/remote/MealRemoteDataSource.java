@@ -178,5 +178,24 @@ public class MealRemoteDataSource {
         });
 
     }
+
+    public void searchMealsByName(String name, ApiResponse<List<FilteredMeal>> apiResponse) {
+        mealService.searchMealsByName(name).enqueue(new Callback<MealsResponse>() {
+            @Override
+            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+                if (response.isSuccessful()) {
+                    List<FilteredMeal> filteredMeals = MealMapper.toFilteredMeals(response.body().meals);
+                    apiResponse.onSuccess(filteredMeals);
+                } else {
+                    apiResponse.onError("Something went wrong");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MealsResponse> call, Throwable t) {
+                apiResponse.onError("Error: " + t.getMessage());
+            }
+        });
+    }
 }
 

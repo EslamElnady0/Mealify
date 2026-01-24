@@ -49,4 +49,8 @@ public class MealsRepo {
     public void getFilteredMeals(FilterType filterType, String query, ApiResponse<List<FilteredMeal>> apiResponse) {
         remoteDataSource.getFilteredMeals(filterType, query, apiResponse);
     }
+
+    public void searchMealsByName(String name, ApiResponse<List<FilteredMeal>> apiResponse) {
+        remoteDataSource.searchMealsByName(name, apiResponse);
+    }
 }
