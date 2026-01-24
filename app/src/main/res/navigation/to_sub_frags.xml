@@ -45,5 +45,12 @@
         <argument
             android:name="query"
             app:argType="string" />
+        <action
+            android:id="@+id/action_mealSearchResultFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 </navigation>
