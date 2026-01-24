@@ -44,4 +44,8 @@
     <string name="cooking_instructions">Cooking Instructions</string>
     <string name="watch_tutorial">Watch Tutorial</string>
     <string name="_0_items">0 items</string>
+    <string name="name">Name</string>
+    <string name="category">Category</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="area">Area</string>
 </resources>
