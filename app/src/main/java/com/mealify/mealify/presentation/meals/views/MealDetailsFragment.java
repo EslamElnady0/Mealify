@@ -34,6 +34,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private ProgressBar progressBar;
     private NestedScrollView contentScrollView;
+    private TextView errorText;
     private ImageView mealImageView;
     private TextView areaText;
     private TextView mealNameText;
@@ -83,6 +84,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private void initViews(View view) {
         progressBar = view.findViewById(R.id.progressBar);
+        errorText = view.findViewById(R.id.errorText);
         contentScrollView = view.findViewById(R.id.contentScrollView);
 
         // Header views
@@ -147,9 +149,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void onFailure(String errorMessage) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-        }
+            errorText.setVisibility(View.VISIBLE);
+            errorText.setText(errorMessage);
+            contentScrollView.setVisibility(View.GONE);
     }
 
     private void loadYoutubeVideo(String videoUrl) {
