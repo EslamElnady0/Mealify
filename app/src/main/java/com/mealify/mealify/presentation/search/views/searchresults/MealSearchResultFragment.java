@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -54,7 +55,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_meal_search_result, container, false);
     }
 
@@ -76,15 +77,22 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
         headerText = view.findViewById(R.id.result_header_text);
         recyclerView = view.findViewById(R.id.resultsRecyclerView);
         searchEditText = view.findViewById(R.id.search_edit_text);
+
+        view.findViewById(R.id.back_button).setOnClickListener(v -> {
+            NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager()
+                    .findFragmentById(R.id.inner_home_container);
+            NavController navController = navHostFragment.getNavController();
+            navController.navigateUp();
+        });
     }
 
     private void setupRecyclerView() {
         adapter = new MealSearchResultAdapter(meal -> {
             int mealId = Integer.parseInt(meal.getIdMeal());
-            MealSearchResultFragmentDirections.ActionMealSearchResultFragmentToMealDetailsFragment action =
-                    MealSearchResultFragmentDirections.actionMealSearchResultFragmentToMealDetailsFragment(mealId);
-            NavHostFragment navHostFragment = (NavHostFragment)
-                    getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+            MealSearchResultFragmentDirections.ActionMealSearchResultFragmentToMealDetailsFragment action = MealSearchResultFragmentDirections
+                    .actionMealSearchResultFragmentToMealDetailsFragment(mealId);
+            NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager()
+                    .findFragmentById(R.id.inner_home_container);
             NavController navController = navHostFragment.getNavController();
             navController.navigate(action);
         });
@@ -115,7 +123,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
 
     private void updateHeader() {
         if (filterType != null && query != null) {
-            String header = "Results for searching by " + filterType.getFilterName() + ": " + query;
+            String header = filterType.getFilterName() + " : " + query;
             headerText.setText(header);
         }
     }
