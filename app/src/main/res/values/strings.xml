@@ -48,4 +48,10 @@
     <string name="category">Category</string>
     <string name="ingredient">Ingredient</string>
     <string name="area">Area</string>
+    <string name="try_searching_for_your_favorite_protein_or_a_specific_dish_name_to_get_started">Try searching for your favorite protein or a\nspecific dish name to get started.</string>
+    <string name="looking_for_something_specific">Looking for something specific?</string>
+    <string name="search_meals_by_ingredient">Search meals by ingredient...</string>
+    <string name="search_meals_by_category">Search meals by category...</string>
+    <string name="search_meals_by_area">Search meals by area...</string>
+    <string name="search_meals_by_name">Search meals by name...</string>
 </resources>
