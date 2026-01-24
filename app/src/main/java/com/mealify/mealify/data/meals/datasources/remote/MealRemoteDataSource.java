@@ -10,13 +10,18 @@ import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.category.CategoryStrDto;
 import com.mealify.mealify.data.meals.model.country.CountriesResponse;
 import com.mealify.mealify.data.meals.model.country.CountryDto;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMealsResponse;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientsResponse;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.model.meal.MealsResponse;
 import com.mealify.mealify.network.Network;
+
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,7 +76,7 @@ public class MealRemoteDataSource {
             @Override
             public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
                 if (response.isSuccessful()) {
-                    MealDto mealDto= response.body().meals.get(0);
+                    MealDto mealDto = response.body().meals.get(0);
                     MealEntity meal = MealMapper.toEntity(mealDto);
                     apiResponse.onSuccess(meal);
                 } else {
@@ -139,4 +144,58 @@ public class MealRemoteDataSource {
             }
         });
     }
+
+    public void getFilteredMeals(FilterType filterType, String query, ApiResponse<List<FilteredMeal>> apiResponse) {
+        Call<FilteredMealsResponse> call;
+
+        switch (filterType) {
+            case AREA:
+                call = mealService.filterMealsByArea(query);
+                break;
+            case CATEGORY:
+                call = mealService.filterMealsByCategory(query);
+                break;
+            case INGREDIENT:
+                call = mealService.filterMealsByIngredient(query);
+                break;
+            default:
+                call = mealService.filterMealsByCategory(query);
+        }
+        call.enqueue(new Callback<FilteredMealsResponse>() {
+            @Override
+            public void onResponse(Call<FilteredMealsResponse> call, Response<FilteredMealsResponse> response) {
+                if (response.isSuccessful()) {
+                    apiResponse.onSuccess(response.body().getMeals());
+                } else {
+                    apiResponse.onError("Something went wrong");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FilteredMealsResponse> call, Throwable t) {
+                apiResponse.onError("Error: " + t.getMessage());
+            }
+        });
+
+    }
+
+    public void searchMealsByName(String name, ApiResponse<List<FilteredMeal>> apiResponse) {
+        mealService.searchMealsByName(name).enqueue(new Callback<MealsResponse>() {
+            @Override
+            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+                if (response.isSuccessful()) {
+                    List<FilteredMeal> filteredMeals = MealMapper.toFilteredMeals(response.body().meals);
+                    apiResponse.onSuccess(filteredMeals);
+                } else {
+                    apiResponse.onError("Something went wrong");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MealsResponse> call, Throwable t) {
+                apiResponse.onError("Error: " + t.getMessage());
+            }
+        });
+    }
 }
+

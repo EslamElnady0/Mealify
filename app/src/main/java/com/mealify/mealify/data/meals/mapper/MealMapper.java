@@ -1,7 +1,11 @@
 package com.mealify.mealify.data.meals.mapper;
 
+import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MealMapper {
     public static MealEntity toEntity(MealDto dto) {
@@ -21,4 +25,21 @@ public class MealMapper {
 
         return entity;
     }
+
+    public static List<FilteredMeal> toFilteredMeals(List<MealDto> meals) {
+        List<FilteredMeal> filteredMeals = new ArrayList<>();
+        if (meals == null || meals.isEmpty()) {
+            return filteredMeals;
+        }
+
+        for (MealDto meal : meals) {
+            FilteredMeal filteredMeal = new FilteredMeal();
+            filteredMeal.setStrMeal(meal.name);
+            filteredMeal.setStrMealThumb(meal.thumbnail);
+            filteredMeal.setIdMeal(meal.id);
+            filteredMeals.add(filteredMeal);
+        }
+        return filteredMeals;
+    }
+
 }

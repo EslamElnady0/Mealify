@@ -1,9 +1,14 @@
-
 package com.mealify.mealify.presentation.home.views;
 
 import static android.view.View.VISIBLE;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,12 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
@@ -25,9 +25,11 @@ import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.presentation.home.presenter.HomePresenter;
 import com.mealify.mealify.presentation.home.presenter.HomePresenterImpl;
+
 import java.util.List;
 
 
@@ -114,13 +116,18 @@ public class HomeContentFragment extends Fragment implements HomeView {
 
     private void setupCategoriesRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(
-                getContext(), 
-                LinearLayoutManager.HORIZONTAL, 
+                getContext(),
+                LinearLayoutManager.HORIZONTAL,
                 false
         );
         categoriesRecyclerView.setLayoutManager(layoutManager);
-        categoryAdapter = new CategoryAdapter( category -> {
-            CustomToast.show(requireContext(), "Clicked on category: " + category.name);
+        categoryAdapter = new CategoryAdapter(category -> {
+            InnerAppFragmentDirections.ActionInnerAppFragmentToMealSearchResultFragment action =
+                    InnerAppFragmentDirections.actionInnerAppFragmentToMealSearchResultFragment(FilterType.CATEGORY, category.name);
+            NavHostFragment navHostFragment = (NavHostFragment)
+                    getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+            NavController navController = navHostFragment.getNavController();
+            navController.navigate(action);
         });
 
         categoriesRecyclerView.setAdapter(categoryAdapter);

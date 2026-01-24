@@ -44,4 +44,15 @@
     <string name="cooking_instructions">Cooking Instructions</string>
     <string name="watch_tutorial">Watch Tutorial</string>
     <string name="_0_items">0 items</string>
+    <string name="name">Name</string>
+    <string name="category">Category</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="area">Area</string>
+    <string name="try_searching_for_your_favorite_protein_or_a_specific_dish_name_to_get_started">Try searching for a specific dish name to get started.</string>
+    <string name="looking_for_something_specific">Looking for something specific?</string>
+    <string name="search_ingredient">Search ingredients...</string>
+    <string name="search_category">Search categories...</string>
+    <string name="search_area">Search areas...</string>
+    <string name="search_meals_by_name">Search meals by name...</string>
+    <string name="search_results">Search Results</string>
 </resources>
