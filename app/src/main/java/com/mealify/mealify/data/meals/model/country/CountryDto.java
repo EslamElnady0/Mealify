@@ -98,6 +98,8 @@ public class CountryDto {
                 return "uy";
             case "Vietnamese":
                 return "vn";
+            case "Venezulan":
+                return "ve";
             default:
                 return "unknown";
         }
