@@ -3,6 +3,7 @@ package com.mealify.mealify.data.meals.datasources.remote;
 import com.mealify.mealify.data.meals.model.category.CategoriesResponse;
 import com.mealify.mealify.data.meals.model.category.CategoriesStrResponse;
 import com.mealify.mealify.data.meals.model.country.CountriesResponse;
+import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMealsResponse;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientsResponse;
 import com.mealify.mealify.data.meals.model.meal.MealsResponse;
 
@@ -29,6 +30,11 @@ public interface MealService {
     public abstract Call<CategoriesStrResponse> listCategories();
     @GET("list.php?a=list")
     public abstract Call<CountriesResponse> listAreas();
-
+    @GET("filter.php")
+    public abstract Call<FilteredMealsResponse> filterMealsByIngredient(@Query("i") String ingredient);
+    @GET("filter.php")
+    public abstract Call<FilteredMealsResponse> filterMealsByCategory(@Query("c") String category);
+    @GET("filter.php")
+    public abstract Call<FilteredMealsResponse> filterMealsByArea(@Query("a") String area);
 
 }
