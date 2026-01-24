@@ -21,10 +21,6 @@ public class SearchCategoryAdapter extends RecyclerView.Adapter<SearchCategoryAd
     private List<CategoryDto> categories = new ArrayList<>();
     private OnCategoryClickListener listener;
 
-    public interface OnCategoryClickListener {
-        void onCategoryClick(CategoryDto category);
-    }
-
     public void setOnCategoryClickListener(OnCategoryClickListener listener) {
         this.listener = listener;
     }
@@ -53,6 +49,10 @@ public class SearchCategoryAdapter extends RecyclerView.Adapter<SearchCategoryAd
         return categories.size();
     }
 
+    public interface OnCategoryClickListener {
+        void onCategoryClick(CategoryDto category);
+    }
+
     class CategoryViewHolder extends RecyclerView.ViewHolder {
         private final ImageView categoryImage;
         private final TextView categoryName;
@@ -74,6 +74,7 @@ public class SearchCategoryAdapter extends RecyclerView.Adapter<SearchCategoryAd
             categoryName.setText(category.name);
             Glide.with(itemView.getContext())
                     .load(category.thumbnail)
+                    .circleCrop()
                     .placeholder(R.drawable.mealify_logo)
                     .into(categoryImage);
         }

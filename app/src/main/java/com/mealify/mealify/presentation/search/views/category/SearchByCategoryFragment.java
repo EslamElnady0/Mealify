@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.presentation.search.presenter.category.SearchCategoryPresenter;
 import com.mealify.mealify.presentation.search.presenter.category.SearchCategoryPresenterImpl;
@@ -32,7 +33,6 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
     private TextInputEditText searchEditText;
 
     public SearchByCategoryFragment() {
-        // Required empty public constructor
     }
 
     public static SearchByCategoryFragment newInstance() {
@@ -41,8 +41,7 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_search_by_category, container, false);
     }
 
@@ -102,7 +101,7 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
 
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        CustomToast.show(getContext(), message);
     }
 
     @Override

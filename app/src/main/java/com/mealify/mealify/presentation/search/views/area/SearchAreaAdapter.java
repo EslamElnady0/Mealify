@@ -21,10 +21,6 @@ public class SearchAreaAdapter extends RecyclerView.Adapter<SearchAreaAdapter.Ar
     private List<CountryDto> areas = new ArrayList<>();
     private OnAreaClickListener listener;
 
-    public interface OnAreaClickListener {
-        void onAreaClick(CountryDto area);
-    }
-
     public void setOnAreaClickListener(OnAreaClickListener listener) {
         this.listener = listener;
     }
@@ -53,6 +49,10 @@ public class SearchAreaAdapter extends RecyclerView.Adapter<SearchAreaAdapter.Ar
         return areas.size();
     }
 
+    public interface OnAreaClickListener {
+        void onAreaClick(CountryDto area);
+    }
+
     class AreaViewHolder extends RecyclerView.ViewHolder {
         private final ImageView areaFlag;
         private final TextView areaName;
@@ -75,7 +75,7 @@ public class SearchAreaAdapter extends RecyclerView.Adapter<SearchAreaAdapter.Ar
 
             Glide.with(itemView.getContext())
                     .load(area.getFlagUrl())
-                    .placeholder(R.drawable.mealify_logo)
+                    .placeholder(R.drawable.globe_24dp)
                     .into(areaFlag);
         }
     }
