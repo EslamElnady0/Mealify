@@ -1,10 +1,11 @@
 package com.mealify.mealify.data.favs.model.fav;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.annotation.NonNull;
+
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 
 @Entity(
@@ -13,7 +14,7 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
                 entity = MealEntity.class,
                 parentColumns = "id",
                 childColumns = "mealId",
-                onDelete = ForeignKey.CASCADE
+                onDelete = ForeignKey.NO_ACTION
         ),
         indices = {@Index("mealId")}
 )
@@ -23,6 +24,7 @@ public class FavouriteEntity {
     private String mealId;
 
     private long timestamp;
+
     public FavouriteEntity(@NonNull String mealId, long timestamp) {
         this.mealId = mealId;
         this.timestamp = timestamp;

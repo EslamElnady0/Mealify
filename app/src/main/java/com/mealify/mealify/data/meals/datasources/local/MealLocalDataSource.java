@@ -18,7 +18,9 @@ public class MealLocalDataSource {
     }
 
     public void insertMeal(MealEntity meal) {
-        mealDao.insert(meal);
+        new Thread(() -> {
+            mealDao.insert(meal);
+        }).start();
     }
 
     public MealEntity getMealById(String mealId) {
@@ -30,7 +32,9 @@ public class MealLocalDataSource {
     }
 
     public void deleteMeal(MealEntity meal) {
-        mealDao.delete(meal);
+        new Thread(() -> {
+            mealDao.delete(meal);
+        }).start();
     }
 
     public boolean isMealCached(String mealId) {

@@ -6,4 +6,6 @@ public interface MealDetailsView {
     void toggleLoading(boolean isLoading);
     void onSuccess(MealEntity mealDetails);
     void onFailure(String errorMessage);
+    void onIsFavoriteResult(boolean isFavorite);
+    void onToggleFavoriteSuccess(boolean isFavorite);
 }

@@ -3,6 +3,7 @@ package com.mealify.mealify.data.meals.repo;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
 import com.mealify.mealify.data.meals.datasources.remote.MealRemoteDataSource;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.category.CategoryStrDto;
@@ -17,8 +18,11 @@ import java.util.List;
 
 public class MealsRepo {
     private MealRemoteDataSource remoteDataSource;
+    private MealLocalDataSource localDataSource;
+
     public MealsRepo(Context ctx) {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
+        this.localDataSource = new MealLocalDataSource(ctx);
     }
 
     public void getRandomMeal(ApiResponse<List<MealDto>> apiResponse) {
@@ -51,5 +55,9 @@ public class MealsRepo {
 
     public void searchMealsByName(String name, ApiResponse<List<FilteredMeal>> apiResponse) {
         remoteDataSource.searchMealsByName(name, apiResponse);
+    }
+
+    public void addMealToLocal(MealEntity meal) {
+        localDataSource.insertMeal(meal);
     }
 }

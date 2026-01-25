@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.db.AppDatabase;
-import com.mealify.mealify.db.AppDatabase_Impl;
 
 import java.util.List;
 
@@ -19,13 +18,16 @@ public class FavouriteLocalDataSource {
     }
 
     public void addToFavourites(String mealId) {
-        FavouriteEntity entity =
-                new FavouriteEntity(mealId, System.currentTimeMillis());
-        favouriteDao.insert(entity);
+        FavouriteEntity entity = new FavouriteEntity(mealId, System.currentTimeMillis());
+        new Thread(() -> {
+            favouriteDao.insert(entity);
+        }).start();
     }
 
     public void removeFromFavourites(String mealId) {
-        favouriteDao.deleteByMealId(mealId);
+        new Thread(() -> {
+            favouriteDao.deleteByMealId(mealId);
+        }).start();
     }
 
     public boolean isFavourite(String mealId) {

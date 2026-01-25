@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
@@ -44,12 +45,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private RecyclerView stepsRecycler;
     private YouTubePlayerView youtubePlayerView;
     private ImageButton backButton;
+    private ImageButton favButton;
 
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
 
     private int mealId;
+    private MealEntity currentMeal;
+    private boolean isFavorite = false;
 
     public MealDetailsFragment() {
     }
@@ -75,10 +79,18 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupRecyclerView();
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
+        
         presenter.getMealDetails(String.valueOf(mealId));
+        presenter.isMealFavorite(String.valueOf(mealId));
 
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
+        });
+
+        favButton.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                presenter.toggleFavorite(currentMeal);
+            }
         });
     }
 
@@ -94,6 +106,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         mealNameText = header.findViewById(R.id.meal_name);
         categoryText = header.findViewById(R.id.category_text);
         backButton = view.findViewById(R.id.back_button);
+        favButton = view.findViewById(R.id.fav_btn);
 
         ingCountText = view.findViewById(R.id.ing_count);
         ingredientsRecycler = view.findViewById(R.id.ingredientsRecycler);
@@ -144,6 +157,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 ingCountText.setText(mealDetails.getIngredients().size() + " items");
                 ingredientAdapter.setIngredients(mealDetails.getIngredients());
             }
+            this.currentMeal = mealDetails;
         }
     }
 
@@ -169,5 +183,26 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 getView().findViewById(R.id.watch_tut_text).setVisibility(View.GONE);
             }
         }
+    }
+    private void updateFavButton() {
+        if (isFavorite) {
+            favButton.setImageResource(R.drawable.favourite);
+        } else {
+            favButton.setImageResource(R.drawable.fav_24);
+        }
+    }
+
+    @Override
+    public void onIsFavoriteResult(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+        updateFavButton();
+    }
+
+    @Override
+    public void onToggleFavoriteSuccess(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+        updateFavButton();
+        String message = isFavorite ? "Added to favorites" : "Removed from favorites";
+        CustomToast.show(getContext(), message);
     }
 }
