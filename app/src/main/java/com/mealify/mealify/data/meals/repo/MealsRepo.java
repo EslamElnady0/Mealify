@@ -17,7 +17,6 @@ import java.util.List;
 
 public class MealsRepo {
     private MealRemoteDataSource remoteDataSource;
-
     public MealsRepo(Context ctx) {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
     }

@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.meals.model.fav;
+package com.mealify.mealify.data.favs.model.fav;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;

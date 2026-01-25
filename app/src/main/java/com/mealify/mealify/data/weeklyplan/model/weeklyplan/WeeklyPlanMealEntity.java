@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.meals.model.weeklyplan;
+package com.mealify.mealify.data.weeklyplan.model.weeklyplan;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
