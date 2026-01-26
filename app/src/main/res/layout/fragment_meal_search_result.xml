@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".presentation.search.views.searchresults.MealSearchResultFragment">
 
     <ImageButton
@@ -26,8 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/search_results"
-        android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textColor="@color/darkBlue"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,18 +47,27 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_input_layout"
-        style="@style/AppTextInput"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        app:hintEnabled="false"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxStrokeColor="@color/primary"
+        app:boxStrokeWidth="1.5dp"
+        app:boxStrokeWidthFocused="2.5dp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/darkGray"
+        app:hintTextColor="@color/primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/result_header_text"
-        app:startIconDrawable="@android:drawable/ic_menu_search"
-        app:startIconTint="@color/darkGray">
+        app:startIconDrawable="@drawable/search"
+        app:startIconTint="@color/primary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/search_edit_text"
@@ -65,7 +75,10 @@
             android:layout_height="wrap_content"
             android:hint="@string/search_meals_by_name"
             android:inputType="text"
-            android:textSize="16sp" />
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:textColor="@color/darkBlue"
+            android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +86,7 @@
         android:id="@+id/resultsRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:clipToPadding="false"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"

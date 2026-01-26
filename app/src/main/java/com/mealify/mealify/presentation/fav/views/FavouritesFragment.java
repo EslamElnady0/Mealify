@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
     private FavsAdapter adapter;
     private LinearLayout emptyView;
     private TextInputEditText searchInput;
+    private TextView favoritesCount;
     private List<FavouriteWithMeal> allFavs = new ArrayList<>();
 
     public FavouritesFragment() {
@@ -63,6 +65,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
         favoritesRecycler = view.findViewById(R.id.favoritesRecycler);
         emptyView = view.findViewById(R.id.emptyView);
         searchInput = view.findViewById(R.id.searchInput);
+        favoritesCount = view.findViewById(R.id.favorites_count);
 
         setupRecyclerView();
         setupSearch();
@@ -115,11 +118,19 @@ public class FavouritesFragment extends Fragment implements FavsView {
     private void filter(String query) {
         if (query.isEmpty()) {
             adapter.setFavs(allFavs);
+            updateCount(allFavs.size());
         } else {
             List<FavouriteWithMeal> filteredList = allFavs.stream()
                     .filter(fav -> fav.meal != null && fav.meal.getName().toLowerCase().contains(query.toLowerCase()))
                     .collect(Collectors.toList());
             adapter.setFavs(filteredList);
+            updateCount(filteredList.size());
+        }
+    }
+
+    private void updateCount(int count) {
+        if (favoritesCount != null) {
+            favoritesCount.setText(String.valueOf(count));
         }
     }
 
@@ -130,11 +141,13 @@ public class FavouritesFragment extends Fragment implements FavsView {
                 allFavs = new ArrayList<>();
                 favoritesRecycler.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
+                updateCount(0);
             } else {
                 allFavs = favs;
                 favoritesRecycler.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 adapter.setFavs(favs);
+                updateCount(favs.size());
             }
         });
     }

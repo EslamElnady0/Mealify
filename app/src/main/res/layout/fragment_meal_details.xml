@@ -9,12 +9,11 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,10 +31,9 @@
 
     <include
         android:id="@+id/contentScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         layout="@layout/meal_details_scroll_view"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/back_button"
@@ -47,23 +45,23 @@
         android:clickable="true"
         android:elevation="4dp"
         android:src="@drawable/arrow_back"
-        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white" />
 
     <ImageButton
         android:id="@+id/fav_btn"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/fab_btn_bg"
         android:clickable="true"
         android:elevation="4dp"
         android:src="@drawable/fav_24"
-        app:tint="@color/primary"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:tint="@color/primary" />
 
     <ImageButton
         android:id="@+id/weekly_plan_btn"
@@ -75,9 +73,9 @@
         android:elevation="4dp"
         android:importantForAccessibility="no"
         android:src="@drawable/event"
-        app:tint="@color/primary"
         app:layout_constraintBottom_toTopOf="@+id/fav_btn"
         app:layout_constraintEnd_toEndOf="@+id/fav_btn"
-        app:layout_constraintStart_toStartOf="@+id/fav_btn" />
+        app:layout_constraintStart_toStartOf="@+id/fav_btn"
+        app:tint="@color/primary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,9 +26,6 @@ import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
@@ -68,7 +64,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_meal_details, container, false);
     }
 
@@ -79,7 +75,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupRecyclerView();
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
-        
+
         presenter.getMealDetails(String.valueOf(mealId));
         presenter.isMealFavorite(String.valueOf(mealId));
 
@@ -163,9 +159,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void onFailure(String errorMessage) {
-            errorText.setVisibility(View.VISIBLE);
-            errorText.setText(errorMessage);
-            contentScrollView.setVisibility(View.GONE);
+        errorText.setVisibility(View.VISIBLE);
+        errorText.setText(errorMessage);
+        contentScrollView.setVisibility(View.GONE);
     }
 
     private void loadYoutubeVideo(String videoUrl) {
@@ -184,6 +180,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         }
     }
+
     private void updateFavButton() {
         if (isFavorite) {
             favButton.setImageResource(R.drawable.favourite);

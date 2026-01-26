@@ -57,4 +57,7 @@
     <string name="search_results">Search Results</string>
     <string name="search_favorites">Search favorites</string>
     <string name="no_favourites_yet">no Favourites yet</string>
+    <string name="items_you_favorite_will_appear_here">Items you favorite will appear here</string>
+    <string name="no_matching_meals">No matching meals</string>
+    <string name="try_a_different_search_term">Try a different search term</string>
 </resources>
