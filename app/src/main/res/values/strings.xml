@@ -60,4 +60,14 @@
     <string name="items_you_favorite_will_appear_here">Items you favorite will appear here</string>
     <string name="no_matching_meals">No matching meals</string>
     <string name="try_a_different_search_term">Try a different search term</string>
+    <string name="explore_recipe">Explore Recipe</string>
+    <string name="earth_image">🌍</string>
+    <string name="cat_emoji">🍽️</string>
+    <string name="featured">Featured</string>
+    <string name="find_your_next_favorite_meal">Find your next favorite meal</string>
+    <string name="good_morning">Good Morning</string>
+    <string name="today_s_featured_dish">Today\'s Featured Dish</string>
+    <string name="handpicked_just_for_you">Handpicked just for you</string>
+    <string name="star_emoji">✨</string>
+    <string name="explore_by_category">Explore by Category</string>
 </resources>

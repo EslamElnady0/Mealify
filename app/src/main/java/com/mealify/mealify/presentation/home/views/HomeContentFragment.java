@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,8 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.chip.Chip;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
@@ -30,6 +30,7 @@ import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.presentation.home.presenter.HomePresenter;
 import com.mealify.mealify.presentation.home.presenter.HomePresenterImpl;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -37,13 +38,14 @@ public class HomeContentFragment extends Fragment implements HomeView {
     private HomePresenter presenter;
 
     private RecyclerView categoriesRecyclerView;
+    private RecyclerView categoriesLoadingRecyclerView;
     private CategoryAdapter categoryAdapter;
+    private ShimmerCategoryAdapter shimmerCategoryAdapter;
     private MaterialCardView mealOfTheDayCard;
-    private FrameLayout mealOfTheDayLoading;
-    private FrameLayout categoriesLoading;
+    private View mealOfTheDayLoadingShimmer;
     private TextView mealOfTheDayText;
+    private TextView greetingText;
     private TextView browseCats;
-    private TextView seeAll;
     private NavController navController;
 
 
@@ -67,12 +69,15 @@ public class HomeContentFragment extends Fragment implements HomeView {
         View view = inflater.inflate(R.layout.fragment_home_content, container, false);
 
         categoriesRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
+        categoriesLoadingRecyclerView = view.findViewById(R.id.categoriesLoading);
         mealOfTheDayCard = view.findViewById(R.id.mealOfTheDayCard);
-        mealOfTheDayLoading = view.findViewById(R.id.mealOfTheDayLoading);
-        categoriesLoading = view.findViewById(R.id.categoriesLoading);
+        mealOfTheDayLoadingShimmer = view.findViewById(R.id.mealOfTheDayLoading);
         mealOfTheDayText = view.findViewById(R.id.mealOfTheDayTitle);
+        greetingText = view.findViewById(R.id.greetingText);
         browseCats = view.findViewById(R.id.browseCategoriesTitle);
-        seeAll = view.findViewById(R.id.seeAllButton);
+
+        setGreeting();
+        setupShimmerLoaders();
 
         return view;
     }
@@ -85,33 +90,74 @@ public class HomeContentFragment extends Fragment implements HomeView {
         setupCategoriesRecyclerView();
     }
 
+    private void setupShimmerLoaders() {
+        // Setup shimmer for categories
+        shimmerCategoryAdapter = new ShimmerCategoryAdapter();
+        LinearLayoutManager shimmerLayoutManager = new LinearLayoutManager(
+                getContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+        );
+        categoriesLoadingRecyclerView.setLayoutManager(shimmerLayoutManager);
+        categoriesLoadingRecyclerView.setAdapter(shimmerCategoryAdapter);
+        shimmerCategoryAdapter.setItemCount(4);
+    }
+
+    private void setGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+
+        String greeting;
+        if (hourOfDay >= 5 && hourOfDay < 12) {
+            greeting = "Good Morning ☀️";
+        } else if (hourOfDay >= 12 && hourOfDay < 17) {
+            greeting = "Good Afternoon 🌤️";
+        } else if (hourOfDay >= 17 && hourOfDay < 21) {
+            greeting = "Good Evening 🌆";
+        } else {
+            greeting = "Good Night 🌙";
+        }
+
+        greetingText.setText(greeting);
+    }
+
     private void bindMealOfTheDay(MealDto meal) {
         if (!isAdded()) return;
 
-
         TextView title = mealOfTheDayCard.findViewById(R.id.mealName);
-        Chip category = mealOfTheDayCard.findViewById(R.id.categoryChip);
-        Chip area = mealOfTheDayCard.findViewById(R.id.typeChip);
+        TextView category = mealOfTheDayCard.findViewById(R.id.categoryChip);
+        TextView area = mealOfTheDayCard.findViewById(R.id.typeChip);
         ImageView mealImage = mealOfTheDayCard.findViewById(R.id.mealImage);
+        MaterialButton viewDetailsButton = mealOfTheDayCard.findViewById(R.id.viewDetailsButton);
 
         title.setText(meal.name);
         category.setText(meal.category);
         area.setText(meal.area);
 
+        // Load image with Glide
         Glide.with(this)
                 .load(meal.thumbnail)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.mealify_logo)
+                        .error(R.drawable.mealify_logo))
                 .into(mealImage);
+
         mealOfTheDayCard.setVisibility(VISIBLE);
-        mealOfTheDayCard.setOnClickListener(v -> {
-            if (!isAdded()) return;
-            int mealId = Integer.parseInt(meal.id);
-            InnerAppFragmentDirections.ActionInnerAppFragmentToMealDetailsFragment action =
-                    InnerAppFragmentDirections.actionInnerAppFragmentToMealDetailsFragment(mealId);
-            NavHostFragment navHostFragment = (NavHostFragment)
-                    getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
-            navController = navHostFragment.getNavController();
-            navController.navigate(action);
-        });
+
+        // Click listeners
+        mealOfTheDayCard.setOnClickListener(v -> navigateToMealDetails(meal.id));
+        viewDetailsButton.setOnClickListener(v -> navigateToMealDetails(meal.id));
+    }
+
+    private void navigateToMealDetails(String mealId) {
+        if (!isAdded()) return;
+        int id = Integer.parseInt(mealId);
+        InnerAppFragmentDirections.ActionInnerAppFragmentToMealDetailsFragment action =
+                InnerAppFragmentDirections.actionInnerAppFragmentToMealDetailsFragment(id);
+        NavHostFragment navHostFragment = (NavHostFragment)
+                getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+        navController = navHostFragment.getNavController();
+        navController.navigate(action);
     }
 
     private void setupCategoriesRecyclerView() {
@@ -150,16 +196,16 @@ public class HomeContentFragment extends Fragment implements HomeView {
 
     @Override
     public void toggleMealOfTheDayLoading(boolean isLoading) {
-        mealOfTheDayLoading.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        mealOfTheDayLoadingShimmer.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         mealOfTheDayCard.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         mealOfTheDayText.setVisibility(isLoading ? View.GONE : VISIBLE);
+        greetingText.setVisibility(isLoading ? View.GONE : VISIBLE);
     }
 
     @Override
     public void toggleCategoriesLoading(boolean isLoading) {
-        categoriesLoading.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        categoriesLoadingRecyclerView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         categoriesRecyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         browseCats.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        seeAll.setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
 }

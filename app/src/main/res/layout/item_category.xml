@@ -1,34 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!-- Enhanced Category Item - Place in res/layout/item_category.xml -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="160dp"
-    android:layout_height="160dp"
-    android:backgroundTint="@color/white"
+    android:layout_width="180dp"
+    android:layout_height="240dp"
     android:layout_marginEnd="16dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp">
+    android:backgroundTint="#FFFFFF"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
 
-        <LinearLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Category Image (Full Card) -->
+        <ImageView
+            android:id="@+id/categoryImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:contentDescription="@string/category_name"
+            android:scaleType="centerCrop" />
 
-            <ImageView
-                android:id="@+id/category_image"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_launcher_background" />
+        <!-- Gradient Overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bottom_fade_gradient" />
+
+        <!-- Category Name at Bottom -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
-                android:id="@+id/category_name"
+                android:id="@+id/categoryName"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="@string/category_name"
-                android:textAppearance="?attr/textAppearanceSubtitle1" />
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:letterSpacing="-0.01"
+                android:maxLines="2"
+                android:shadowColor="#000000"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="6"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
+
+    </FrameLayout>
+
 </com.google.android.material.card.MaterialCardView>
