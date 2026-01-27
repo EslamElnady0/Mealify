@@ -10,7 +10,6 @@ import androidx.room.TypeConverters;
 import com.mealify.mealify.data.favs.datasource.FavouriteDao;
 import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.meals.datasources.local.MealDao;
-import com.mealify.mealify.data.meals.model.meal.IngredientListConverter;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanDao;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
@@ -21,9 +20,9 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity
                 WeeklyPlanMealEntity.class,
                 FavouriteEntity.class
         },
-        version = 2
+        version = 3
 )
-@TypeConverters({IngredientListConverter.class})
+@TypeConverters({DBConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "mealify_db";
 
