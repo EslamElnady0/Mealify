@@ -75,4 +75,6 @@
     <string name="lunch">Lunch</string>
     <string name="thursday_oct_5">Thursday, Oct 5</string>
     <string name="dinner">Dinner</string>
+    <string name="no_meal_planned">No meal planned</string>
+    <string name="select_meal">Select Meal</string>
 </resources>
