@@ -12,7 +12,7 @@ import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.meals.datasources.local.MealDao;
 import com.mealify.mealify.data.meals.model.meal.IngredientListConverter;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.weeklyplan.datasource.WeeklyPlanDao;
+import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanDao;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
 
 @Database(

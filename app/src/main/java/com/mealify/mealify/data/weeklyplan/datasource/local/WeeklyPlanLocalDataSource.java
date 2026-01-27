@@ -1,11 +1,11 @@
-package com.mealify.mealify.data.weeklyplan.datasource;
+package com.mealify.mealify.data.weeklyplan.datasource.local;
 
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.db.AppDatabase;
 
 import java.util.List;
@@ -17,6 +17,7 @@ public class WeeklyPlanLocalDataSource {
     public WeeklyPlanLocalDataSource(Context context) {
         this.weeklyPlanDao = AppDatabase.getInstance(context).weeklyPlanDao();
     }
+
     public void addMealToWeeklyPlan(WeeklyPlanMealEntity mealEntity) {
         weeklyPlanDao.addMealToPlan(mealEntity);
     }

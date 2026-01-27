@@ -3,8 +3,9 @@ package com.mealify.mealify.data.weeklyplan.repo;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
-import com.mealify.mealify.data.weeklyplan.datasource.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class WeeklyPlanRepo {
         this.weeklyPlanLocalDataSource = new WeeklyPlanLocalDataSource(ctx);
         this.mealLocalDataSource = new MealLocalDataSource(ctx);
     }
+
     public void addMealToWeeklyPlan(
             WeeklyPlanMealWithMeal weeklyPlanMealWithMeal
     ) {

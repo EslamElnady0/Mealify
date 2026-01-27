@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.weeklyplan.datasource;
+package com.mealify.mealify.data.weeklyplan.datasource.local;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,8 +6,10 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+
 import java.util.List;
 
 @Dao
