@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
@@ -26,9 +26,6 @@ import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
@@ -44,12 +41,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private RecyclerView stepsRecycler;
     private YouTubePlayerView youtubePlayerView;
     private ImageButton backButton;
+    private ImageButton favButton;
 
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
 
     private int mealId;
+    private MealEntity currentMeal;
+    private boolean isFavorite = false;
 
     public MealDetailsFragment() {
     }
@@ -64,7 +64,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_meal_details, container, false);
     }
 
@@ -75,10 +75,18 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupRecyclerView();
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
+
         presenter.getMealDetails(String.valueOf(mealId));
+        presenter.isMealFavorite(String.valueOf(mealId));
 
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
+        });
+
+        favButton.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                presenter.toggleFavorite(currentMeal);
+            }
         });
     }
 
@@ -94,6 +102,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         mealNameText = header.findViewById(R.id.meal_name);
         categoryText = header.findViewById(R.id.category_text);
         backButton = view.findViewById(R.id.back_button);
+        favButton = view.findViewById(R.id.fav_btn);
 
         ingCountText = view.findViewById(R.id.ing_count);
         ingredientsRecycler = view.findViewById(R.id.ingredientsRecycler);
@@ -144,14 +153,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 ingCountText.setText(mealDetails.getIngredients().size() + " items");
                 ingredientAdapter.setIngredients(mealDetails.getIngredients());
             }
+            this.currentMeal = mealDetails;
         }
     }
 
     @Override
     public void onFailure(String errorMessage) {
-            errorText.setVisibility(View.VISIBLE);
-            errorText.setText(errorMessage);
-            contentScrollView.setVisibility(View.GONE);
+        errorText.setVisibility(View.VISIBLE);
+        errorText.setText(errorMessage);
+        contentScrollView.setVisibility(View.GONE);
     }
 
     private void loadYoutubeVideo(String videoUrl) {
@@ -169,5 +179,27 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 getView().findViewById(R.id.watch_tut_text).setVisibility(View.GONE);
             }
         }
+    }
+
+    private void updateFavButton() {
+        if (isFavorite) {
+            favButton.setImageResource(R.drawable.favourite);
+        } else {
+            favButton.setImageResource(R.drawable.fav_24);
+        }
+    }
+
+    @Override
+    public void onIsFavoriteResult(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+        updateFavButton();
+    }
+
+    @Override
+    public void onToggleFavoriteSuccess(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+        updateFavButton();
+        String message = isFavorite ? "Added to favorites" : "Removed from favorites";
+        CustomToast.show(getContext(), message);
     }
 }

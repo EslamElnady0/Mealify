@@ -1,13 +1,14 @@
-package com.mealify.mealify.data.meals.datasources.local.dao;
+package com.mealify.mealify.data.favs.datasource;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Delete;
 import androidx.room.Transaction;
-import com.mealify.mealify.data.meals.model.fav.FavouriteEntity;
-import com.mealify.mealify.data.meals.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
+import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import java.util.List;
 
 @Dao
@@ -17,7 +18,7 @@ public interface FavouriteDao {
 
     @Transaction
     @Query("SELECT * FROM favourites ORDER BY timestamp DESC")
-    List<FavouriteWithMeal> getAllFavouritesWithMeals();
+    LiveData<List<FavouriteWithMeal>> getAllFavouritesWithMeals();
 
     @Query("SELECT EXISTS(SELECT 1 FROM favourites WHERE mealId = :mealId)")
     boolean isFavourite(String mealId);

@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.meals.model.fav;
+package com.mealify.mealify.data.favs.model.fav;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

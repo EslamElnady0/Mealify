@@ -1,66 +1,159 @@
 package com.mealify.mealify.presentation.fav.views;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
+import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.favs.repo.FavRepo;
+import com.mealify.mealify.presentation.fav.presenter.FavsPresenter;
+import com.mealify.mealify.presentation.fav.presenter.FavsPresenterImpl;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavouritesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class FavouritesFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class FavouritesFragment extends Fragment implements FavsView {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FavsPresenter presenter;
+    private RecyclerView favoritesRecycler;
+    private FavsAdapter adapter;
+    private LinearLayout emptyView;
+    private TextInputEditText searchInput;
+    private TextView favoritesCount;
+    private List<FavouriteWithMeal> allFavs = new ArrayList<>();
 
     public FavouritesFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FavouritesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FavouritesFragment newInstance(String param1, String param2) {
-        FavouritesFragment fragment = new FavouritesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static FavouritesFragment newInstance() {
+        return new FavouritesFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        presenter = new FavsPresenterImpl(new FavRepo(requireContext()), this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favourites, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        favoritesRecycler = view.findViewById(R.id.favoritesRecycler);
+        emptyView = view.findViewById(R.id.emptyView);
+        searchInput = view.findViewById(R.id.searchInput);
+        favoritesCount = view.findViewById(R.id.favorites_count);
+
+        setupRecyclerView();
+        setupSearch();
+
+        presenter.getFavouriteMeals();
+    }
+
+    private void setupRecyclerView() {
+        adapter = new FavsAdapter(
+                fav -> {
+                    if (fav.meal != null) {
+                        int mealId = Integer.parseInt(fav.meal.getId());
+                        InnerAppFragmentDirections.ActionInnerAppFragmentToMealDetailsFragment action =
+                                InnerAppFragmentDirections.actionInnerAppFragmentToMealDetailsFragment(mealId);
+
+                        NavHostFragment navHostFragment = (NavHostFragment)
+                                getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+                        if (navHostFragment != null) {
+                            NavController navController = navHostFragment.getNavController();
+                            navController.navigate(action);
+                        }
+                    }
+                },
+                fav -> {
+                    if (fav.meal != null) {
+                        presenter.removeFavouriteMeal(fav.meal.getId());
+                    }
+                }
+        );
+        favoritesRecycler.setAdapter(adapter);
+    }
+
+    private void setupSearch() {
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void filter(String query) {
+        if (query.isEmpty()) {
+            adapter.setFavs(allFavs);
+            updateCount(allFavs.size());
+        } else {
+            List<FavouriteWithMeal> filteredList = allFavs.stream()
+                    .filter(fav -> fav.meal != null && fav.meal.getName().toLowerCase().contains(query.toLowerCase()))
+                    .collect(Collectors.toList());
+            adapter.setFavs(filteredList);
+            updateCount(filteredList.size());
+        }
+    }
+
+    private void updateCount(int count) {
+        if (favoritesCount != null) {
+            favoritesCount.setText(String.valueOf(count));
+        }
+    }
+
+    @Override
+    public void onFavsSuccess(LiveData<List<FavouriteWithMeal>> favMealsLiveData) {
+        favMealsLiveData.observe(getViewLifecycleOwner(), favs -> {
+            if (favs == null || favs.isEmpty()) {
+                allFavs = new ArrayList<>();
+                favoritesRecycler.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+                updateCount(0);
+            } else {
+                allFavs = favs;
+                favoritesRecycler.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+                adapter.setFavs(favs);
+                updateCount(favs.size());
+            }
+        });
+    }
+
+    @Override
+    public void onFavsFailure(String errorMessage) {
+        // Handle failure
     }
 }

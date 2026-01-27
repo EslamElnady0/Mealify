@@ -1,10 +1,10 @@
-package com.mealify.mealify.data.meals.model.weeklyplan;
+package com.mealify.mealify.data.weeklyplan.model.weeklyplan;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.annotation.NonNull;
 
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 
@@ -26,15 +26,15 @@ public class WeeklyPlanMealEntity {
     private String mealId;
 
     @NonNull
-    private String dateString; // "2025-01-20" (YYYY-MM-DD format for easy sorting and querying)
+    private String dateString;
 
     @NonNull
-    private String dayOfWeek; // "Monday", "Tuesday", etc. (for display purposes)
+    private String dayOfWeek;
 
     @NonNull
-    private String mealType; // "Breakfast", "Lunch", "Dinner"
+    private String mealType;
 
-    private long addedAt; // Timestamp when it was added to the plan
+    private long addedAt;
 
     public WeeklyPlanMealEntity(@NonNull String mealId, @NonNull String dateString,
                                 @NonNull String dayOfWeek, @NonNull String mealType, long addedAt) {

@@ -1,5 +1,6 @@
-package com.mealify.mealify.data.meals.datasources.local.dao;
+package com.mealify.mealify.data.meals.datasources.local;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -17,7 +18,7 @@ public interface MealDao {
     MealEntity getMealById(String mealId);
 
     @Query("SELECT * FROM meals")
-    List<MealEntity> getAllMeals();
+    LiveData<List<MealEntity>> getAllMeals();
 
     @Delete
     void delete(MealEntity meal);

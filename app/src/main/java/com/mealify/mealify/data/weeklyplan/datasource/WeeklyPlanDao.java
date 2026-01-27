@@ -1,12 +1,13 @@
-package com.mealify.mealify.data.meals.datasources.local.dao;
+package com.mealify.mealify.data.weeklyplan.datasource;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-import com.mealify.mealify.data.meals.model.weeklyplan.WeeklyPlanMealEntity;
-import com.mealify.mealify.data.meals.model.weeklyplan.WeeklyPlanMeal;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import java.util.List;
 
 @Dao
@@ -17,11 +18,11 @@ public interface WeeklyPlanDao {
 
     @Transaction
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString BETWEEN :startDate AND :endDate ORDER BY dateString, mealType")
-    List<WeeklyPlanMeal> getWeekMeals(String startDate, String endDate);
+    LiveData<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate);
 
     @Transaction
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString = :date ORDER BY mealType")
-    List<WeeklyPlanMeal> getMealsByDate(String date);
+    LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date);
 
     @Query("DELETE FROM weekly_plan_meals WHERE id = :id")
     void deleteMealById(long id);
