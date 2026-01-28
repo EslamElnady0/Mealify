@@ -178,31 +178,31 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         if (breakfast != null) {
             setSlotFilled(breakfastSlot, breakfast);
         } else {
-            setSlotEmpty(breakfastSlot, "breakfast");
+            setSlotEmpty(breakfastSlot);
         }
 
         if (lunch != null) {
             setSlotFilled(lunchSlot, lunch);
         } else {
-            setSlotEmpty(lunchSlot, "lunch");
+            setSlotEmpty(lunchSlot);
         }
 
         if (dinner != null) {
             setSlotFilled(dinnerSlot, dinner);
         } else {
-            setSlotEmpty(dinnerSlot, "dinner");
+            setSlotEmpty(dinnerSlot);
         }
 
         snacksAdapter.setSnacks(snacks);
     }
 
     private void setAllSlotsEmpty() {
-        setSlotEmpty(breakfastSlot, "breakfast");
-        setSlotEmpty(lunchSlot, "lunch");
-        setSlotEmpty(dinnerSlot, "dinner");
+        setSlotEmpty(breakfastSlot);
+        setSlotEmpty(lunchSlot);
+        setSlotEmpty(dinnerSlot);
     }
 
-    private void setSlotEmpty(View slotView, String mealType) {
+    private void setSlotEmpty(View slotView) {
         TextView emptyText = slotView.findViewById(R.id.empty_text);
         MaterialButton selectButton = slotView.findViewById(R.id.select_button);
         LinearLayout filledContent = slotView.findViewById(R.id.filled_content);
@@ -214,7 +214,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         filledContent.setVisibility(View.GONE);
         mealImageCard.setVisibility(View.GONE);
 
-        selectButton.setOnClickListener(v -> openMealSelection(mealType));
+        selectButton.setOnClickListener(v -> openMealSelection());
     }
 
     private void setSlotFilled(View slotView, WeeklyPlanMealWithMeal mealWithPlan) {
@@ -257,7 +257,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         }
     }
 
-    private void openMealSelection(String mealType) {
+    private void openMealSelection() {
     }
 
     private void openMealDetails(String mealId) {
