@@ -26,7 +26,7 @@ public interface WeeklyPlanDao {
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString = :date ORDER BY mealType")
     LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date);
 
-    @Query("DELETE FROM weekly_plan_meals WHERE id = :id")
+    @Query("DELETE FROM weekly_plan_meals WHERE planId = :id")
     void deleteMealById(long id);
 
     @Query("DELETE FROM weekly_plan_meals")

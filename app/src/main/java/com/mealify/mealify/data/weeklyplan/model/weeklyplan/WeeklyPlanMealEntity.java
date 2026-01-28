@@ -5,10 +5,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.db.DBConverters;
 
 @Entity(
         tableName = "weekly_plan_meals",
@@ -16,25 +14,24 @@ import com.mealify.mealify.db.DBConverters;
                 entity = MealEntity.class,
                 parentColumns = "id",
                 childColumns = "mealId",
-                onDelete = ForeignKey.NO_ACTION
+                onDelete = ForeignKey.CASCADE
         ),
         indices = {@Index("mealId"), @Index(value = {"dateString", "mealType"}, unique = true)}
 )
 public class WeeklyPlanMealEntity {
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private long planId;
 
     @NonNull
     private String mealId;
 
     @NonNull
     private String dateString;
+
     @NonNull
-    @TypeConverters(DBConverters.class)
     private DayOfWeek dayOfWeek;
 
     @NonNull
-    @TypeConverters(DBConverters.class)
     private WeeklyPlanMealType mealType;
 
     private long addedAt;
@@ -48,12 +45,12 @@ public class WeeklyPlanMealEntity {
         this.addedAt = addedAt;
     }
 
-    public long getId() {
-        return id;
+    public long getPlanId() {
+        return planId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setPlanId(long planId) {
+        this.planId = planId;
     }
 
     @NonNull
