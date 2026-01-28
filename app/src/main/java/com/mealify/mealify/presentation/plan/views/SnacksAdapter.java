@@ -1,4 +1,4 @@
-package com.mealify.mealify.presentation.plan.adapters;
+package com.mealify.mealify.presentation.plan.views;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +55,7 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
     public interface OnSnackActionListener {
         void onRemoveSnack(long planId);
 
-        void onSnackClick(WeeklyPlanMealWithMeal snack);
+        void onSnackClick(String mealId);
     }
 
     static class SnackViewHolder extends RecyclerView.ViewHolder {
@@ -111,7 +111,7 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
 
                 cardView.setOnClickListener(v -> {
                     if (listener != null) {
-                        listener.onSnackClick(snack);
+                        listener.onSnackClick(snack.meal.getId());
                     }
                 });
             }

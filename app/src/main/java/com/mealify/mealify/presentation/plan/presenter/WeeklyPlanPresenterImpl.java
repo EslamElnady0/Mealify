@@ -18,11 +18,7 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
         this.weeklyPlanRepo = new WeeklyPlanRepo(ctx);
         this.view = view;
     }
-
-    @Override
-    public void loadMealsForToday() {
-
-    }
+    
 
     @Override
     public void loadMealsForDate(String dateString) {

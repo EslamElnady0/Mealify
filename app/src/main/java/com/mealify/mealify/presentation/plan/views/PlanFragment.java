@@ -13,16 +13,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
-import com.mealify.mealify.presentation.plan.adapters.SnacksAdapter;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenter;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenterImpl;
 
@@ -44,6 +46,8 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     private View dinnerSlot;
     private RecyclerView snacksRecyclerView;
     private SnacksAdapter snacksAdapter;
+
+    private NavController navController;
 
     public PlanFragment() {
     }
@@ -242,21 +246,27 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
                     .placeholder(R.drawable.mealify_logo)
                     .error(R.drawable.mealify_logo)
                     .into(mealImage);
-
+            filledContent.setOnClickListener(v -> {
+                openMealDetails(mealWithPlan.meal.getId());
+            });
             removeButton.setOnClickListener(v -> {
                 if (mealWithPlan.planEntry != null) {
                     presenter.deleteMealFromPlan(mealWithPlan.planEntry.getPlanId());
                 }
             });
-
-            slotView.setOnClickListener(v -> openMealDetails(mealWithPlan));
         }
     }
 
     private void openMealSelection(String mealType) {
     }
 
-    private void openMealDetails(WeeklyPlanMealWithMeal mealWithPlan) {
+    private void openMealDetails(String mealId) {
+        InnerAppFragmentDirections.ActionInnerAppFragmentToMealDetailsFragment action =
+                InnerAppFragmentDirections.actionInnerAppFragmentToMealDetailsFragment(Integer.parseInt(mealId));
+        NavHostFragment navHostFragment = (NavHostFragment)
+                getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_home_container);
+        navController = navHostFragment.getNavController();
+        navController.navigate(action);
     }
 
     @Override
@@ -265,7 +275,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     }
 
     @Override
-    public void onSnackClick(WeeklyPlanMealWithMeal snack) {
-        openMealDetails(snack);
+    public void onSnackClick(String mealId) {
+        openMealDetails(mealId);
     }
 }
