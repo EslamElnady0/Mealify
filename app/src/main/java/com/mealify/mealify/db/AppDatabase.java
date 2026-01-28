@@ -20,7 +20,7 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity
                 WeeklyPlanMealEntity.class,
                 FavouriteEntity.class
         },
-        version = 4
+        version = 6
 )
 @TypeConverters({DBConverters.class})
 public abstract class AppDatabase extends RoomDatabase {

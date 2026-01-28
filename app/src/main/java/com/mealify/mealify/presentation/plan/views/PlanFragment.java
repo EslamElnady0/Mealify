@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +22,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.R;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.presentation.plan.adapters.SnacksAdapter;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenter;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenterImpl;
 
@@ -31,23 +33,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class PlanFragment extends Fragment implements PlanView {
+public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.OnSnackActionListener {
 
     private WeeklyPlanPresenter presenter;
-
-    // Calendar and date
     private CalendarView calendarView;
     private TextView selectedDayText;
     private String currentDateString;
-
-    // Meal slots
     private View breakfastSlot;
     private View lunchSlot;
     private View dinnerSlot;
-
-    // Snacks RecyclerView
     private RecyclerView snacksRecyclerView;
-//    private SnacksAdapter snacksAdapter;
+    private SnacksAdapter snacksAdapter;
 
     public PlanFragment() {
     }
@@ -59,7 +55,6 @@ public class PlanFragment extends Fragment implements PlanView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize presenter
         presenter = new WeeklyPlanPresenterImpl(requireContext(), this);
     }
 
@@ -116,9 +111,9 @@ public class PlanFragment extends Fragment implements PlanView {
     }
 
     private void setupSnacksRecyclerView() {
-//        snacksAdapter = new SnacksAdapter(this);
-//        snacksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        snacksRecyclerView.setAdapter(snacksAdapter);
+        snacksAdapter = new SnacksAdapter(this);
+        snacksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        snacksRecyclerView.setAdapter(snacksAdapter);
     }
 
     private void loadMealsForCurrentDate() {
@@ -131,11 +126,6 @@ public class PlanFragment extends Fragment implements PlanView {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
         String formattedDate = sdf.format(new Date(dateInMillis));
         selectedDayText.setText(formattedDate);
-    }
-
-    private String formatDateToString(long dateInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        return sdf.format(new Date(dateInMillis));
     }
 
     @Override
@@ -151,10 +141,9 @@ public class PlanFragment extends Fragment implements PlanView {
     private void updateUIWithMeals(List<WeeklyPlanMealWithMeal> meals) {
         if (meals == null || meals.isEmpty()) {
             setAllSlotsEmpty();
-            //snacksAdapter.setSnacks(null);
+            snacksAdapter.setSnacks(null);
             return;
         }
-
 
         WeeklyPlanMealWithMeal breakfast = null;
         WeeklyPlanMealWithMeal lunch = null;
@@ -178,7 +167,6 @@ public class PlanFragment extends Fragment implements PlanView {
                     case SNACK:
                         snacks.add(meal);
                         break;
-
                 }
             }
         }
@@ -201,8 +189,7 @@ public class PlanFragment extends Fragment implements PlanView {
             setSlotEmpty(dinnerSlot, "dinner");
         }
 
-
-        // snacksAdapter.setSnacks(snacks.isEmpty() ? null : snacks);
+        snacksAdapter.setSnacks(snacks);
     }
 
     private void setAllSlotsEmpty() {
@@ -233,8 +220,8 @@ public class PlanFragment extends Fragment implements PlanView {
         MaterialCardView mealImageCard = slotView.findViewById(R.id.meal_image);
         ImageView mealImage = slotView.findViewById(R.id.meal_image_view);
         TextView mealName = slotView.findViewById(R.id.meal_name);
-//        TextView mealCategory = slotView.findViewById(R.id.meal_category);
-//        MaterialButton removeButton = slotView.findViewById(R.id.remove_button);
+        TextView mealDetails = slotView.findViewById(R.id.meal_details);
+        MaterialButton removeButton = slotView.findViewById(R.id.remove_button);
 
         emptyText.setVisibility(View.GONE);
         selectButton.setVisibility(View.GONE);
@@ -244,7 +231,11 @@ public class PlanFragment extends Fragment implements PlanView {
 
         if (mealWithPlan.meal != null) {
             mealName.setText(mealWithPlan.meal.getName());
-            //  mealCategory.setText(mealWithPlan.meal.getCategory());
+
+            if (mealDetails != null) {
+                String details = mealWithPlan.meal.getCategory();
+                mealDetails.setText(details);
+            }
 
             Glide.with(this)
                     .load(mealWithPlan.meal.getThumbnail())
@@ -252,9 +243,11 @@ public class PlanFragment extends Fragment implements PlanView {
                     .error(R.drawable.mealify_logo)
                     .into(mealImage);
 
-//            removeButton.setOnClickListener(v -> {
-//
-//            });
+            removeButton.setOnClickListener(v -> {
+                if (mealWithPlan.planEntry != null) {
+                    presenter.deleteMealFromPlan(mealWithPlan.planEntry.getPlanId());
+                }
+            });
 
             slotView.setOnClickListener(v -> openMealDetails(mealWithPlan));
         }
@@ -266,5 +259,13 @@ public class PlanFragment extends Fragment implements PlanView {
     private void openMealDetails(WeeklyPlanMealWithMeal mealWithPlan) {
     }
 
+    @Override
+    public void onRemoveSnack(long planId) {
+        presenter.deleteMealFromPlan(planId);
+    }
 
+    @Override
+    public void onSnackClick(WeeklyPlanMealWithMeal snack) {
+        openMealDetails(snack);
+    }
 }

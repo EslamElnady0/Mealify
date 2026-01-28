@@ -14,9 +14,10 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
                 entity = MealEntity.class,
                 parentColumns = "id",
                 childColumns = "mealId",
-                onDelete = ForeignKey.CASCADE
+                onDelete = ForeignKey.NO_ACTION
         ),
-        indices = {@Index("mealId"), @Index(value = {"dateString", "mealType"}, unique = true)}
+        indices = {@Index("mealId"),
+                @Index(value = {"dateString", "mealType"})}
 )
 public class WeeklyPlanMealEntity {
     @PrimaryKey(autoGenerate = true)

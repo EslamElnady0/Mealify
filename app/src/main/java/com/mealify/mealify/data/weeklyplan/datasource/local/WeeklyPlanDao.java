@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
@@ -29,10 +30,12 @@ public interface WeeklyPlanDao {
     @Query("DELETE FROM weekly_plan_meals WHERE planId = :id")
     void deleteMealById(long id);
 
+    @Query("DELETE FROM weekly_plan_meals WHERE dateString = :date AND mealType = :mealType")
+    void deleteMealByDateAndType(String date, WeeklyPlanMealType mealType);
+
     @Query("DELETE FROM weekly_plan_meals")
     void clearAllPlannedMeals();
 
     @Query("SELECT COUNT(*) FROM weekly_plan_meals")
     int getPlannedMealsCount();
-
 }

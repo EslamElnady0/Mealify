@@ -70,7 +70,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     @Override
     public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
         new Thread(() -> {
-            weeklyPlanRepo.addMealToWeeklyPlan(meal);
+            weeklyPlanRepo.addMealToPlan(meal);
             view.onWeeklyPlanMealAdded("Meal added to weekly plan");
         }).start();
     }

@@ -29,4 +29,11 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
         LiveData<List<WeeklyPlanMealWithMeal>> meals = weeklyPlanRepo.getMealsByDate(dateString);
         view.showMeals(meals);
     }
+
+    @Override
+    public void deleteMealFromPlan(long planId) {
+        new Thread(() -> {
+            weeklyPlanRepo.deleteMealFromPlan(planId);
+        }).start();
+    }
 }
