@@ -206,4 +206,52 @@ public class DialogUtils {
 
         dialog.show();
     }
+
+    public static void showReplaceMealDialog(Context context,
+                                             String existingMealName,
+                                             String existingMealThumbnail,
+                                             DialogCallback callback) {
+
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_replace_meal, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        ImageView mealImage = dialogView.findViewById(R.id.existing_meal_image);
+        TextView mealName = dialogView.findViewById(R.id.existing_meal_name);
+        Button btnReplace = dialogView.findViewById(R.id.btn_replace);
+        Button btnKeep = dialogView.findViewById(R.id.btn_keep);
+
+        mealName.setText(existingMealName);
+        if (existingMealThumbnail != null && !existingMealThumbnail.isEmpty()) {
+            Glide.with(context)
+                    .load(existingMealThumbnail)
+                    .placeholder(R.drawable.mealify_logo)
+                    .error(R.drawable.mealify_logo)
+                    .into(mealImage);
+        }
+
+        btnReplace.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onConfirm();
+            }
+            dialog.dismiss();
+        });
+
+        btnKeep.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onCancel();
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
 }

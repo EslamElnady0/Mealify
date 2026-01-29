@@ -316,4 +316,22 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_dialog_rounded);
     }
 
+    @Override
+    public void showReplaceConfirmation(WeeklyPlanMealWithMeal newMeal, WeeklyPlanMealWithMeal existingMeal) {
+        DialogUtils.showReplaceMealDialog(
+                requireContext(),
+                existingMeal.meal.getName(),
+                existingMeal.meal.getThumbnail(),
+                new DialogUtils.DialogCallback() {
+                    @Override
+                    public void onConfirm() {
+                        presenter.forceAddToWeeklyPlan(newMeal);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+                }
+        );
+    }
 }

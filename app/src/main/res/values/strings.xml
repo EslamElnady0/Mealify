@@ -83,4 +83,9 @@
     <string name="are_you_sure_you_want_to_remove_this_meal_from_your_favorites">Are you sure you want to remove this meal from your favorites?</string>
     <string name="remove_from_plan">Remove from Plan</string>
     <string name="are_you_sure_you_want_to_remove_this_meal_from_your_plan">Are you sure you want to remove this meal from your plan?</string>
+    <string name="replace_existing_meal">Replace existing meal?</string>
+    <string name="current_meal">CURRENT MEAL</string>
+    <string name="replace_meal_description">This will replace your current meal selection for this slot in your planner.</string>
+    <string name="replace_meal_action">Replace Meal</string>
+    <string name="keep_current">Keep Current</string>
 </resources>
