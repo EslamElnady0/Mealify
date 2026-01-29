@@ -68,4 +68,5 @@ dependencies {
     implementation(libs.rxandroid)
     implementation(libs.rxjava)
     implementation(libs.room.rxjava3)
+    implementation libs.rx.preferences
 }
