@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.mealify.mealify.db.DBConverters;
+
 import java.util.List;
 
 @Entity(tableName = "meals")
@@ -20,11 +22,11 @@ public class MealEntity {
     private String thumbnail;
     private String youtubeUrl;
 
-    @TypeConverters(IngredientListConverter.class)
+    @TypeConverters(DBConverters.class)
     private List<Ingredient> ingredients;
 
     public MealEntity(@NonNull String id, String name, String category, String area,
-            String instructions, String thumbnail, String youtubeUrl, List<Ingredient> ingredients) {
+                      String instructions, String thumbnail, String youtubeUrl, List<Ingredient> ingredients) {
         this.id = id;
         this.name = name;
         this.category = category;

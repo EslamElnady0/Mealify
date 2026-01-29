@@ -14,13 +14,14 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
                 entity = MealEntity.class,
                 parentColumns = "id",
                 childColumns = "mealId",
-                onDelete = ForeignKey.CASCADE
+                onDelete = ForeignKey.NO_ACTION
         ),
-        indices = {@Index("mealId"), @Index(value = {"dateString", "mealType"}, unique = true)}
+        indices = {@Index("mealId"),
+                @Index(value = {"dateString", "mealType"})}
 )
 public class WeeklyPlanMealEntity {
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private long planId;
 
     @NonNull
     private String mealId;
@@ -29,15 +30,15 @@ public class WeeklyPlanMealEntity {
     private String dateString;
 
     @NonNull
-    private String dayOfWeek;
+    private DayOfWeek dayOfWeek;
 
     @NonNull
-    private String mealType;
+    private WeeklyPlanMealType mealType;
 
     private long addedAt;
 
     public WeeklyPlanMealEntity(@NonNull String mealId, @NonNull String dateString,
-                                @NonNull String dayOfWeek, @NonNull String mealType, long addedAt) {
+                                @NonNull DayOfWeek dayOfWeek, @NonNull WeeklyPlanMealType mealType, long addedAt) {
         this.mealId = mealId;
         this.dateString = dateString;
         this.dayOfWeek = dayOfWeek;
@@ -45,12 +46,12 @@ public class WeeklyPlanMealEntity {
         this.addedAt = addedAt;
     }
 
-    public long getId() {
-        return id;
+    public long getPlanId() {
+        return planId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setPlanId(long planId) {
+        this.planId = planId;
     }
 
     @NonNull
@@ -72,20 +73,20 @@ public class WeeklyPlanMealEntity {
     }
 
     @NonNull
-    public String getDayOfWeek() {
+    public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(@NonNull String dayOfWeek) {
+    public void setDayOfWeek(@NonNull DayOfWeek dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 
     @NonNull
-    public String getMealType() {
+    public WeeklyPlanMealType getMealType() {
         return mealType;
     }
 
-    public void setMealType(@NonNull String mealType) {
+    public void setMealType(@NonNull WeeklyPlanMealType mealType) {
         this.mealType = mealType;
     }
 

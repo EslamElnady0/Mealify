@@ -3,50 +3,53 @@ package com.mealify.mealify.data.weeklyplan.repo;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
-import com.mealify.mealify.data.weeklyplan.datasource.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WeeklyPlanRepo {
-
-    private final WeeklyPlanLocalDataSource weeklyPlanLocalDataSource;
+    private final WeeklyPlanLocalDataSource localDataSource;
     private final MealLocalDataSource mealLocalDataSource;
+    private final ExecutorService executorService;
 
-    public WeeklyPlanRepo(
-            Context ctx
-    ) {
-        this.weeklyPlanLocalDataSource = new WeeklyPlanLocalDataSource(ctx);
-        this.mealLocalDataSource = new MealLocalDataSource(ctx);
-    }
-    public void addMealToWeeklyPlan(
-            WeeklyPlanMealWithMeal weeklyPlanMealWithMeal
-    ) {
-        mealLocalDataSource.insertMeal(weeklyPlanMealWithMeal.meal);
-        weeklyPlanLocalDataSource.addMealToWeeklyPlan(weeklyPlanMealWithMeal.planEntry);
+    public WeeklyPlanRepo(Context context) {
+        this.localDataSource = new WeeklyPlanLocalDataSource(context);
+        this.mealLocalDataSource = new MealLocalDataSource(context);
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
-    public LiveData<List<WeeklyPlanMealWithMeal>> getWeekMeals(
-            String startDate,
-            String endDate
-    ) {
-        return weeklyPlanLocalDataSource.getWeekMeals(startDate, endDate);
+    public void addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal) {
+        executorService.execute(() -> {
+            if (planMealWithMeal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
+                localDataSource.deleteMealByDateAndType(
+                        planMealWithMeal.planEntry.getDateString(),
+                        planMealWithMeal.planEntry.getMealType()
+                );
+            }
+            mealLocalDataSource.insertMeal(planMealWithMeal.meal);
+            localDataSource.addMealToWeeklyPlan(planMealWithMeal.planEntry);
+        });
     }
 
     public LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date) {
-        return weeklyPlanLocalDataSource.getMealsByDate(date);
+        return localDataSource.getMealsByDate(date);
     }
 
-    public void deleteMealById(long id) {
-        weeklyPlanLocalDataSource.deleteMealById(id);
+    public LiveData<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate) {
+        return localDataSource.getWeekMeals(startDate, endDate);
     }
 
-    public void clearWeeklyPlan() {
-        weeklyPlanLocalDataSource.clearWeeklyPlan();
+    public void deleteMealFromPlan(long planId) {
+        localDataSource.deleteMealById(planId);
     }
 
-    public int getPlannedMealsCount() {
-        return weeklyPlanLocalDataSource.getPlannedMealsCount();
+    public void clearAllPlannedMeals() {
+        localDataSource.clearWeeklyPlan();
     }
 }

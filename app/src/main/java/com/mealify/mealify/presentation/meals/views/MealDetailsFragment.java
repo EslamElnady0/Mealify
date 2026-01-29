@@ -1,5 +1,7 @@
 package com.mealify.mealify.presentation.meals.views;
 
+import android.app.DatePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -21,11 +25,18 @@ import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+
+import java.time.LocalDate;
+import java.util.Calendar;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
@@ -42,7 +53,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private YouTubePlayerView youtubePlayerView;
     private ImageButton backButton;
     private ImageButton favButton;
-
+    private ImageButton weeklyPlanBtn;
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
@@ -68,6 +79,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         return inflater.inflate(R.layout.fragment_meal_details, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -88,6 +100,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 presenter.toggleFavorite(currentMeal);
             }
         });
+        weeklyPlanBtn.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                showDatePicker();
+            }
+        });
     }
 
     private void initViews(View view) {
@@ -103,6 +120,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         categoryText = header.findViewById(R.id.category_text);
         backButton = view.findViewById(R.id.back_button);
         favButton = view.findViewById(R.id.fav_btn);
+        weeklyPlanBtn = view.findViewById(R.id.weekly_plan_btn);
 
         ingCountText = view.findViewById(R.id.ing_count);
         ingredientsRecycler = view.findViewById(R.id.ingredientsRecycler);
@@ -202,4 +220,75 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         String message = isFavorite ? "Added to favorites" : "Removed from favorites";
         CustomToast.show(getContext(), message);
     }
+
+    @Override
+    public void onWeeklyPlanMealAdded(String message) {
+        CustomToast.show(getContext(), message);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                R.style.CustomDatePickerDialogTheme,
+                (view, year, month, day) -> {
+                    String formattedDate = year + "-" + (month + 1) + "-" + day;
+                    LocalDate localDate = LocalDate.of(year, month + 1, day);
+                    DayOfWeek dayEnum = DayOfWeek.valueOf(
+                            localDate.getDayOfWeek().name()
+                    );
+                    showMealTypeSelector(formattedDate, dayEnum);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.show();
+    }
+
+    private void showMealTypeSelector(String formattedDate, DayOfWeek dayEnum) {
+        String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.select_meal_type)
+                .setItems(mealTypes, (dialog, which) -> {
+                    WeeklyPlanMealType selectedType;
+                    switch (which) {
+                        case 0:
+                            selectedType = WeeklyPlanMealType.BREAKFAST;
+                            break;
+                        case 1:
+                            selectedType = WeeklyPlanMealType.LUNCH;
+                            break;
+                        case 2:
+                            selectedType = WeeklyPlanMealType.DINNER;
+                            break;
+                        case 3:
+                            selectedType = WeeklyPlanMealType.SNACK;
+                            break;
+                        default:
+                            selectedType = WeeklyPlanMealType.BREAKFAST;
+                    }
+
+                    WeeklyPlanMealEntity planEntry = new WeeklyPlanMealEntity(
+                            currentMeal.getId(),
+                            formattedDate,
+                            dayEnum,
+                            selectedType,
+                            System.currentTimeMillis()
+                    );
+                    WeeklyPlanMealWithMeal meal = new WeeklyPlanMealWithMeal(
+                            currentMeal,
+                            planEntry
+                    );
+                    presenter.addToWeeklyPlan(meal);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
 }

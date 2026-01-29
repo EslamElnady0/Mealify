@@ -1,6 +1,5 @@
 package com.mealify.mealify.data.meals.datasources.local;
 
-
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
@@ -17,10 +16,8 @@ public class MealLocalDataSource {
         this.mealDao = AppDatabase.getInstance(ctx).mealDao();
     }
 
-    public void insertMeal(MealEntity meal) {
-        new Thread(() -> {
-            mealDao.insert(meal);
-        }).start();
+    public long insertMeal(MealEntity meal) {
+        return mealDao.insertMeal(meal);
     }
 
     public MealEntity getMealById(String mealId) {
@@ -32,9 +29,7 @@ public class MealLocalDataSource {
     }
 
     public void deleteMeal(MealEntity meal) {
-        new Thread(() -> {
-            mealDao.delete(meal);
-        }).start();
+        mealDao.delete(meal);
     }
 
     public boolean isMealCached(String mealId) {

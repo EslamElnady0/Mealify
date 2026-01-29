@@ -6,17 +6,21 @@ import com.mealify.mealify.core.response.ApiResponse;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
 
 public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     private MealDetailsView view;
     private MealsRepo mealsRepo;
     private FavRepo favRepo;
+    private WeeklyPlanRepo weeklyPlanRepo;
 
     public MealDetailsPresenterImpl(Context context, MealDetailsView view) {
         this.view = view;
         this.mealsRepo = new MealsRepo(context);
         this.favRepo = new FavRepo(context);
+        this.weeklyPlanRepo = new WeeklyPlanRepo(context);
     }
 
     @Override
@@ -60,6 +64,14 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
             new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
                 view.onToggleFavoriteSuccess(!isFav);
             });
+        }).start();
+    }
+
+    @Override
+    public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
+        new Thread(() -> {
+            weeklyPlanRepo.addMealToPlan(meal);
+            view.onWeeklyPlanMealAdded("Meal added to weekly plan");
         }).start();
     }
 }
