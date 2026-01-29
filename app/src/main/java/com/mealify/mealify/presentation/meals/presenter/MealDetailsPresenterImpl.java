@@ -6,6 +6,7 @@ import com.mealify.mealify.core.response.ApiResponse;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
@@ -70,8 +71,34 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     @Override
     public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
         new Thread(() -> {
+            if (meal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
+                WeeklyPlanMealWithMeal existingMeal = weeklyPlanRepo.getMealByDateAndType(
+                        meal.planEntry.getDateString(),
+                        meal.planEntry.getMealType()
+                );
+
+                if (existingMeal != null) {
+                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                        view.showReplaceConfirmation(meal, existingMeal);
+                    });
+                    return;
+                }
+            }
+
             weeklyPlanRepo.addMealToPlan(meal);
-            view.onWeeklyPlanMealAdded("Meal added to weekly plan");
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                view.onWeeklyPlanMealAdded("Meal added to weekly plan");
+            });
+        }).start();
+    }
+
+    @Override
+    public void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
+        new Thread(() -> {
+            weeklyPlanRepo.addMealToPlan(meal);
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                view.onWeeklyPlanMealAdded("Meal added to weekly plan");
+            });
         }).start();
     }
 }

@@ -11,4 +11,6 @@ public interface MealDetailsPresenter {
     void toggleFavorite(MealEntity meal);
 
     void addToWeeklyPlan(WeeklyPlanMealWithMeal meal);
+
+    void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal);
 }

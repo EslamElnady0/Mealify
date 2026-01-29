@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.presentation.fav.presenter.FavsPresenter;
@@ -91,7 +92,22 @@ public class FavouritesFragment extends Fragment implements FavsView {
                 },
                 fav -> {
                     if (fav.meal != null) {
-                        presenter.removeFavouriteMeal(fav.meal.getId());
+                        DialogUtils.showConfirmationDialog(
+                                getContext(),
+                                fav.meal.getThumbnail(),
+                                getString(R.string.remove_from_favorites),
+                                getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_favorites),
+                                new DialogUtils.DialogCallback() {
+                                    @Override
+                                    public void onConfirm() {
+                                        presenter.removeFavouriteMeal(fav.meal.getId());
+                                    }
+
+                                    @Override
+                                    public void onCancel() {
+                                    }
+                                }
+                        );
                     }
                 }
         );

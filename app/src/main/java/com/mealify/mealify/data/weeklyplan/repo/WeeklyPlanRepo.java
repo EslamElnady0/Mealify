@@ -26,19 +26,23 @@ public class WeeklyPlanRepo {
 
     public void addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal) {
         executorService.execute(() -> {
-            if (planMealWithMeal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
-                localDataSource.deleteMealByDateAndType(
-                        planMealWithMeal.planEntry.getDateString(),
-                        planMealWithMeal.planEntry.getMealType()
-                );
-            }
             mealLocalDataSource.insertMeal(planMealWithMeal.meal);
             localDataSource.addMealToWeeklyPlan(planMealWithMeal.planEntry);
         });
     }
 
+    public void deleteMealByDateAndType(String date, WeeklyPlanMealType mealType) {
+        executorService.execute(() -> {
+            localDataSource.deleteMealByDateAndType(date, mealType);
+        });
+    }
+
     public LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date) {
         return localDataSource.getMealsByDate(date);
+    }
+
+    public WeeklyPlanMealWithMeal getMealByDateAndType(String date, WeeklyPlanMealType type) {
+        return localDataSource.getMealByDateAndType(date, type);
     }
 
     public LiveData<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate) {
@@ -51,5 +55,9 @@ public class WeeklyPlanRepo {
 
     public void clearAllPlannedMeals() {
         localDataSource.clearWeeklyPlan();
+    }
+
+    public LiveData<List<String>> getAllPlannedDates() {
+        return localDataSource.getAllPlannedDates();
     }
 }

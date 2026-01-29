@@ -21,8 +21,10 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
@@ -97,7 +99,26 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         favButton.setOnClickListener(v -> {
             if (currentMeal != null) {
-                presenter.toggleFavorite(currentMeal);
+                if (isFavorite) {
+                    DialogUtils.showConfirmationDialog(
+                            getContext(),
+                            currentMeal.getThumbnail(),
+                            getString(R.string.remove_from_favorites),
+                            getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_favorites),
+                            new DialogUtils.DialogCallback() {
+                                @Override
+                                public void onConfirm() {
+                                    presenter.toggleFavorite(currentMeal);
+                                }
+
+                                @Override
+                                public void onCancel() {
+                                }
+                            }
+                    );
+                } else {
+                    presenter.toggleFavorite(currentMeal);
+                }
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {
@@ -251,44 +272,66 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void showMealTypeSelector(String formattedDate, DayOfWeek dayEnum) {
-        String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
+        String[] mealTypes = {"🍳  Breakfast", "🍔  Lunch", "🍛  Dinner", "🍿  Snack"};
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.select_meal_type)
-                .setItems(mealTypes, (dialog, which) -> {
-                    WeeklyPlanMealType selectedType;
-                    switch (which) {
-                        case 0:
-                            selectedType = WeeklyPlanMealType.BREAKFAST;
-                            break;
-                        case 1:
-                            selectedType = WeeklyPlanMealType.LUNCH;
-                            break;
-                        case 2:
-                            selectedType = WeeklyPlanMealType.DINNER;
-                            break;
-                        case 3:
-                            selectedType = WeeklyPlanMealType.SNACK;
-                            break;
-                        default:
-                            selectedType = WeeklyPlanMealType.BREAKFAST;
-                    }
+        MaterialAlertDialogBuilder builder =
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.select_meal_type)
+                        .setItems(mealTypes, (dialog, which) -> {
+                            WeeklyPlanMealType selectedType;
+                            switch (which) {
+                                case 0:
+                                    selectedType = WeeklyPlanMealType.BREAKFAST;
+                                    break;
+                                case 1:
+                                    selectedType = WeeklyPlanMealType.LUNCH;
+                                    break;
+                                case 2:
+                                    selectedType = WeeklyPlanMealType.DINNER;
+                                    break;
+                                case 3:
+                                    selectedType = WeeklyPlanMealType.SNACK;
+                                    break;
+                                default:
+                                    selectedType = WeeklyPlanMealType.BREAKFAST;
+                            }
 
-                    WeeklyPlanMealEntity planEntry = new WeeklyPlanMealEntity(
-                            currentMeal.getId(),
-                            formattedDate,
-                            dayEnum,
-                            selectedType,
-                            System.currentTimeMillis()
-                    );
-                    WeeklyPlanMealWithMeal meal = new WeeklyPlanMealWithMeal(
-                            currentMeal,
-                            planEntry
-                    );
-                    presenter.addToWeeklyPlan(meal);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                            WeeklyPlanMealEntity planEntry = new WeeklyPlanMealEntity(
+                                    currentMeal.getId(),
+                                    formattedDate,
+                                    dayEnum,
+                                    selectedType,
+                                    System.currentTimeMillis()
+                            );
+                            WeeklyPlanMealWithMeal meal = new WeeklyPlanMealWithMeal(
+                                    currentMeal,
+                                    planEntry
+                            );
+                            presenter.addToWeeklyPlan(meal);
+                        })
+                        .setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_dialog_rounded);
     }
 
+    @Override
+    public void showReplaceConfirmation(WeeklyPlanMealWithMeal newMeal, WeeklyPlanMealWithMeal existingMeal) {
+        DialogUtils.showReplaceMealDialog(
+                requireContext(),
+                existingMeal.meal.getName(),
+                existingMeal.meal.getThumbnail(),
+                new DialogUtils.DialogCallback() {
+                    @Override
+                    public void onConfirm() {
+                        presenter.forceAddToWeeklyPlan(newMeal);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+                }
+        );
+    }
 }

@@ -35,6 +35,10 @@ public class WeeklyPlanLocalDataSource {
         return weeklyPlanDao.getMealsByDate(date);
     }
 
+    public WeeklyPlanMealWithMeal getMealByDateAndType(String date, WeeklyPlanMealType mealType) {
+        return weeklyPlanDao.getMealByDateAndType(date, mealType);
+    }
+
     public void deleteMealById(long id) {
         executorService.execute(() -> weeklyPlanDao.deleteMealById(id));
     }
@@ -49,5 +53,9 @@ public class WeeklyPlanLocalDataSource {
 
     public int getPlannedMealsCount() {
         return weeklyPlanDao.getPlannedMealsCount();
+    }
+
+    public LiveData<List<String>> getAllPlannedDates() {
+        return weeklyPlanDao.getAllPlannedDates();
     }
 }

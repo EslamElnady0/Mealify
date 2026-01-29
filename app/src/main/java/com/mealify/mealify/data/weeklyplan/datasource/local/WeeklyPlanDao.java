@@ -27,6 +27,10 @@ public interface WeeklyPlanDao {
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString = :date ORDER BY mealType")
     LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date);
 
+    @Transaction
+    @Query("SELECT * FROM weekly_plan_meals WHERE dateString = :date AND mealType = :mealType Order By addedAt DESC LIMIT 1")
+    WeeklyPlanMealWithMeal getMealByDateAndType(String date, WeeklyPlanMealType mealType);
+
     @Query("DELETE FROM weekly_plan_meals WHERE planId = :id")
     void deleteMealById(long id);
 
@@ -38,4 +42,7 @@ public interface WeeklyPlanDao {
 
     @Query("SELECT COUNT(*) FROM weekly_plan_meals")
     int getPlannedMealsCount();
+
+    @Query("SELECT DISTINCT dateString FROM weekly_plan_meals")
+    LiveData<List<String>> getAllPlannedDates();
 }

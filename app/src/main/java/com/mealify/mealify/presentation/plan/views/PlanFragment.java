@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenter;
@@ -84,7 +86,6 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         breakfastSlot = view.findViewById(R.id.breakfast_slot);
         lunchSlot = view.findViewById(R.id.lunch_slot);
         dinnerSlot = view.findViewById(R.id.dinner_slot);
-
         snacksRecyclerView = view.findViewById(R.id.snacks_recycler_view);
     }
 
@@ -140,6 +141,11 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     @Override
     public void showError(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPlannedDates(LiveData<List<String>> dates) {
+
     }
 
     private void updateUIWithMeals(List<WeeklyPlanMealWithMeal> meals) {
@@ -214,7 +220,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         filledContent.setVisibility(View.GONE);
         mealImageCard.setVisibility(View.GONE);
 
-        selectButton.setOnClickListener(v -> openMealSelection());
+        selectButton.setOnClickListener(v -> openMealRedirectionDialog());
     }
 
     private void setSlotFilled(View slotView, WeeklyPlanMealWithMeal mealWithPlan) {
@@ -251,13 +257,45 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
             });
             removeButton.setOnClickListener(v -> {
                 if (mealWithPlan.planEntry != null) {
-                    presenter.deleteMealFromPlan(mealWithPlan.planEntry.getPlanId());
+                    DialogUtils.showConfirmationDialog(
+                            getContext(),
+                            mealWithPlan.meal.getThumbnail(),
+                            getString(R.string.remove_from_plan),
+                            getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_plan),
+                            new DialogUtils.DialogCallback() {
+                                @Override
+                                public void onConfirm() {
+                                    presenter.deleteMealFromPlan(mealWithPlan.planEntry.getPlanId());
+                                }
+
+                                @Override
+                                public void onCancel() {
+                                }
+                            }
+                    );
                 }
             });
         }
     }
 
-    private void openMealSelection() {
+    private void openMealRedirectionDialog() {
+        DialogUtils.showAddMealOptionDialog(getContext(), new DialogUtils.AddMealOptionCallback() {
+            @Override
+            public void onGoToFavorites() {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottomNavBar);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.favouritesFragment);
+                }
+            }
+
+            @Override
+            public void onGoToSearch() {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottomNavBar);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.searchFragment);
+                }
+            }
+        });
     }
 
     private void openMealDetails(String mealId) {
@@ -270,12 +308,34 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     }
 
     @Override
-    public void onRemoveSnack(long planId) {
-        presenter.deleteMealFromPlan(planId);
+    public void onRemoveSnack(WeeklyPlanMealWithMeal snack) {
+        if (snack.meal != null && snack.planEntry != null) {
+            DialogUtils.showConfirmationDialog(
+                    getContext(),
+                    snack.meal.getThumbnail(),
+                    getString(R.string.remove_from_plan),
+                    getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_plan),
+                    new DialogUtils.DialogCallback() {
+                        @Override
+                        public void onConfirm() {
+                            presenter.deleteMealFromPlan(snack.planEntry.getPlanId());
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    }
+            );
+        }
     }
 
     @Override
     public void onSnackClick(String mealId) {
         openMealDetails(mealId);
+    }
+
+    @Override
+    public void onAddMealClick() {
+        openMealRedirectionDialog();
     }
 }
