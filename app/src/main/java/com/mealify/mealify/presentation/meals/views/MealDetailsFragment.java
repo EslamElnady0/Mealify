@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.DialogUtils;
@@ -271,44 +272,48 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void showMealTypeSelector(String formattedDate, DayOfWeek dayEnum) {
-        String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
+        String[] mealTypes = {"🍳  Breakfast", "🍔  Lunch", "🍛  Dinner", "🍿  Snack"};
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.select_meal_type)
-                .setItems(mealTypes, (dialog, which) -> {
-                    WeeklyPlanMealType selectedType;
-                    switch (which) {
-                        case 0:
-                            selectedType = WeeklyPlanMealType.BREAKFAST;
-                            break;
-                        case 1:
-                            selectedType = WeeklyPlanMealType.LUNCH;
-                            break;
-                        case 2:
-                            selectedType = WeeklyPlanMealType.DINNER;
-                            break;
-                        case 3:
-                            selectedType = WeeklyPlanMealType.SNACK;
-                            break;
-                        default:
-                            selectedType = WeeklyPlanMealType.BREAKFAST;
-                    }
+        MaterialAlertDialogBuilder builder =
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.select_meal_type)
+                        .setItems(mealTypes, (dialog, which) -> {
+                            WeeklyPlanMealType selectedType;
+                            switch (which) {
+                                case 0:
+                                    selectedType = WeeklyPlanMealType.BREAKFAST;
+                                    break;
+                                case 1:
+                                    selectedType = WeeklyPlanMealType.LUNCH;
+                                    break;
+                                case 2:
+                                    selectedType = WeeklyPlanMealType.DINNER;
+                                    break;
+                                case 3:
+                                    selectedType = WeeklyPlanMealType.SNACK;
+                                    break;
+                                default:
+                                    selectedType = WeeklyPlanMealType.BREAKFAST;
+                            }
 
-                    WeeklyPlanMealEntity planEntry = new WeeklyPlanMealEntity(
-                            currentMeal.getId(),
-                            formattedDate,
-                            dayEnum,
-                            selectedType,
-                            System.currentTimeMillis()
-                    );
-                    WeeklyPlanMealWithMeal meal = new WeeklyPlanMealWithMeal(
-                            currentMeal,
-                            planEntry
-                    );
-                    presenter.addToWeeklyPlan(meal);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                            WeeklyPlanMealEntity planEntry = new WeeklyPlanMealEntity(
+                                    currentMeal.getId(),
+                                    formattedDate,
+                                    dayEnum,
+                                    selectedType,
+                                    System.currentTimeMillis()
+                            );
+                            WeeklyPlanMealWithMeal meal = new WeeklyPlanMealWithMeal(
+                                    currentMeal,
+                                    planEntry
+                            );
+                            presenter.addToWeeklyPlan(meal);
+                        })
+                        .setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_dialog_rounded);
     }
 
 }

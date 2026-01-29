@@ -45,16 +45,14 @@
         <item name="backgroundTint">@color/primary</item>
     </style>
 
-    <!--    <style name="ThemeOverlay.App.DatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">-->
-    <!--        <item name="colorPrimary">@color/primary</item>-->
-    <!--        <item name="colorOnPrimary">@color/white</item>-->
-    <!--        <item name="colorSurface">@color/white</item>-->
-    <!--        <item name="colorOnSurface">@color/black</item>-->
-    <!--        <item name="materialCalendarHeaderToggleButton">@style/Widget.App.Button.TextButton</item>-->
-    <!--    </style>-->
 
-    <!--    <style name="Widget.App.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">-->
-    <!--        <item name="iconTint">@color/primary</item>-->
-    <!--        <item name="android:textColor">@color/primary</item>-->
-    <!--    </style>-->
+    <style name="RoundedMaterialDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Corner24dp</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="android:textColorPrimary">#212121</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.Corner24dp" parent="">
+        <item name="cornerSize">24dp</item>
+    </style>
 </resources>
