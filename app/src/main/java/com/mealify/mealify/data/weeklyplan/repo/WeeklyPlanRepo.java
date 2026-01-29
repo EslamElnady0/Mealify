@@ -52,4 +52,8 @@ public class WeeklyPlanRepo {
     public void clearAllPlannedMeals() {
         localDataSource.clearWeeklyPlan();
     }
+
+    public LiveData<List<String>> getAllPlannedDates() {
+        return localDataSource.getAllPlannedDates();
+    }
 }

@@ -32,4 +32,9 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
             weeklyPlanRepo.deleteMealFromPlan(planId);
         }).start();
     }
+
+    @Override
+    public void getAllPlannedDates() {
+        view.showPlannedDates(weeklyPlanRepo.getAllPlannedDates());
+    }
 }

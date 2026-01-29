@@ -5,4 +5,6 @@ public interface WeeklyPlanPresenter {
     public void loadMealsForDate(String dateString);
 
     void deleteMealFromPlan(long planId);
+
+    void getAllPlannedDates();
 }

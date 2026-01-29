@@ -10,4 +10,6 @@ public interface PlanView {
     void showMeals(LiveData<List<WeeklyPlanMealWithMeal>> meals);
 
     void showError(String message);
+
+    void showPlannedDates(LiveData<List<String>> dates);
 }

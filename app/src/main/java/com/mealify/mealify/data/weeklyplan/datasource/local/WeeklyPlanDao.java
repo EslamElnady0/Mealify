@@ -38,4 +38,7 @@ public interface WeeklyPlanDao {
 
     @Query("SELECT COUNT(*) FROM weekly_plan_meals")
     int getPlannedMealsCount();
+
+    @Query("SELECT DISTINCT dateString FROM weekly_plan_meals")
+    LiveData<List<String>> getAllPlannedDates();
 }

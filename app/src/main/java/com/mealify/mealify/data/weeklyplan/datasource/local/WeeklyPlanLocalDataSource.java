@@ -50,4 +50,8 @@ public class WeeklyPlanLocalDataSource {
     public int getPlannedMealsCount() {
         return weeklyPlanDao.getPlannedMealsCount();
     }
+
+    public LiveData<List<String>> getAllPlannedDates() {
+        return weeklyPlanDao.getAllPlannedDates();
+    }
 }

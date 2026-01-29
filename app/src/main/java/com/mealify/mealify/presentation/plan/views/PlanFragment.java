@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -89,13 +91,16 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     }
 
     private void setupCalendar() {
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month, dayOfMonth);
+        calendarView.setOnDayClickListener(eventDay -> {
+            Calendar calendar = eventDay.getCalendar();
             long dateInMillis = calendar.getTimeInMillis();
 
             updateSelectedDayText(dateInMillis);
-            currentDateString = formatDateToString(year, month, dayOfMonth);
+            currentDateString = formatDateToString(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
             presenter.loadMealsForDate(currentDateString);
         });
 
@@ -108,6 +113,8 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
+
+        presenter.getAllPlannedDates();
     }
 
     private String formatDateToString(int year, int month, int dayOfMonth) {
@@ -309,5 +316,28 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     @Override
     public void onSnackClick(String mealId) {
         openMealDetails(mealId);
+    }
+    @Override
+    public void showPlannedDates(LiveData<List<String>> datesLiveData) {
+        datesLiveData.observe(getViewLifecycleOwner(), dateStrings -> {
+            if (dateStrings != null) {
+                List<EventDay> events = new ArrayList<>();
+                for (String dateStr : dateStrings) {
+                    try {
+                        String[] parts = dateStr.split("-");
+                        int year = Integer.parseInt(parts[0]);
+                        int month = Integer.parseInt(parts[1]) - 1;
+                        int day = Integer.parseInt(parts[2]);
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+                        events.add(new EventDay(calendar, R.drawable.ic_dot));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                calendarView.setEvents(events);
+            }
+        });
     }
 }
