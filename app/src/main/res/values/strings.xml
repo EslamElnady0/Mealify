@@ -79,4 +79,8 @@
     <string name="select_meal">Select Meal</string>
     <string name="select_meal_type">Select Meal Type</string>
     <string name="remove">remove</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
+    <string name="are_you_sure_you_want_to_remove_this_meal_from_your_favorites">Are you sure you want to remove this meal from your favorites?</string>
+    <string name="remove_from_plan">Remove from Plan</string>
+    <string name="are_you_sure_you_want_to_remove_this_meal_from_your_plan">Are you sure you want to remove this meal from your plan?</string>
 </resources>

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
@@ -97,7 +98,26 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         favButton.setOnClickListener(v -> {
             if (currentMeal != null) {
-                presenter.toggleFavorite(currentMeal);
+                if (isFavorite) {
+                    DialogUtils.showConfirmationDialog(
+                            getContext(),
+                            currentMeal.getThumbnail(),
+                            getString(R.string.remove_from_favorites),
+                            getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_favorites),
+                            new DialogUtils.DialogCallback() {
+                                @Override
+                                public void onConfirm() {
+                                    presenter.toggleFavorite(currentMeal);
+                                }
+
+                                @Override
+                                public void onCancel() {
+                                }
+                            }
+                    );
+                } else {
+                    presenter.toggleFavorite(currentMeal);
+                }
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {

@@ -43,17 +43,21 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
 
     @Override
     public void onBindViewHolder(@NonNull SnackViewHolder holder, int position) {
-        WeeklyPlanMealWithMeal snack = snacks.get(position);
-        holder.bind(snack, listener);
+        if (snacks.isEmpty()) {
+            holder.bindEmpty();
+        } else {
+            WeeklyPlanMealWithMeal snack = snacks.get(position);
+            holder.bind(snack, listener);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return snacks.size();
+        return snacks.isEmpty() ? 1 : snacks.size();
     }
 
     public interface OnSnackActionListener {
-        void onRemoveSnack(long planId);
+        void onRemoveSnack(WeeklyPlanMealWithMeal snack);
 
         void onSnackClick(String mealId);
     }
@@ -104,8 +108,8 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
                         .into(mealImage);
 
                 removeButton.setOnClickListener(v -> {
-                    if (listener != null && snack.planEntry != null) {
-                        listener.onRemoveSnack(snack.planEntry.getPlanId());
+                    if (listener != null) {
+                        listener.onRemoveSnack(snack);
                     }
                 });
 
@@ -115,6 +119,14 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
                     }
                 });
             }
+        }
+
+        public void bindEmpty() {
+            emptyText.setVisibility(View.VISIBLE);
+            selectButton.setVisibility(View.VISIBLE);
+
+            mealImageCard.setVisibility(View.GONE);
+            filledContent.setVisibility(View.GONE);
         }
     }
 }
