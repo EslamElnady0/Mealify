@@ -44,7 +44,7 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
     @Override
     public void onBindViewHolder(@NonNull SnackViewHolder holder, int position) {
         if (snacks.isEmpty()) {
-            holder.bindEmpty();
+            holder.bindEmpty(listener);
         } else {
             WeeklyPlanMealWithMeal snack = snacks.get(position);
             holder.bind(snack, listener);
@@ -60,6 +60,8 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
         void onRemoveSnack(WeeklyPlanMealWithMeal snack);
 
         void onSnackClick(String mealId);
+
+        void onAddMealClick();
     }
 
     static class SnackViewHolder extends RecyclerView.ViewHolder {
@@ -121,12 +123,18 @@ public class SnacksAdapter extends RecyclerView.Adapter<SnacksAdapter.SnackViewH
             }
         }
 
-        public void bindEmpty() {
+        public void bindEmpty(OnSnackActionListener listener) {
             emptyText.setVisibility(View.VISIBLE);
             selectButton.setVisibility(View.VISIBLE);
 
             mealImageCard.setVisibility(View.GONE);
             filledContent.setVisibility(View.GONE);
+
+            selectButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onAddMealClick();
+                }
+            });
         }
     }
 }

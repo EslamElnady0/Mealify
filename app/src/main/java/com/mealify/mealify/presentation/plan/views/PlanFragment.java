@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.utils.DialogUtils;
@@ -219,7 +220,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         filledContent.setVisibility(View.GONE);
         mealImageCard.setVisibility(View.GONE);
 
-        selectButton.setOnClickListener(v -> openMealSelection());
+        selectButton.setOnClickListener(v -> openMealRedirectionDialog());
     }
 
     private void setSlotFilled(View slotView, WeeklyPlanMealWithMeal mealWithPlan) {
@@ -277,7 +278,24 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         }
     }
 
-    private void openMealSelection() {
+    private void openMealRedirectionDialog() {
+        DialogUtils.showAddMealOptionDialog(getContext(), new DialogUtils.AddMealOptionCallback() {
+            @Override
+            public void onGoToFavorites() {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottomNavBar);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.favouritesFragment);
+                }
+            }
+
+            @Override
+            public void onGoToSearch() {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottomNavBar);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.searchFragment);
+                }
+            }
+        });
     }
 
     private void openMealDetails(String mealId) {
@@ -314,5 +332,10 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     @Override
     public void onSnackClick(String mealId) {
         openMealDetails(mealId);
+    }
+
+    @Override
+    public void onAddMealClick() {
+        openMealRedirectionDialog();
     }
 }

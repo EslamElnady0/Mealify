@@ -165,4 +165,45 @@ public class DialogUtils {
 
         void onCancel();
     }
+
+    public interface AddMealOptionCallback {
+        void onGoToFavorites();
+        void onGoToSearch();
+    }
+
+    public static void showAddMealOptionDialog(Context context, AddMealOptionCallback callback) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_option, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        View btnGoToFavorites = dialogView.findViewById(R.id.btn_go_to_favorites);
+        View btnGoToSearch = dialogView.findViewById(R.id.btn_go_to_search);
+        View btnCancel = dialogView.findViewById(R.id.btn_cancel);
+
+        btnGoToFavorites.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onGoToFavorites();
+            }
+            dialog.dismiss();
+        });
+
+        btnGoToSearch.setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onGoToSearch();
+            }
+            dialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
 }
