@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.search.presenter.searchresults;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
@@ -25,7 +25,7 @@ public class MealSearchResultPresenterImpl implements MealSearchResultPresenter 
     @Override
     public void getFilteredMeals(FilterType filterType, String query) {
         view.toggleLoading(true);
-        mealsRepo.getFilteredMeals(filterType, query, new ApiResponse<List<FilteredMeal>>() {
+        mealsRepo.getFilteredMeals(filterType, query, new GeneralResponse<List<FilteredMeal>>() {
             @Override
             public void onSuccess(List<FilteredMeal> data) {
                 view.toggleLoading(false);

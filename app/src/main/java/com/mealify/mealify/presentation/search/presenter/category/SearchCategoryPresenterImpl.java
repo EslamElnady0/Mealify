@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.search.presenter.category;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
 import com.mealify.mealify.presentation.search.views.category.SearchCategoryView;
@@ -24,7 +24,7 @@ public class SearchCategoryPresenterImpl implements SearchCategoryPresenter {
     @Override
     public void getCategories() {
         view.toggleLoading(true);
-        mealsRepo.getCategories(new ApiResponse<List<CategoryDto>>() {
+        mealsRepo.getCategories(new GeneralResponse<List<CategoryDto>>() {
             @Override
             public void onSuccess(List<CategoryDto> data) {
                 view.toggleLoading(false);

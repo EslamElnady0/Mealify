@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -151,21 +150,19 @@ public class FavouritesFragment extends Fragment implements FavsView {
     }
 
     @Override
-    public void onFavsSuccess(LiveData<List<FavouriteWithMeal>> favMealsLiveData) {
-        favMealsLiveData.observe(getViewLifecycleOwner(), favs -> {
-            if (favs == null || favs.isEmpty()) {
-                allFavs = new ArrayList<>();
-                favoritesRecycler.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                updateCount(0);
-            } else {
-                allFavs = favs;
-                favoritesRecycler.setVisibility(View.VISIBLE);
-                emptyView.setVisibility(View.GONE);
-                adapter.setFavs(favs);
-                updateCount(favs.size());
-            }
-        });
+    public void onFavsSuccess(List<FavouriteWithMeal> favMeals) {
+        if (favMeals == null || favMeals.isEmpty()) {
+            allFavs = new ArrayList<>();
+            favoritesRecycler.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            updateCount(0);
+        } else {
+            allFavs = favMeals;
+            favoritesRecycler.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            adapter.setFavs(favMeals);
+            updateCount(favMeals.size());
+        }
     }
 
     @Override

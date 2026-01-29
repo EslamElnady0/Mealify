@@ -1,9 +1,8 @@
-
 package com.mealify.mealify.presentation.home.presenter;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
@@ -24,7 +23,7 @@ public class HomePresenterImpl implements HomePresenter {
     @Override
     public void getMealOfTheDay() {
         view.toggleMealOfTheDayLoading(true);
-        mealsRepo.getRandomMeal(new ApiResponse<List<MealDto>>() {
+        mealsRepo.getRandomMeal(new GeneralResponse<List<MealDto>>() {
             @Override
             public void onSuccess(List<MealDto> data) {
                 view.toggleMealOfTheDayLoading(false);
@@ -42,7 +41,7 @@ public class HomePresenterImpl implements HomePresenter {
     @Override
     public void getCategories() {
         view.toggleCategoriesLoading(true);
-        mealsRepo.getCategories(new ApiResponse<List<CategoryDto>>() {
+        mealsRepo.getCategories(new GeneralResponse<List<CategoryDto>>() {
             @Override
             public void onSuccess(List<CategoryDto> data) {
                 view.toggleCategoriesLoading(false);

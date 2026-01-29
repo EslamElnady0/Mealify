@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.search.presenter.ingredient;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
 import com.mealify.mealify.presentation.search.views.ingredient.SearchIngredientView;
@@ -24,7 +24,7 @@ public class SearchIngredientPresenterImpl implements SearchIngredientPresenter 
     @Override
     public void getIngredients() {
         view.toggleLoading(true);
-        mealsRepo.listIngredients(new ApiResponse<List<IngredientDto>>() {
+        mealsRepo.listIngredients(new GeneralResponse<List<IngredientDto>>() {
             @Override
             public void onSuccess(List<IngredientDto> data) {
                 view.toggleLoading(false);

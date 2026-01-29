@@ -1,6 +1,5 @@
 package com.mealify.mealify.data.meals.datasources.local;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -11,17 +10,21 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+
 @Dao
 public interface MealDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertMeal(MealEntity meal);
+    Completable insertMeal(MealEntity meal);
 
     @Query("SELECT * FROM meals WHERE id = :mealId")
-    MealEntity getMealById(String mealId);
+    Single<MealEntity> getMealById(String mealId);
 
     @Query("SELECT * FROM meals")
-    LiveData<List<MealEntity>> getAllMeals();
+    Observable<List<MealEntity>> getAllMeals();
 
     @Delete
-    void delete(MealEntity meal);
+    Completable delete(MealEntity meal);
 }

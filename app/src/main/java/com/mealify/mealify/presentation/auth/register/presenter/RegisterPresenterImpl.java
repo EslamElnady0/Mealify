@@ -1,7 +1,8 @@
 package com.mealify.mealify.presentation.auth.register.presenter;
 
 import android.content.Context;
-import com.mealify.mealify.core.response.ApiResponse;
+
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.auth.repo.AuthRepo;
 import com.mealify.mealify.presentation.auth.register.views.RegisterView;
 
@@ -21,7 +22,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
         view.toggleLoading(true);
 
-        authRepo.register(email, password, name, new ApiResponse<String>() {
+        authRepo.register(email, password, name, new GeneralResponse<String>() {
             @Override
             public void onSuccess(String response) {
                 if (view == null) return;
@@ -41,7 +42,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     @Override
     public void googleSignIn() {
         view.toggleLoading(true);
-        authRepo.googleSignIn(new ApiResponse<String>() {
+        authRepo.googleSignIn(new GeneralResponse<String>() {
             @Override
             public void onSuccess(String response) {
                 view.toggleLoading(false);
@@ -59,7 +60,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     @Override
     public void signInAnonymously() {
         view.toggleLoading(true);
-        authRepo.signInAnonymously(new ApiResponse<String>() {
+        authRepo.signInAnonymously(new GeneralResponse<String>() {
             @Override
             public void onSuccess(String response) {
                 view.toggleLoading(false);

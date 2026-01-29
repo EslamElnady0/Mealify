@@ -2,28 +2,33 @@ package com.mealify.mealify.data.auth.repo;
 
 import android.content.Context;
 
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.auth.datasources.AuthRemoteDataSource;
 
 public class AuthRepo {
     private AuthRemoteDataSource authRemoteDataSource;
+
     public AuthRepo(Context context) {
         this.authRemoteDataSource = authRemoteDataSource = AuthRemoteDataSource.getInstance(context);
     }
 
-    public void login(String email, String password, com.mealify.mealify.core.response.ApiResponse<String> apiResponse) {
-        authRemoteDataSource.login(email, password, apiResponse);
+    public void login(String email, String password, GeneralResponse<String> generalResponse) {
+        authRemoteDataSource.login(email, password, generalResponse);
     }
 
-    public void register(String email, String password, String name, com.mealify.mealify.core.response.ApiResponse<String> apiResponse) {
-        authRemoteDataSource.register(email, password, name, apiResponse);
+    public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
+        authRemoteDataSource.register(email, password, name, generalResponse);
     }
-    public void googleSignIn(com.mealify.mealify.core.response.ApiResponse<String> apiResponse) {
-        authRemoteDataSource.googleSignIn(apiResponse);
+
+    public void googleSignIn(GeneralResponse<String> generalResponse) {
+        authRemoteDataSource.googleSignIn(generalResponse);
     }
-    public void signInAnonymously(com.mealify.mealify.core.response.ApiResponse<String> apiResponse) {
-        authRemoteDataSource.signInAnonymously(apiResponse);
+
+    public void signInAnonymously(GeneralResponse<String> generalResponse) {
+        authRemoteDataSource.signInAnonymously(generalResponse);
     }
-    public void logout(com.mealify.mealify.core.response.ApiResponse<String> apiResponse) {
-        authRemoteDataSource.logout(apiResponse);
+
+    public void logout(GeneralResponse<String> generalResponse) {
+        authRemoteDataSource.logout(generalResponse);
     }
 }

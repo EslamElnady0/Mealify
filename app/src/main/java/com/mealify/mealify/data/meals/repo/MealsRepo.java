@@ -3,7 +3,7 @@ package com.mealify.mealify.data.meals.repo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
 import com.mealify.mealify.data.meals.datasources.remote.MealRemoteDataSource;
 import com.mealify.mealify.data.meals.mapper.MealMapper;
@@ -34,35 +34,35 @@ public class MealsRepo {
     }
 
     @SuppressLint("CheckResult")
-    public void getRandomMeal(ApiResponse<List<MealDto>> apiResponse) {
+    public void getRandomMeal(GeneralResponse<List<MealDto>> generalResponse) {
         remoteDataSource.getRandomMeal()
                 .subscribeOn(Schedulers.io())
                 .map(response -> response.meals)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
     }
 
     @SuppressLint("CheckResult")
-    public void getCategories(ApiResponse<List<CategoryDto>> apiResponse) {
+    public void getCategories(GeneralResponse<List<CategoryDto>> generalResponse) {
         remoteDataSource.getCategories()
                 .subscribeOn(Schedulers.io())
                 .map(response -> response.categories)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
     }
 
     @SuppressLint("CheckResult")
-    public void getMealDetails(String mealId, ApiResponse<MealEntity> apiResponse) {
+    public void getMealDetails(String mealId, GeneralResponse<MealEntity> generalResponse) {
         remoteDataSource.getMealDetails(mealId)
                 .subscribeOn(Schedulers.io())
                 .map(response ->
@@ -71,78 +71,81 @@ public class MealsRepo {
                 )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
     }
 
     @SuppressLint("CheckResult")
-    public void listIngredients(ApiResponse<List<IngredientDto>> apiResponse) {
+    public void listIngredients(GeneralResponse<List<IngredientDto>> generalResponse) {
         remoteDataSource.listIngredients()
                 .subscribeOn(Schedulers.io())
                 .map(IngredientsResponse::getIngredients)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
 
     }
 
-    public void listCategories(ApiResponse<List<CategoryStrDto>> apiResponse) {
+    public void listCategories(GeneralResponse<List<CategoryStrDto>> generalResponse) {
         remoteDataSource.listCategories()
         ;
     }
 
     @SuppressLint("CheckResult")
-    public void listAreas(ApiResponse<List<CountryDto>> apiResponse) {
+    public void listAreas(GeneralResponse<List<CountryDto>> generalResponse) {
         remoteDataSource.listAreas()
                 .subscribeOn(Schedulers.io())
                 .map(CountriesResponse::getMeals)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
     }
 
     @SuppressLint("CheckResult")
-    public void getFilteredMeals(FilterType filterType, String query, ApiResponse<List<FilteredMeal>> apiResponse) {
+    public void getFilteredMeals(FilterType filterType, String query, GeneralResponse<List<FilteredMeal>> generalResponse) {
         remoteDataSource.getFilteredMeals(filterType, query)
                 .subscribeOn(Schedulers.io())
                 .map(FilteredMealsResponse::getMeals)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
         ;
     }
 
     @SuppressLint("CheckResult")
-    public void searchMealsByName(String name, ApiResponse<List<FilteredMeal>> apiResponse) {
+    public void searchMealsByName(String name, GeneralResponse<List<FilteredMeal>> generalResponse) {
         remoteDataSource.searchMealsByName(name)
                 .subscribeOn(Schedulers.io())
                 .map(response -> MealMapper.toFilteredMeals(response.meals))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        apiResponse::onSuccess,
+                        generalResponse::onSuccess,
                         error -> {
-                            apiResponse.onError(error.getMessage());
+                            generalResponse.onError(error.getMessage());
                         }
                 );
         ;
     }
 
     public void addMealToLocal(MealEntity meal) {
-        localDataSource.insertMeal(meal);
+        localDataSource.insertMeal(meal)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 }

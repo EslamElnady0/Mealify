@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.meals.presenter;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
@@ -27,7 +27,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     @Override
     public void getMealDetails(String id) {
         view.toggleLoading(true);
-        mealsRepo.getMealDetails(id, new ApiResponse<MealEntity>() {
+        mealsRepo.getMealDetails(id, new GeneralResponse<MealEntity>() {
             @Override
             public void onSuccess(MealEntity data) {
                 view.toggleLoading(false);
@@ -44,61 +44,89 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
     @Override
     public void isMealFavorite(String mealId) {
-        new Thread(() -> {
-            boolean isFav = favRepo.isMealFavorite(mealId);
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                view.onIsFavoriteResult(isFav);
-            });
-        }).start();
+
+        favRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
+                view.onIsFavoriteResult(data);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
     }
 
     @Override
     public void toggleFavorite(MealEntity meal) {
-        new Thread(() -> {
-            boolean isFav = favRepo.isMealFavorite(meal.getId());
-            if (isFav) {
-                favRepo.deleteMealFromFavorites(meal.getId());
-            } else {
-                mealsRepo.addMealToLocal(meal);
-                favRepo.insertMealInFavorites(meal);
-            }
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+
+        favRepo.isMealFavorite(meal.getId(), new GeneralResponse<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
+                boolean isFav = data;
+                if (isFav) {
+                    favRepo.deleteMealFromFavorites(meal.getId());
+                } else {
+                    favRepo.insertMealInFavorites(meal);
+                }
                 view.onToggleFavoriteSuccess(!isFav);
-            });
-        }).start();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
     }
 
     @Override
     public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
-        new Thread(() -> {
-            if (meal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
-                WeeklyPlanMealWithMeal existingMeal = weeklyPlanRepo.getMealByDateAndType(
-                        meal.planEntry.getDateString(),
-                        meal.planEntry.getMealType()
-                );
+        if (meal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
+            weeklyPlanRepo.getMealByDateAndType(
+                    meal.planEntry.getDateString(),
+                    meal.planEntry.getMealType(), new GeneralResponse<WeeklyPlanMealWithMeal>() {
+                        @Override
+                        public void onSuccess(WeeklyPlanMealWithMeal existingMeal) {
+                            if (existingMeal != null) {
+                                view.showReplaceConfirmation(meal, existingMeal);
+                            } else {
+                                weeklyPlanRepo.addMealToPlan(meal, new GeneralResponse<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean data) {
+                                        view.onWeeklyPlanMealAdded("Meal added to weekly plan");
+                                    }
 
-                if (existingMeal != null) {
-                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                        view.showReplaceConfirmation(meal, existingMeal);
-                    });
-                    return;
-                }
-            }
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        view.onFailure(errorMessage + " fromADD");
+                                    }
+                                });
+                            }
+                        }
 
-            weeklyPlanRepo.addMealToPlan(meal);
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                view.onWeeklyPlanMealAdded("Meal added to weekly plan");
-            });
-        }).start();
+                        @Override
+                        public void onError(String errorMessage) {
+                            view.onFailure(errorMessage + " fromGET");
+
+                        }
+                    }
+            );
+        }
     }
 
     @Override
     public void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
-        new Thread(() -> {
-            weeklyPlanRepo.addMealToPlan(meal);
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+        weeklyPlanRepo.addMealToPlan(meal, new GeneralResponse<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
                 view.onWeeklyPlanMealAdded("Meal added to weekly plan");
-            });
-        }).start();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
     }
 }

@@ -1,9 +1,6 @@
 package com.mealify.mealify.presentation.fav.presenter;
 
-import androidx.lifecycle.LiveData;
-
-
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.presentation.fav.views.FavsView;
@@ -22,26 +19,31 @@ public class FavsPresenterImpl implements FavsPresenter {
 
     @Override
     public void getFavouriteMeals() {
+        favRepo.getFavouriteMeals(new GeneralResponse<List<FavouriteWithMeal>>() {
+            @Override
+            public void onSuccess(List<FavouriteWithMeal> data) {
+                view.onFavsSuccess(data);
+            }
 
-        try {
-            LiveData<List<FavouriteWithMeal>> favMealsLiveData = favRepo.getFavouriteMeals();
-            view.onFavsSuccess(favMealsLiveData);
-
-        } catch (Exception e) {
-            view.onFavsFailure(e.getMessage());
-        }
+            @Override
+            public void onError(String errorMessage) {
+                view.onFavsFailure(errorMessage);
+            }
+        });
     }
 
     @Override
     public void removeFavouriteMeal(String mealId) {
-        new Thread(() -> {
-            if (favRepo.isMealFavorite(mealId)) {
+        favRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isFav) {
                 favRepo.deleteMealFromFavorites(mealId);
-            } else {
-                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                    view.onFavsFailure("Meal is not favorite");
-                });
             }
-        }).start();
+
+            @Override
+            public void onError(String errorMessage) {
+                view.onFavsFailure("Meal is not favorite");
+            }
+        });
     }
 }
