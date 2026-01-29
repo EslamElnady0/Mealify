@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.mealify.mealify.data.favs.datasource.FavouriteDao;
+import com.mealify.mealify.data.favs.datasource.local.FavouriteDao;
 import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.meals.datasources.local.MealDao;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;

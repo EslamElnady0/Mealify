@@ -2,12 +2,14 @@ package com.mealify.mealify.data.meals.datasources.local;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.db.AppDatabase;
 
 import java.util.List;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public class MealLocalDataSource {
     private final MealDao mealDao;
@@ -16,23 +18,19 @@ public class MealLocalDataSource {
         this.mealDao = AppDatabase.getInstance(ctx).mealDao();
     }
 
-    public long insertMeal(MealEntity meal) {
+    public Completable insertMeal(MealEntity meal) {
         return mealDao.insertMeal(meal);
     }
 
-    public MealEntity getMealById(String mealId) {
+    public Single<MealEntity> getMealById(String mealId) {
         return mealDao.getMealById(mealId);
     }
 
-    public LiveData<List<MealEntity>> getAllMeals() {
+    public Observable<List<MealEntity>> getAllMeals() {
         return mealDao.getAllMeals();
     }
 
-    public void deleteMeal(MealEntity meal) {
-        mealDao.delete(meal);
-    }
-
-    public boolean isMealCached(String mealId) {
-        return mealDao.getMealById(mealId) != null;
+    public Completable deleteMeal(MealEntity meal) {
+        return mealDao.delete(meal);
     }
 }

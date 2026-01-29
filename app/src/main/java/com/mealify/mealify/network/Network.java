@@ -5,6 +5,8 @@ import android.content.Context;
 import com.mealify.mealify.data.auth.datasources.AuthService;
 import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
 import com.mealify.mealify.data.meals.datasources.remote.MealService;
+
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -14,25 +16,28 @@ public class Network {
     private static Network instance = null;
     private final MealService mealService;
     private final AuthService authService;
-    private Network(Context ctx){
+
+    private Network(Context ctx) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
         mealService = retrofit.create(MealService.class);
         authService = FirebaseAuthService.getInstance(ctx);
     }
 
-    public static Network getInstance(Context ctx){
-        if(instance == null){
+    public static Network getInstance(Context ctx) {
+        if (instance == null) {
             instance = new Network(ctx);
         }
         return instance;
     }
 
-    public MealService getHomeService(){
+    public MealService getHomeService() {
         return mealService;
     }
+
     public AuthService getAuthService() {
         return authService;
     }

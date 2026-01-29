@@ -1,31 +1,36 @@
-package com.mealify.mealify.data.favs.datasource;
+package com.mealify.mealify.data.favs.datasource.local;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Delete;
 import androidx.room.Transaction;
+
 import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+
 import java.util.List;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface FavouriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(FavouriteEntity favourite);
+    Completable insert(FavouriteEntity favourite);
 
     @Transaction
     @Query("SELECT * FROM favourites ORDER BY timestamp DESC")
-    LiveData<List<FavouriteWithMeal>> getAllFavouritesWithMeals();
+    Observable<List<FavouriteWithMeal>> getAllFavouritesWithMeals();
 
     @Query("SELECT EXISTS(SELECT 1 FROM favourites WHERE mealId = :mealId)")
-    boolean isFavourite(String mealId);
+    Single<Boolean> isFavourite(String mealId);
 
     @Delete
-    void delete(FavouriteEntity favourite);
+    Completable delete(FavouriteEntity favourite);
 
     @Query("DELETE FROM favourites WHERE mealId = :mealId")
-    void deleteByMealId(String mealId);
+    Completable deleteByMealId(String mealId);
 }

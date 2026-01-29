@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.search.presenter.area;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.country.CountryDto;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
 import com.mealify.mealify.presentation.search.views.area.SearchAreaView;
@@ -24,7 +24,7 @@ public class SearchAreaPresenterImpl implements SearchAreaPresenter {
     @Override
     public void getAreas() {
         view.toggleLoading(true);
-        mealsRepo.listAreas(new ApiResponse<List<CountryDto>>() {
+        mealsRepo.listAreas(new GeneralResponse<List<CountryDto>>() {
             @Override
             public void onSuccess(List<CountryDto> data) {
                 view.toggleLoading(false);

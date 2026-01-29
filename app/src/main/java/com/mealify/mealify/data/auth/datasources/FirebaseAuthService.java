@@ -3,6 +3,7 @@ package com.mealify.mealify.data.auth.datasources;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+
 import androidx.annotation.NonNull;
 import androidx.credentials.ClearCredentialStateRequest;
 import androidx.credentials.Credential;
@@ -13,6 +14,7 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.ClearCredentialException;
 import androidx.credentials.exceptions.GetCredentialException;
+
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
@@ -20,8 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.response.ApiResponse;
 import com.mealify.mealify.core.helper.CustomLogger;
+import com.mealify.mealify.core.response.GeneralResponse;
 
 import java.util.concurrent.Executors;
 
@@ -46,6 +48,7 @@ public class FirebaseAuthService implements AuthService {
                 .addCredentialOption(googleIdOption)
                 .build();
     }
+
     public static FirebaseAuthService getInstance(Context context) {
         if (instance == null) {
             instance = new FirebaseAuthService(context);
@@ -54,52 +57,55 @@ public class FirebaseAuthService implements AuthService {
     }
 
     @Override
-    public void login(String email, String password, ApiResponse<String> apiResponse) {
+    public void login(String email, String password, GeneralResponse<String> generalResponse) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
-                        apiResponse.onSuccess(user.getUid());
+                        generalResponse.onSuccess(user.getUid());
                     } else {
-                        apiResponse.onError("Login failed: User not found");
+                        generalResponse.onError("Login failed: User not found");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    apiResponse.onError(e.getMessage());
+                    generalResponse.onError(e.getMessage());
                 });
     }
+
     @Override
-    public void register(String email, String password, String name,ApiResponse<String> apiResponse) {
+    public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
-                        apiResponse.onSuccess(user.getUid());
+                        generalResponse.onSuccess(user.getUid());
                     } else {
-                        apiResponse.onError("Registration failed: User not created");
+                        generalResponse.onError("Registration failed: User not created");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    apiResponse.onError(e.getMessage());
+                    generalResponse.onError(e.getMessage());
                 });
     }
+
     @Override
-    public void signInAnonymously(ApiResponse<String> apiResponse) {
+    public void signInAnonymously(GeneralResponse<String> generalResponse) {
         firebaseAuth.signInAnonymously()
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
-                        apiResponse.onSuccess("guest_" + user.getUid());
+                        generalResponse.onSuccess("guest_" + user.getUid());
                     } else {
-                        apiResponse.onError("Anonymous sign-in failed: User not found");
+                        generalResponse.onError("Anonymous sign-in failed: User not found");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    apiResponse.onError(e.getMessage());
+                    generalResponse.onError(e.getMessage());
                 });
     }
+
     @Override
-    public void signInWithGoogle(ApiResponse<String> apiResponse) {
+    public void signInWithGoogle(GeneralResponse<String> generalResponse) {
         credentialManager.getCredentialAsync(
                 context,
                 credentialRequest,
@@ -108,19 +114,19 @@ public class FirebaseAuthService implements AuthService {
                 new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
                     @Override
                     public void onResult(@NonNull GetCredentialResponse result) {
-                        handleSignIn(result.getCredential(), apiResponse);
+                        handleSignIn(result.getCredential(), generalResponse);
                     }
 
                     @Override
                     public void onError(@NonNull GetCredentialException e) {
-                        CustomLogger.log( "Google Sign-In failed: " + e.getMessage());
-                        apiResponse.onError("Google Sign-In failed: " + e.getMessage());
+                        CustomLogger.log("Google Sign-In failed: " + e.getMessage());
+                        generalResponse.onError("Google Sign-In failed: " + e.getMessage());
                     }
                 }
         );
     }
 
-    private void handleSignIn(Credential credential, ApiResponse<String> apiResponse) {
+    private void handleSignIn(Credential credential, GeneralResponse<String> generalResponse) {
         if (credential instanceof CustomCredential
                 && credential.getType().equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
 
@@ -128,34 +134,35 @@ public class FirebaseAuthService implements AuthService {
             GoogleIdTokenCredential googleIdTokenCredential =
                     GoogleIdTokenCredential.createFrom(credentialData);
 
-            firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken(), apiResponse);
+            firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken(), generalResponse);
         } else {
-           CustomLogger.log("Credential is not of type Google ID!");
-            apiResponse.onError("Invalid credential type");
+            CustomLogger.log("Credential is not of type Google ID!");
+            generalResponse.onError("Invalid credential type");
         }
     }
 
-    private void firebaseAuthWithGoogle(String idToken, ApiResponse<String> apiResponse) {
+    private void firebaseAuthWithGoogle(String idToken, GeneralResponse<String> generalResponse) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        CustomLogger.log( "signInWithCredential:success");
+                        CustomLogger.log("signInWithCredential:success");
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
-                            apiResponse.onSuccess(user.getUid());
+                            generalResponse.onSuccess(user.getUid());
                         } else {
-                            apiResponse.onError("Google authentication failed: User not found");
+                            generalResponse.onError("Google authentication failed: User not found");
                         }
                     } else {
-                        CustomLogger.log("signInWithCredential:failure " +task.getException());
-                        apiResponse.onError("Google authentication failed: " +
+                        CustomLogger.log("signInWithCredential:failure " + task.getException());
+                        generalResponse.onError("Google authentication failed: " +
                                 (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
                     }
                 });
     }
+
     @Override
-    public void signOut(ApiResponse<String> apiResponse) {
+    public void signOut(GeneralResponse<String> generalResponse) {
 
         firebaseAuth.signOut();
         ClearCredentialStateRequest clearRequest = new ClearCredentialStateRequest();
@@ -166,14 +173,14 @@ public class FirebaseAuthService implements AuthService {
                 new CredentialManagerCallback<Void, ClearCredentialException>() {
                     @Override
                     public void onResult(@NonNull Void result) {
-                        CustomLogger.log( "Credentials cleared successfully");
-                        apiResponse.onSuccess("Signed out successfully");
+                        CustomLogger.log("Credentials cleared successfully");
+                        generalResponse.onSuccess("Signed out successfully");
                     }
 
                     @Override
                     public void onError(@NonNull ClearCredentialException e) {
-                        CustomLogger.log( "Couldn't clear user credentials: " + e.getLocalizedMessage());
-                        apiResponse.onError("Sign out failed: " + e.getMessage());
+                        CustomLogger.log("Couldn't clear user credentials: " + e.getLocalizedMessage());
+                        generalResponse.onError("Sign out failed: " + e.getMessage());
                     }
                 }
         );

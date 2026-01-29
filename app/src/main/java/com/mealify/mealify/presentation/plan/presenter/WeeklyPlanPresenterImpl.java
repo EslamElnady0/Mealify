@@ -2,8 +2,7 @@ package com.mealify.mealify.presentation.plan.presenter;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
 import com.mealify.mealify.presentation.plan.views.PlanView;
@@ -18,23 +17,41 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
         this.weeklyPlanRepo = new WeeklyPlanRepo(ctx);
         this.view = view;
     }
-    
+
 
     @Override
     public void loadMealsForDate(String dateString) {
-        LiveData<List<WeeklyPlanMealWithMeal>> meals = weeklyPlanRepo.getMealsByDate(dateString);
-        view.showMeals(meals);
+        weeklyPlanRepo.getMealsByDate(dateString,
+                new GeneralResponse<List<WeeklyPlanMealWithMeal>>() {
+                    @Override
+                    public void onSuccess(List<WeeklyPlanMealWithMeal> data) {
+                        view.showMeals(data);
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+
+                    }
+                });
     }
 
     @Override
     public void deleteMealFromPlan(long planId) {
-        new Thread(() -> {
-            weeklyPlanRepo.deleteMealFromPlan(planId);
-        }).start();
+        weeklyPlanRepo.deleteMealFromPlan(planId);
     }
 
     @Override
     public void getAllPlannedDates() {
-        view.showPlannedDates(weeklyPlanRepo.getAllPlannedDates());
+        weeklyPlanRepo.getAllPlannedDates(new GeneralResponse<List<String>>() {
+            @Override
+            public void onSuccess(List<String> data) {
+                view.showPlannedDates(data);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
     }
 }

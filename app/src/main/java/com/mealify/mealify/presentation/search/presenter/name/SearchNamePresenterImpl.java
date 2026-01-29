@@ -2,7 +2,7 @@ package com.mealify.mealify.presentation.search.presenter.name;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.ApiResponse;
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
 import com.mealify.mealify.presentation.search.views.name.SearchNameView;
@@ -21,7 +21,7 @@ public class SearchNamePresenterImpl implements SearchNamePresenter {
     @Override
     public void searchMealsByName(String name) {
         view.toggleLoading(true);
-        mealsRepo.searchMealsByName(name, new ApiResponse<List<FilteredMeal>>() {
+        mealsRepo.searchMealsByName(name, new GeneralResponse<List<FilteredMeal>>() {
             @Override
             public void onSuccess(List<FilteredMeal> data) {
                 view.toggleLoading(false);

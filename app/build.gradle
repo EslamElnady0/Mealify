@@ -48,6 +48,7 @@ dependencies {
     implementation libs.lifecycle.livedata.ktx
     implementation libs.lifecycle.viewmodel.ktx
     implementation libs.recyclerview
+    implementation libs.google.firebase.firestore
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -60,9 +61,14 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.viewpager2)
-    implementation("androidx.credentials:credentials:1.3.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation('com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0')
-
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.core)
+    implementation(libs.rxjava3.retrofit.adapter)
+    implementation(libs.rxandroid)
+    implementation(libs.rxjava)
+    implementation(libs.room.rxjava3)
+    implementation libs.rx.preferences
+    implementation(libs.firebase.firestore)
 }

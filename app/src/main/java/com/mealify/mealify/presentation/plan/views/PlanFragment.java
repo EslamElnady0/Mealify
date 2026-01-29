@@ -12,16 +12,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.utils.DialogUtils;
@@ -134,8 +133,8 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     }
 
     @Override
-    public void showMeals(LiveData<List<WeeklyPlanMealWithMeal>> mealsLiveData) {
-        mealsLiveData.observe(getViewLifecycleOwner(), this::updateUIWithMeals);
+    public void showMeals(List<WeeklyPlanMealWithMeal> meals) {
+        updateUIWithMeals(meals);
     }
 
     @Override
@@ -144,7 +143,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     }
 
     @Override
-    public void showPlannedDates(LiveData<List<String>> dates) {
+    public void showPlannedDates(List<String> dates) {
 
     }
 

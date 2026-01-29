@@ -1,63 +1,134 @@
 package com.mealify.mealify.data.weeklyplan.repo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-
+import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
+import com.mealify.mealify.data.meals.datasources.remote.MealFirestoreRemoteDataSource;
 import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.remote.WeeklyPlanRemoteDataSource;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WeeklyPlanRepo {
     private final WeeklyPlanLocalDataSource localDataSource;
     private final MealLocalDataSource mealLocalDataSource;
-    private final ExecutorService executorService;
+    private final WeeklyPlanRemoteDataSource weeklyPlanRemoteDataSource;
+    private final MealFirestoreRemoteDataSource mealFirestoreRemoteDataSource;
+
 
     public WeeklyPlanRepo(Context context) {
         this.localDataSource = new WeeklyPlanLocalDataSource(context);
         this.mealLocalDataSource = new MealLocalDataSource(context);
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.weeklyPlanRemoteDataSource = new WeeklyPlanRemoteDataSource();
+        this.mealFirestoreRemoteDataSource = new MealFirestoreRemoteDataSource();
     }
 
-    public void addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal) {
-        executorService.execute(() -> {
-            mealLocalDataSource.insertMeal(planMealWithMeal.meal);
-            localDataSource.addMealToWeeklyPlan(planMealWithMeal.planEntry);
-        });
+    @SuppressLint("CheckResult")
+    public void addMealToPlan(
+            WeeklyPlanMealWithMeal planMealWithMeal,
+            GeneralResponse<Boolean> generalResponse
+    ) {
+        mealLocalDataSource.insertMeal(planMealWithMeal.meal)
+                .andThen(
+                        mealFirestoreRemoteDataSource.saveMeal(
+                                planMealWithMeal.meal.getId(),
+                                planMealWithMeal.meal
+                        )
+                )
+                .andThen(
+                        localDataSource.addMealToWeeklyPlan(
+                                planMealWithMeal.planEntry
+                        )
+                )
+                .andThen(
+                        weeklyPlanRemoteDataSource.saveToWeeklyPlan(
+                                String.valueOf(planMealWithMeal.planEntry.getMealId()),
+                                planMealWithMeal.planEntry
+                        )
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> generalResponse.onSuccess(true),
+                        error -> generalResponse.onError(error.getMessage())
+                );
     }
+
 
     public void deleteMealByDateAndType(String date, WeeklyPlanMealType mealType) {
-        executorService.execute(() -> {
-            localDataSource.deleteMealByDateAndType(date, mealType);
-        });
+        localDataSource.deleteMealByDateAndType(date, mealType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
-    public LiveData<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date) {
-        return localDataSource.getMealsByDate(date);
+    @SuppressLint("CheckResult")
+    public void getMealsByDate(String date, GeneralResponse<List<WeeklyPlanMealWithMeal>> generalResponse) {
+        localDataSource.getMealsByDate(date)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        generalResponse::onSuccess,
+                        error -> {
+                            generalResponse.onError(error.getMessage());
+                        }
+                );
     }
 
-    public WeeklyPlanMealWithMeal getMealByDateAndType(String date, WeeklyPlanMealType type) {
-        return localDataSource.getMealByDateAndType(date, type);
+    @SuppressLint("CheckResult")
+    public void getMealByDateAndType(String date, WeeklyPlanMealType type, GeneralResponse<WeeklyPlanMealWithMeal> generalResponse) {
+        localDataSource.getMealByDateAndType(date, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        generalResponse::onSuccess,
+                        error -> generalResponse.onError(error.getMessage()),
+                        () -> generalResponse.onSuccess(null)
+                );
     }
 
-    public LiveData<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate) {
-        return localDataSource.getWeekMeals(startDate, endDate);
+    @SuppressLint("CheckResult")
+    public void getWeekMeals(String startDate, String endDate, GeneralResponse<List<WeeklyPlanMealWithMeal>> generalResponse) {
+        localDataSource.getWeekMeals(startDate, endDate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(generalResponse::onSuccess, error -> {
+                    generalResponse.onError(error.getMessage());
+                });
     }
 
+    @SuppressLint("CheckResult")
     public void deleteMealFromPlan(long planId) {
-        localDataSource.deleteMealById(planId);
+        localDataSource.deleteMealById(planId)
+                .andThen(
+                        weeklyPlanRemoteDataSource.deleteFromWeeklyPlan(
+                                String.valueOf(planId)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     public void clearAllPlannedMeals() {
-        localDataSource.clearWeeklyPlan();
+        localDataSource.clearWeeklyPlan()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
-    public LiveData<List<String>> getAllPlannedDates() {
-        return localDataSource.getAllPlannedDates();
+    @SuppressLint("CheckResult")
+    public void getAllPlannedDates(GeneralResponse<List<String>> generalResponse) {
+        localDataSource.getAllPlannedDates().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(generalResponse::onSuccess, error -> {
+                    generalResponse.onError(error.getMessage());
+                });
+
     }
 }

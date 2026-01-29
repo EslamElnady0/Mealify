@@ -1,14 +1,16 @@
-package com.mealify.mealify.data.favs.datasource;
+package com.mealify.mealify.data.favs.datasource.local;
 
 import android.content.Context;
-
-import androidx.lifecycle.LiveData;
 
 import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.db.AppDatabase;
 
 import java.util.List;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public class FavouriteLocalDataSource {
     private final FavouriteDao favouriteDao;
@@ -17,24 +19,20 @@ public class FavouriteLocalDataSource {
         this.favouriteDao = AppDatabase.getInstance(ctx).favouriteDao();
     }
 
-    public void addToFavourites(String mealId) {
+    public Completable addToFavourites(String mealId) {
         FavouriteEntity entity = new FavouriteEntity(mealId, System.currentTimeMillis());
-        new Thread(() -> {
-            favouriteDao.insert(entity);
-        }).start();
+        return favouriteDao.insert(entity);
     }
 
-    public void removeFromFavourites(String mealId) {
-        new Thread(() -> {
-            favouriteDao.deleteByMealId(mealId);
-        }).start();
+    public Completable removeFromFavourites(String mealId) {
+        return favouriteDao.deleteByMealId(mealId);
     }
 
-    public boolean isFavourite(String mealId) {
+    public Single<Boolean> isFavourite(String mealId) {
         return favouriteDao.isFavourite(mealId);
     }
 
-    public LiveData<List<FavouriteWithMeal>> getAllFavourites() {
+    public Observable<List<FavouriteWithMeal>> getAllFavourites() {
         return favouriteDao.getAllFavouritesWithMeals();
     }
 }

@@ -1,15 +1,13 @@
 package com.mealify.mealify.presentation.plan.views;
 
-import androidx.lifecycle.LiveData;
-
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
 
 public interface PlanView {
-    void showMeals(LiveData<List<WeeklyPlanMealWithMeal>> meals);
+    void showMeals(List<WeeklyPlanMealWithMeal> meals);
 
     void showError(String message);
 
-    void showPlannedDates(LiveData<List<String>> dates);
+    void showPlannedDates(List<String> dates);
 }
