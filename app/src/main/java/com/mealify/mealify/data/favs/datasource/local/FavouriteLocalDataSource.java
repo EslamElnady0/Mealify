@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.favs.datasource;
+package com.mealify.mealify.data.favs.datasource.local;
 
 import android.content.Context;
 

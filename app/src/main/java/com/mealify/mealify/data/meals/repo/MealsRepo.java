@@ -8,7 +8,6 @@ import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
 import com.mealify.mealify.data.meals.datasources.remote.MealRemoteDataSource;
 import com.mealify.mealify.data.meals.mapper.MealMapper;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
-import com.mealify.mealify.data.meals.model.category.CategoryStrDto;
 import com.mealify.mealify.data.meals.model.country.CountriesResponse;
 import com.mealify.mealify.data.meals.model.country.CountryDto;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
@@ -25,8 +24,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MealsRepo {
-    private MealRemoteDataSource remoteDataSource;
-    private MealLocalDataSource localDataSource;
+
+    private final MealRemoteDataSource remoteDataSource;
+    private final MealLocalDataSource localDataSource;
 
     public MealsRepo(Context ctx) {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
@@ -41,9 +41,7 @@ public class MealsRepo {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
     }
 
@@ -55,9 +53,7 @@ public class MealsRepo {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
     }
 
@@ -65,16 +61,11 @@ public class MealsRepo {
     public void getMealDetails(String mealId, GeneralResponse<MealEntity> generalResponse) {
         remoteDataSource.getMealDetails(mealId)
                 .subscribeOn(Schedulers.io())
-                .map(response ->
-                        MealMapper.toEntity(response.meals.get(0))
-
-                )
+                .map(response -> MealMapper.toEntity(response.meals.get(0)))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
     }
 
@@ -86,16 +77,8 @@ public class MealsRepo {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
-
-    }
-
-    public void listCategories(GeneralResponse<List<CategoryStrDto>> generalResponse) {
-        remoteDataSource.listCategories()
-        ;
     }
 
     @SuppressLint("CheckResult")
@@ -106,46 +89,38 @@ public class MealsRepo {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
     }
 
     @SuppressLint("CheckResult")
-    public void getFilteredMeals(FilterType filterType, String query, GeneralResponse<List<FilteredMeal>> generalResponse) {
+    public void getFilteredMeals(
+            FilterType filterType,
+            String query,
+            GeneralResponse<List<FilteredMeal>> generalResponse
+    ) {
         remoteDataSource.getFilteredMeals(filterType, query)
                 .subscribeOn(Schedulers.io())
                 .map(FilteredMealsResponse::getMeals)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
-        ;
     }
 
     @SuppressLint("CheckResult")
-    public void searchMealsByName(String name, GeneralResponse<List<FilteredMeal>> generalResponse) {
+    public void searchMealsByName(
+            String name,
+            GeneralResponse<List<FilteredMeal>> generalResponse
+    ) {
         remoteDataSource.searchMealsByName(name)
                 .subscribeOn(Schedulers.io())
                 .map(response -> MealMapper.toFilteredMeals(response.meals))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         generalResponse::onSuccess,
-                        error -> {
-                            generalResponse.onError(error.getMessage());
-                        }
+                        error -> generalResponse.onError(error.getMessage())
                 );
-        ;
-    }
-
-    public void addMealToLocal(MealEntity meal) {
-        localDataSource.insertMeal(meal)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
     }
 }

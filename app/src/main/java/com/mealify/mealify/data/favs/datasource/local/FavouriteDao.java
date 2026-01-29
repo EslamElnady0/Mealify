@@ -1,4 +1,4 @@
-package com.mealify.mealify.data.favs.datasource;
+package com.mealify.mealify.data.favs.datasource.local;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

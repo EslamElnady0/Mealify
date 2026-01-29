@@ -5,7 +5,9 @@ import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
+import com.mealify.mealify.data.meals.datasources.remote.MealFirestoreRemoteDataSource;
 import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.remote.WeeklyPlanRemoteDataSource;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
@@ -17,33 +19,48 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class WeeklyPlanRepo {
     private final WeeklyPlanLocalDataSource localDataSource;
     private final MealLocalDataSource mealLocalDataSource;
+    private final WeeklyPlanRemoteDataSource weeklyPlanRemoteDataSource;
+    private final MealFirestoreRemoteDataSource mealFirestoreRemoteDataSource;
+
 
     public WeeklyPlanRepo(Context context) {
         this.localDataSource = new WeeklyPlanLocalDataSource(context);
         this.mealLocalDataSource = new MealLocalDataSource(context);
+        this.weeklyPlanRemoteDataSource = new WeeklyPlanRemoteDataSource();
+        this.mealFirestoreRemoteDataSource = new MealFirestoreRemoteDataSource();
     }
 
     @SuppressLint("CheckResult")
-    public void addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal, GeneralResponse<Boolean> generalResponse) {
+    public void addMealToPlan(
+            WeeklyPlanMealWithMeal planMealWithMeal,
+            GeneralResponse<Boolean> generalResponse
+    ) {
         mealLocalDataSource.insertMeal(planMealWithMeal.meal)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
-                        () -> {
-                            localDataSource.addMealToWeeklyPlan(planMealWithMeal.planEntry)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(
-                                            () -> {
-                                                generalResponse.onSuccess(true);
-                                            },
-                                            error -> {
-                                                generalResponse.onError(error.getMessage());
-                                            }
-                                    );
-
-                        }
-
+                .andThen(
+                        mealFirestoreRemoteDataSource.saveMeal(
+                                planMealWithMeal.meal.getId(),
+                                planMealWithMeal.meal
+                        )
+                )
+                .andThen(
+                        localDataSource.addMealToWeeklyPlan(
+                                planMealWithMeal.planEntry
+                        )
+                )
+                .andThen(
+                        weeklyPlanRemoteDataSource.saveToWeeklyPlan(
+                                String.valueOf(planMealWithMeal.planEntry.getMealId()),
+                                planMealWithMeal.planEntry
+                        )
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> generalResponse.onSuccess(true),
+                        error -> generalResponse.onError(error.getMessage())
                 );
     }
+
 
     public void deleteMealByDateAndType(String date, WeeklyPlanMealType mealType) {
         localDataSource.deleteMealByDateAndType(date, mealType)
@@ -87,8 +104,12 @@ public class WeeklyPlanRepo {
                 });
     }
 
+    @SuppressLint("CheckResult")
     public void deleteMealFromPlan(long planId) {
         localDataSource.deleteMealById(planId)
+                .andThen(
+                        weeklyPlanRemoteDataSource.deleteFromWeeklyPlan(
+                                String.valueOf(planId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();

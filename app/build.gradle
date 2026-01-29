@@ -48,6 +48,7 @@ dependencies {
     implementation libs.lifecycle.livedata.ktx
     implementation libs.lifecycle.viewmodel.ktx
     implementation libs.recyclerview
+    implementation libs.google.firebase.firestore
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -69,4 +70,5 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.room.rxjava3)
     implementation libs.rx.preferences
+    implementation(libs.firebase.firestore)
 }
