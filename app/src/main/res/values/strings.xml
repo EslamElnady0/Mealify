@@ -88,4 +88,13 @@
     <string name="replace_meal_description">This will replace your current meal selection for this slot in your planner.</string>
     <string name="replace_meal_action">Replace Meal</string>
     <string name="keep_current">Keep Current</string>
+    <string name="favorite_meals">Favorite Meals</string>
+    <string name="planner_icon">Planner icon</string>
+    <string name="_5">5</string>
+    <string name="planned_meals">Planned Meals</string>
+    <string name="log_out">Log Out</string>
+    <string name="_12">12</string>
+    <string name="favorites_icon">Favorites icon</string>
+    <string name="eslamelnady254_gmail_com">eslamelnady254@gmail.com</string>
+    <string name="eslam_elnady">Eslam Elnady</string>
 </resources>

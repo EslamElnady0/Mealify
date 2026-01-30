@@ -55,4 +55,7 @@
     <style name="ShapeAppearanceOverlay.App.Corner24dp" parent="">
         <item name="cornerSize">24dp</item>
     </style>
+    <style name="CircleAppearance" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
