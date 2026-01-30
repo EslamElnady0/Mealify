@@ -37,6 +37,9 @@ public class WeeklyPlanMealEntity {
 
     private long addedAt;
 
+    public WeeklyPlanMealEntity() {
+    }
+
     public WeeklyPlanMealEntity(@NonNull String mealId, @NonNull String dateString,
                                 @NonNull DayOfWeek dayOfWeek, @NonNull WeeklyPlanMealType mealType, long addedAt) {
         this.mealId = mealId;

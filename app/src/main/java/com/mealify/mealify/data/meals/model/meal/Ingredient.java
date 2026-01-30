@@ -1,8 +1,11 @@
 package com.mealify.mealify.data.meals.model.meal;
 
 public class Ingredient {
-    public final String name;
-    public final String measure;
+    public String name;
+    public String measure;
+
+    public Ingredient() {
+    }
 
     public Ingredient(String name, String measure) {
         this.name = name;

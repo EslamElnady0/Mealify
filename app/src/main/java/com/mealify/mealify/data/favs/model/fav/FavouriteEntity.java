@@ -25,6 +25,9 @@ public class FavouriteEntity {
 
     private long timestamp;
 
+    public FavouriteEntity() {
+    }
+
     public FavouriteEntity(@NonNull String mealId, long timestamp) {
         this.mealId = mealId;
         this.timestamp = timestamp;
