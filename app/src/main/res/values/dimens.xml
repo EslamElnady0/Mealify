@@ -2,4 +2,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>
     <dimen name="fragment_vertical_margin">16dp</dimen>
+    <dimen name="design_bottom_navigation_margin">20dp</dimen>
+    <dimen name="mtrl_bottomnavigation_icon_margin">20dp</dimen>
 </resources>
