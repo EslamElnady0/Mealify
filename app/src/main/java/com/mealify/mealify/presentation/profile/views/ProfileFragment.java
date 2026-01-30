@@ -25,6 +25,11 @@ public class ProfileFragment extends Fragment implements ProfileView {
     private TextView favCountText;
     private TextView planCountText;
     private MaterialButton logoutBtn;
+    private MaterialButton loginBtn;
+    private View guestContainer;
+    private View statsContainer;
+    private View profileImageContainer;
+    private View dividerLine;
     private ProfilePresenter presenter;
     private View loadingOverlay;
 
@@ -56,8 +61,19 @@ public class ProfileFragment extends Fragment implements ProfileView {
         favCountText = view.findViewById(R.id.fav_count_text);
         planCountText = view.findViewById(R.id.plan_count_text);
         logoutBtn = view.findViewById(R.id.logout_btn);
+        loginBtn = view.findViewById(R.id.login_btn);
+        guestContainer = view.findViewById(R.id.guest_container);
+        statsContainer = view.findViewById(R.id.stats_container);
+        profileImageContainer = view.findViewById(R.id.profile_image_container);
+        dividerLine = view.findViewById(R.id.divider_line);
         loadingOverlay = view.findViewById(R.id.loading_overlay);
+
         logoutBtn.setOnClickListener(v -> presenter.logout());
+        loginBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AuthActivity.class);
+            startActivity(intent);
+        });
+
         presenter.loadUserData();
         presenter.loadStats();
     }
@@ -95,6 +111,35 @@ public class ProfileFragment extends Fragment implements ProfileView {
     public void onLogoutError(String errorMessage) {
         if (getContext() != null) {
             Toast.makeText(getContext(), "Logout failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void setGuestMode(boolean isGuest) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (guestContainer != null) {
+                    guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+                }
+                if (statsContainer != null) {
+                    statsContainer.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+                if (logoutBtn != null) {
+                    logoutBtn.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+                if (profileImageContainer != null) {
+                    profileImageContainer.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+                if (usernameText != null) {
+                    usernameText.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+                if (emailText != null) {
+                    emailText.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+                if (dividerLine != null) {
+                    dividerLine.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                }
+            });
         }
     }
 
