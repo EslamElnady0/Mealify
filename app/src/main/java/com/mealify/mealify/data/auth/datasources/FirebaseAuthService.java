@@ -186,6 +186,12 @@ public class FirebaseAuthService implements AuthService {
         );
     }
 
+    @Override
+    public String getCurrentUserId() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        return user != null ? user.getUid() : null;
+    }
+
     public FirebaseUser getCurrentUser() {
         return firebaseAuth.getCurrentUser();
     }

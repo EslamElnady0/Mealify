@@ -12,4 +12,6 @@ public interface AuthService {
     public void signInWithGoogle(GeneralResponse<String> generalResponse);
 
     public void signOut(GeneralResponse<String> generalResponse);
+
+    public String getCurrentUserId();
 }

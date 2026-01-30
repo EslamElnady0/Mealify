@@ -88,4 +88,8 @@ public class AuthRepo {
             }
         });
     }
+
+    public String getCurrentUserId() {
+        return authRemoteDataSource.getCurrentUserId();
+    }
 }
