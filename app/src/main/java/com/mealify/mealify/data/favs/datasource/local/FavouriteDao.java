@@ -33,4 +33,7 @@ public interface FavouriteDao {
 
     @Query("DELETE FROM favourites WHERE mealId = :mealId")
     Completable deleteByMealId(String mealId);
+
+    @Query("SELECT COUNT(*) FROM favourites")
+    Single<Integer> getFavouritesCount();
 }

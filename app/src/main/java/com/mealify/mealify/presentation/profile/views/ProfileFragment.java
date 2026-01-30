@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 import com.mealify.mealify.R;
 import com.mealify.mealify.presentation.auth.AuthActivity;
+import com.mealify.mealify.presentation.profile.presenter.ProfilePresenter;
+import com.mealify.mealify.presentation.profile.presenter.ProfilePresenterImpl;
 
 public class ProfileFragment extends Fragment implements ProfileView {
 
@@ -23,7 +25,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
     private TextView favCountText;
     private TextView planCountText;
     private MaterialButton logoutBtn;
-    //  private ProfilePresenter presenter;
+    private ProfilePresenter presenter;
     private View loadingOverlay;
 
     public ProfileFragment() {
@@ -36,7 +38,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // presenter = new ProfilePresenterImpl(requireContext(), this);
+        presenter = new ProfilePresenterImpl(requireContext(), this);
     }
 
     @Override
@@ -55,9 +57,9 @@ public class ProfileFragment extends Fragment implements ProfileView {
         planCountText = view.findViewById(R.id.plan_count_text);
         logoutBtn = view.findViewById(R.id.logout_btn);
         loadingOverlay = view.findViewById(R.id.loading_overlay);
-//        logoutBtn.setOnClickListener(v -> presenter.logout());
-//        presenter.loadUserData();
-//        presenter.loadStats();
+        logoutBtn.setOnClickListener(v -> presenter.logout());
+        presenter.loadUserData();
+        presenter.loadStats();
     }
 
     @Override
@@ -113,8 +115,8 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (presenter != null) {
-//            presenter.onDestroy();
-//        }
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
     }
 }

@@ -35,4 +35,8 @@ public class FavouriteLocalDataSource {
     public Observable<List<FavouriteWithMeal>> getAllFavourites() {
         return favouriteDao.getAllFavouritesWithMeals();
     }
+
+    public Single<Integer> getFavouritesCount() {
+        return favouriteDao.getFavouritesCount();
+    }
 }

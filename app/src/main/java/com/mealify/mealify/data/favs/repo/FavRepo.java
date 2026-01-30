@@ -86,4 +86,14 @@ public class FavRepo {
                 });
     }
 
+    @SuppressLint("CheckResult")
+    public void getFavouritesCount(GeneralResponse<Integer> generalResponse) {
+        favoritesDataSource.getFavouritesCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(generalResponse::onSuccess, error -> {
+                    generalResponse.onError(error.getMessage());
+                });
+    }
+
 }

@@ -135,4 +135,14 @@ public class WeeklyPlanRepo {
                 });
 
     }
+
+    @SuppressLint("CheckResult")
+    public void getPlannedMealsCount(GeneralResponse<Integer> generalResponse) {
+        localDataSource.getPlannedMealsCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(generalResponse::onSuccess, error -> {
+                    generalResponse.onError(error.getMessage());
+                });
+    }
 }
