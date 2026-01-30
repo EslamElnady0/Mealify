@@ -6,4 +6,5 @@ public interface ProfileView {
     void onLogoutSuccess();
     void onLogoutError(String errorMessage);
     void toggleLoading(boolean isLoading);
+    void setGuestMode(boolean isGuest);
 }

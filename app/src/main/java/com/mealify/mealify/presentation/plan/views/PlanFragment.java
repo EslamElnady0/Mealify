@@ -47,6 +47,11 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     private View dinnerSlot;
     private RecyclerView snacksRecyclerView;
     private SnacksAdapter snacksAdapter;
+    private View guestContainer;
+    private MaterialButton loginBtn;
+    private View calendarIcon;
+    private View weeklyPlanLabel;
+    private View scrollView;
 
     private NavController navController;
 
@@ -86,6 +91,18 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         lunchSlot = view.findViewById(R.id.lunch_slot);
         dinnerSlot = view.findViewById(R.id.dinner_slot);
         snacksRecyclerView = view.findViewById(R.id.snacks_recycler_view);
+        guestContainer = view.findViewById(R.id.guest_container);
+        loginBtn = view.findViewById(R.id.login_btn);
+        calendarIcon = view.findViewById(R.id.imageView);
+        weeklyPlanLabel = view.findViewById(R.id.weekly_plan_text);
+        scrollView = view.findViewById(R.id.nestedScrollView);
+
+        if (loginBtn != null) {
+            loginBtn.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(getContext(), com.mealify.mealify.presentation.auth.AuthActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void setupCalendar() {
@@ -129,7 +146,9 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     private void updateSelectedDayText(long dateInMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
         String formattedDate = sdf.format(new Date(dateInMillis));
-        selectedDayText.setText(formattedDate);
+        if (selectedDayText != null) {
+            selectedDayText.setText(formattedDate);
+        }
     }
 
     @Override
@@ -145,6 +164,20 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     @Override
     public void showPlannedDates(List<String> dates) {
 
+    }
+
+    @Override
+    public void setGuestMode(boolean isGuest) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+                if (calendarView != null) calendarView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (selectedDayText != null) selectedDayText.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (calendarIcon != null) calendarIcon.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (weeklyPlanLabel != null) weeklyPlanLabel.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (scrollView != null) scrollView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+            });
+        }
     }
 
     private void updateUIWithMeals(List<WeeklyPlanMealWithMeal> meals) {
@@ -165,12 +198,15 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
 
                 switch (mealType) {
                     case BREAKFAST:
+                        breakFastSlotFilled(meal);
                         breakfast = meal;
                         break;
                     case LUNCH:
+                        lunchSlotFilled(meal);
                         lunch = meal;
                         break;
                     case DINNER:
+                        dinnerSlotFilled(meal);
                         dinner = meal;
                         break;
                     case SNACK:
@@ -180,49 +216,50 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
             }
         }
 
-        if (breakfast != null) {
-            setSlotFilled(breakfastSlot, breakfast);
-        } else {
-            setSlotEmpty(breakfastSlot);
-        }
-
-        if (lunch != null) {
-            setSlotFilled(lunchSlot, lunch);
-        } else {
-            setSlotEmpty(lunchSlot);
-        }
-
-        if (dinner != null) {
-            setSlotFilled(dinnerSlot, dinner);
-        } else {
-            setSlotEmpty(dinnerSlot);
-        }
+        if (breakfast == null) setSlotEmpty(breakfastSlot);
+        if (lunch == null) setSlotEmpty(lunchSlot);
+        if (dinner == null) setSlotEmpty(dinnerSlot);
 
         snacksAdapter.setSnacks(snacks);
     }
 
+    private void breakFastSlotFilled(WeeklyPlanMealWithMeal meal) {
+        setSlotFilled(breakfastSlot, meal);
+    }
+    
+    private void lunchSlotFilled(WeeklyPlanMealWithMeal meal) {
+        setSlotFilled(lunchSlot, meal);
+    }
+    
+    private void dinnerSlotFilled(WeeklyPlanMealWithMeal meal) {
+        setSlotFilled(dinnerSlot, meal);
+    }
+
     private void setAllSlotsEmpty() {
-        setSlotEmpty(breakfastSlot);
-        setSlotEmpty(lunchSlot);
-        setSlotEmpty(dinnerSlot);
+        if (breakfastSlot != null) setSlotEmpty(breakfastSlot);
+        if (lunchSlot != null) setSlotEmpty(lunchSlot);
+        if (dinnerSlot != null) setSlotEmpty(dinnerSlot);
     }
 
     private void setSlotEmpty(View slotView) {
+        if (slotView == null) return;
         TextView emptyText = slotView.findViewById(R.id.empty_text);
         MaterialButton selectButton = slotView.findViewById(R.id.select_button);
         LinearLayout filledContent = slotView.findViewById(R.id.filled_content);
         MaterialCardView mealImageCard = slotView.findViewById(R.id.meal_image);
 
-        emptyText.setVisibility(View.VISIBLE);
-        selectButton.setVisibility(View.VISIBLE);
+        if (emptyText != null) emptyText.setVisibility(View.VISIBLE);
+        if (selectButton != null) {
+            selectButton.setVisibility(View.VISIBLE);
+            selectButton.setOnClickListener(v -> openMealRedirectionDialog());
+        }
 
-        filledContent.setVisibility(View.GONE);
-        mealImageCard.setVisibility(View.GONE);
-
-        selectButton.setOnClickListener(v -> openMealRedirectionDialog());
+        if (filledContent != null) filledContent.setVisibility(View.GONE);
+        if (mealImageCard != null) mealImageCard.setVisibility(View.GONE);
     }
 
     private void setSlotFilled(View slotView, WeeklyPlanMealWithMeal mealWithPlan) {
+        if (slotView == null) return;
         TextView emptyText = slotView.findViewById(R.id.empty_text);
         MaterialButton selectButton = slotView.findViewById(R.id.select_button);
         LinearLayout filledContent = slotView.findViewById(R.id.filled_content);
@@ -232,48 +269,55 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
         TextView mealDetails = slotView.findViewById(R.id.meal_details);
         MaterialButton removeButton = slotView.findViewById(R.id.remove_button);
 
-        emptyText.setVisibility(View.GONE);
-        selectButton.setVisibility(View.GONE);
+        if (emptyText != null) emptyText.setVisibility(View.GONE);
+        if (selectButton != null) selectButton.setVisibility(View.GONE);
 
-        mealImageCard.setVisibility(View.VISIBLE);
-        filledContent.setVisibility(View.VISIBLE);
+        if (mealImageCard != null) mealImageCard.setVisibility(View.VISIBLE);
+        if (filledContent != null) {
+            filledContent.setVisibility(View.VISIBLE);
+            filledContent.setOnClickListener(v -> {
+                if (mealWithPlan.meal != null) openMealDetails(mealWithPlan.meal.getId());
+            });
+        }
 
         if (mealWithPlan.meal != null) {
-            mealName.setText(mealWithPlan.meal.getName());
+            if (mealName != null) mealName.setText(mealWithPlan.meal.getName());
 
             if (mealDetails != null) {
                 String details = mealWithPlan.meal.getCategory();
                 mealDetails.setText(details);
             }
 
-            Glide.with(this)
-                    .load(mealWithPlan.meal.getThumbnail())
-                    .placeholder(R.drawable.mealify_logo)
-                    .error(R.drawable.mealify_logo)
-                    .into(mealImage);
-            filledContent.setOnClickListener(v -> {
-                openMealDetails(mealWithPlan.meal.getId());
-            });
-            removeButton.setOnClickListener(v -> {
-                if (mealWithPlan.planEntry != null) {
-                    DialogUtils.showConfirmationDialog(
-                            getContext(),
-                            mealWithPlan.meal.getThumbnail(),
-                            getString(R.string.remove_from_plan),
-                            getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_plan),
-                            new DialogUtils.DialogCallback() {
-                                @Override
-                                public void onConfirm() {
-                                    presenter.deleteMealFromPlan(Long.parseLong(mealWithPlan.planEntry.getMealId()));
-                                }
+            if (mealImage != null) {
+                Glide.with(this)
+                        .load(mealWithPlan.meal.getThumbnail())
+                        .placeholder(R.drawable.mealify_logo)
+                        .error(R.drawable.mealify_logo)
+                        .into(mealImage);
+            }
+            
+            if (removeButton != null) {
+                removeButton.setOnClickListener(v -> {
+                    if (mealWithPlan.planEntry != null) {
+                        DialogUtils.showConfirmationDialog(
+                                getContext(),
+                                mealWithPlan.meal.getThumbnail(),
+                                getString(R.string.remove_from_plan),
+                                getString(R.string.are_you_sure_you_want_to_remove_this_meal_from_your_plan),
+                                new DialogUtils.DialogCallback() {
+                                    @Override
+                                    public void onConfirm() {
+                                        presenter.deleteMealFromPlan(Long.parseLong(mealWithPlan.planEntry.getMealId()));
+                                    }
 
-                                @Override
-                                public void onCancel() {
+                                    @Override
+                                    public void onCancel() {
+                                    }
                                 }
-                            }
-                    );
-                }
-            });
+                        );
+                    }
+                });
+            }
         }
     }
 

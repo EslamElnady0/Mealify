@@ -37,6 +37,10 @@ public class FavouritesFragment extends Fragment implements FavsView {
     private LinearLayout emptyView;
     private TextInputEditText searchInput;
     private TextView favoritesCount;
+    private View guestContainer;
+    private com.google.android.material.button.MaterialButton loginBtn;
+    private View searchLayout;
+    private View headerLayout;
     private List<FavouriteWithMeal> allFavs = new ArrayList<>();
 
     public FavouritesFragment() {
@@ -49,7 +53,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new FavsPresenterImpl(new FavRepo(requireContext()), this);
+        presenter = new FavsPresenterImpl(new FavRepo(requireContext()), this, requireContext());
     }
 
     @Override
@@ -66,6 +70,15 @@ public class FavouritesFragment extends Fragment implements FavsView {
         emptyView = view.findViewById(R.id.emptyView);
         searchInput = view.findViewById(R.id.searchInput);
         favoritesCount = view.findViewById(R.id.favorites_count);
+        guestContainer = view.findViewById(R.id.guest_container);
+        loginBtn = view.findViewById(R.id.login_btn);
+        searchLayout = view.findViewById(R.id.searchLayout);
+        headerLayout = view.findViewById(R.id.headerLayout);
+
+        loginBtn.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(getContext(), com.mealify.mealify.presentation.auth.AuthActivity.class);
+            startActivity(intent);
+        });
 
         setupRecyclerView();
         setupSearch();
@@ -168,5 +181,18 @@ public class FavouritesFragment extends Fragment implements FavsView {
     @Override
     public void onFavsFailure(String errorMessage) {
         // Handle failure
+    }
+
+    @Override
+    public void setGuestMode(boolean isGuest) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+                if (favoritesRecycler != null) favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (searchLayout != null) searchLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (headerLayout != null) headerLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+                if (emptyView != null && isGuest) emptyView.setVisibility(View.GONE);
+            });
+        }
     }
 }

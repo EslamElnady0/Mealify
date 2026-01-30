@@ -10,15 +10,22 @@ import java.util.List;
 public class FavsPresenterImpl implements FavsPresenter {
 
     private final FavRepo favRepo;
+    private final com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService;
     private FavsView view;
 
-    public FavsPresenterImpl(FavRepo favRepo, FavsView view) {
+    public FavsPresenterImpl(FavRepo favRepo, FavsView view, android.content.Context context) {
         this.favRepo = favRepo;
         this.view = view;
+        this.authService = com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(context);
     }
 
     @Override
     public void getFavouriteMeals() {
+        if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
+            view.setGuestMode(true);
+            return;
+        }
+        view.setGuestMode(false);
         favRepo.getFavouriteMeals(new GeneralResponse<List<FavouriteWithMeal>>() {
             @Override
             public void onSuccess(List<FavouriteWithMeal> data) {

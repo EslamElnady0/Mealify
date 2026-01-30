@@ -43,22 +43,32 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     public void loadUserData() {
         FirebaseUser user = authService.getCurrentUser();
         if (user != null) {
-            String email = user.getEmail();
-            String name = user.getDisplayName();
+            if (user.isAnonymous()) {
+                view.setGuestMode(true);
+                view.displayUserData("Guest User", "Sign in to access all features");
+            } else {
+                view.setGuestMode(false);
+                String email = user.getEmail();
+                String name = user.getDisplayName();
 
-            if (name == null || name.isEmpty()) {
-                if (email != null && email.contains("@")) {
-                    name = email.split("@")[0];
-                } else {
-                    name = "User";
+                if (name == null || name.isEmpty()) {
+                    if (email != null && email.contains("@")) {
+                        name = email.split("@")[0];
+                    } else {
+                        name = "User";
+                    }
                 }
+                view.displayUserData(name, email);
             }
-            view.displayUserData(name, email);
         }
     }
 
     @Override
     public void loadStats() {
+        FirebaseUser user = authService.getCurrentUser();
+        if (user != null && user.isAnonymous()) {
+            return;
+        }
         view.toggleLoading(true);
         favRepo.getFavouritesCount(new GeneralResponse<Integer>() {
             @Override

@@ -202,6 +202,63 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/guest_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="60dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/guest_image"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/outline_lock_open_large"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/ready_to_cook_something_amazing"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkBlue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:alpha="0.8"
+                    android:paddingHorizontal="32dp"
+                    android:text="@string/sign_in_to_save_your_favorite_meals_and_sync_your_meal_plans_across_devices"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkGray"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/login_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="40dp"
+                    android:backgroundTint="@color/primary"
+                    android:letterSpacing="0.03"
+                    android:text="@string/login_sign_up"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="20dp"
+                    app:elevation="4dp" />
+            </LinearLayout>
+
             <!-- Logout Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/logout_btn"

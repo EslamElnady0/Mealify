@@ -9,4 +9,6 @@ public interface FavsView {
     void onFavsSuccess(List<FavouriteWithMeal> favMeals);
 
     void onFavsFailure(String errorMessage);
+
+    void setGuestMode(boolean isGuest);
 }

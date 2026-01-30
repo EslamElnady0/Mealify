@@ -10,4 +10,6 @@ public interface PlanView {
     void showError(String message);
 
     void showPlannedDates(List<String> dates);
+
+    void setGuestMode(boolean isGuest);
 }

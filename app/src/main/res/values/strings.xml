@@ -97,4 +97,7 @@
     <string name="favorites_icon">Favorites icon</string>
     <string name="eslamelnady254_gmail_com">eslamelnady254@gmail.com</string>
     <string name="eslam_elnady">Eslam Elnady</string>
+    <string name="ready_to_cook_something_amazing">Ready to cook something amazing?</string>
+    <string name="sign_in_to_save_your_favorite_meals_and_sync_your_meal_plans_across_devices">Sign in to save your favorite meals and sync your meal plans across devices.</string>
+    <string name="login_sign_up">Login / Sign Up</string>
 </resources>
