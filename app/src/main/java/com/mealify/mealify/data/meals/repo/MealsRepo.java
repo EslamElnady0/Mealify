@@ -26,8 +26,13 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.mealify.mealify.data.favs.datasource.local.FavouriteLocalDataSource;
+import com.mealify.mealify.data.favs.datasource.remote.FavouriteRemoteDataSource;
+import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.meals.datasources.remote.MealFirestoreRemoteDataSource;
 import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.remote.WeeklyPlanRemoteDataSource;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 public class MealsRepo {
@@ -36,12 +41,18 @@ public class MealsRepo {
     private final MealLocalDataSource localDataSource;
     private final FavouriteLocalDataSource favouriteLocalDataSource;
     private final WeeklyPlanLocalDataSource weeklyPlanLocalDataSource;
+    private final MealFirestoreRemoteDataSource mealFirestoreRemoteDataSource;
+    private final FavouriteRemoteDataSource favouriteRemoteDataSource;
+    private final WeeklyPlanRemoteDataSource weeklyPlanRemoteDataSource;
 
     public MealsRepo(Context ctx) {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
         this.localDataSource = new MealLocalDataSource(ctx);
         this.favouriteLocalDataSource = new FavouriteLocalDataSource(ctx);
         this.weeklyPlanLocalDataSource = new WeeklyPlanLocalDataSource(ctx);
+        this.mealFirestoreRemoteDataSource = new MealFirestoreRemoteDataSource();
+        this.favouriteRemoteDataSource = new FavouriteRemoteDataSource();
+        this.weeklyPlanRemoteDataSource = new WeeklyPlanRemoteDataSource();
     }
 
     @SuppressLint("CheckResult")
@@ -157,5 +168,26 @@ public class MealsRepo {
 
     public Completable removeAllLocalWeeklyPlans() {
         return weeklyPlanLocalDataSource.clearWeeklyPlan();
+    }
+
+    public Completable uploadMealsToFirebase(List<MealEntity> meals) {
+        if (meals == null || meals.isEmpty()) return Completable.complete();
+        return Observable.fromIterable(meals)
+                .flatMapCompletable(meal -> mealFirestoreRemoteDataSource.saveMeal(meal.getId(), meal))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Completable uploadFavouritesToFirebase(List<FavouriteEntity> favourites) {
+        if (favourites == null || favourites.isEmpty()) return Completable.complete();
+        return Observable.fromIterable(favourites)
+                .flatMapCompletable(fav -> favouriteRemoteDataSource.saveToFavourites(fav.getMealId(), fav))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Completable uploadWeeklyPlanToFirebase(List<WeeklyPlanMealEntity> plans) {
+        if (plans == null || plans.isEmpty()) return Completable.complete();
+        return Observable.fromIterable(plans)
+                .flatMapCompletable(plan -> weeklyPlanRemoteDataSource.saveToWeeklyPlan(String.valueOf(plan.getPlanId()), plan))
+                .subscribeOn(Schedulers.io());
     }
 }
