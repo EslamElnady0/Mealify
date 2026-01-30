@@ -174,6 +174,7 @@ public class RegisterFragment extends Fragment implements RegisterView {
     private void navigateToHome() {
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             getActivity().finish();
         }
