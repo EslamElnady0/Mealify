@@ -14,6 +14,7 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMe
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WeeklyPlanRepo {
@@ -35,7 +36,17 @@ public class WeeklyPlanRepo {
             WeeklyPlanMealWithMeal planMealWithMeal,
             GeneralResponse<Boolean> generalResponse
     ) {
-        mealLocalDataSource.insertMeal(planMealWithMeal.meal)
+        addMealToPlanCompletable(planMealWithMeal)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> generalResponse.onSuccess(true),
+                        error -> generalResponse.onError(error.getMessage())
+                );
+    }
+
+    private Completable addMealToPlanCompletable(WeeklyPlanMealWithMeal planMealWithMeal) {
+        return mealLocalDataSource.insertMeal(planMealWithMeal.meal)
                 .andThen(
                         mealFirestoreRemoteDataSource.saveMeal(
                                 planMealWithMeal.meal.getId(),
@@ -49,24 +60,27 @@ public class WeeklyPlanRepo {
                 )
                 .andThen(
                         weeklyPlanRemoteDataSource.saveToWeeklyPlan(
-                                String.valueOf(planMealWithMeal.planEntry.getMealId()),
+                                planMealWithMeal.planEntry.getMealId(),
                                 planMealWithMeal.planEntry
                         )
-                )
+                );
+    }
+
+    @SuppressLint("CheckResult")
+    public void replaceMealInPlan(
+            String oldMealId,
+            WeeklyPlanMealWithMeal newMeal,
+            GeneralResponse<Boolean> generalResponse
+    ) {
+        localDataSource.deleteMealByDateAndType(newMeal.planEntry.getDateString(), newMeal.planEntry.getMealType())
+                .andThen(weeklyPlanRemoteDataSource.deleteFromWeeklyPlan(oldMealId))
+                .andThen(addMealToPlanCompletable(newMeal))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> generalResponse.onSuccess(true),
                         error -> generalResponse.onError(error.getMessage())
                 );
-    }
-
-
-    public void deleteMealByDateAndType(String date, WeeklyPlanMealType mealType) {
-        localDataSource.deleteMealByDateAndType(date, mealType)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
     }
 
     @SuppressLint("CheckResult")
@@ -92,16 +106,6 @@ public class WeeklyPlanRepo {
                         error -> generalResponse.onError(error.getMessage()),
                         () -> generalResponse.onSuccess(null)
                 );
-    }
-
-    @SuppressLint("CheckResult")
-    public void getWeekMeals(String startDate, String endDate, GeneralResponse<List<WeeklyPlanMealWithMeal>> generalResponse) {
-        localDataSource.getWeekMeals(startDate, endDate)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> {
-                    generalResponse.onError(error.getMessage());
-                });
     }
 
     @SuppressLint("CheckResult")

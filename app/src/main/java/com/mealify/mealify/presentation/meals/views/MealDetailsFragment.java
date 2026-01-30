@@ -325,7 +325,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 new DialogUtils.DialogCallback() {
                     @Override
                     public void onConfirm() {
-                        presenter.forceAddToWeeklyPlan(newMeal);
+                        presenter.forceAddToWeeklyPlan(newMeal, existingMeal.planEntry.getMealId());
                     }
 
                     @Override

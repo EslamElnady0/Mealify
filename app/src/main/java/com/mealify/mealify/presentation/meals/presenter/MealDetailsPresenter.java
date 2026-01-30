@@ -12,5 +12,5 @@ public interface MealDetailsPresenter {
 
     void addToWeeklyPlan(WeeklyPlanMealWithMeal meal);
 
-    void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal);
+    void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal, String oldMealId);
 }

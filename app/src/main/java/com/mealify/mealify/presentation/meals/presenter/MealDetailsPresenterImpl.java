@@ -82,7 +82,9 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
     @Override
     public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
-        if (meal.planEntry.getMealType() != WeeklyPlanMealType.SNACK) {
+        if (meal.planEntry.getMealType() == WeeklyPlanMealType.SNACK) {
+            forceAddToWeeklyPlan(meal, null);
+        } else {
             weeklyPlanRepo.getMealByDateAndType(
                     meal.planEntry.getDateString(),
                     meal.planEntry.getMealType(), new GeneralResponse<WeeklyPlanMealWithMeal>() {
@@ -91,24 +93,13 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                             if (existingMeal != null) {
                                 view.showReplaceConfirmation(meal, existingMeal);
                             } else {
-                                weeklyPlanRepo.addMealToPlan(meal, new GeneralResponse<Boolean>() {
-                                    @Override
-                                    public void onSuccess(Boolean data) {
-                                        view.onWeeklyPlanMealAdded("Meal added to weekly plan");
-                                    }
-
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                        view.onFailure(errorMessage + " fromADD");
-                                    }
-                                });
+                                forceAddToWeeklyPlan(meal, null);
                             }
                         }
 
                         @Override
                         public void onError(String errorMessage) {
                             view.onFailure(errorMessage + " fromGET");
-
                         }
                     }
             );
@@ -116,8 +107,8 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     }
 
     @Override
-    public void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
-        weeklyPlanRepo.addMealToPlan(meal, new GeneralResponse<Boolean>() {
+    public void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal, String oldMealId) {
+        GeneralResponse<Boolean> callback = new GeneralResponse<Boolean>() {
             @Override
             public void onSuccess(Boolean data) {
                 view.onWeeklyPlanMealAdded("Meal added to weekly plan");
@@ -125,8 +116,14 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
             @Override
             public void onError(String errorMessage) {
-
+                view.onFailure(errorMessage);
             }
-        });
+        };
+
+        if (oldMealId != null) {
+            weeklyPlanRepo.replaceMealInPlan(oldMealId, meal, callback);
+        } else {
+            weeklyPlanRepo.addMealToPlan(meal, callback);
+        }
     }
 }
