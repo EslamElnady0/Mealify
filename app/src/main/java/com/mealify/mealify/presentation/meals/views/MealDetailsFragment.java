@@ -96,34 +96,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
         });
-    }
-
-    private void loadData() {
-        if (presenter != null) {
-            presenter.getMealDetails(String.valueOf(mealId));
-            presenter.isMealFavorite(String.valueOf(mealId));
-        }
-    }
-
-    private void setupNetworkMonitoring() {
-        disposables.add(
-                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
-                        .observeConnection()
-                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-                        .subscribe(isConnected -> {
-                            if (isConnected && currentMeal == null) {
-                                loadData();
-                            }
-                        })
-        );
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        disposables.clear();
-
-
         favButton.setOnClickListener(v -> {
             com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService =
                     com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
@@ -165,6 +137,32 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 showDatePicker();
             }
         });
+    }
+
+    private void loadData() {
+        if (presenter != null) {
+            presenter.getMealDetails(String.valueOf(mealId));
+            presenter.isMealFavorite(String.valueOf(mealId));
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected && currentMeal == null) {
+                                loadData();
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     private void initViews(View view) {
