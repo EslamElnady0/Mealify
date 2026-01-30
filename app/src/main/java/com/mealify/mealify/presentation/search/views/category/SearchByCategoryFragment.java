@@ -48,6 +48,8 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
         return inflater.inflate(R.layout.fragment_search_by_category, container, false);
     }
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -57,7 +59,33 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
         setupPresenter();
         setupSearchListener();
 
-        presenter.getCategories();
+        loadData();
+        setupNetworkMonitoring();
+    }
+
+    private void loadData() {
+        if (presenter != null) {
+            presenter.getCategories();
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected) {
+                                loadData();
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     private void initViews(View view) {

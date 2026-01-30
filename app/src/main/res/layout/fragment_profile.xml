@@ -9,6 +9,7 @@
     tools:context=".presentation.profile.views.ProfileFragment">
 
     <ScrollView
+        android:id="@+id/profile_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -285,6 +286,36 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/offlineContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/background"
+        android:elevation="21dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/morty_crying" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:paddingHorizontal="32dp"
+            android:text="Morty! Morty! I can't even see my own profile!! \n *sobbing hysterically* \n The internet portal is closed, Rick!! \n Who am I without my data??"
+            android:textColor="@color/darkBlue"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+    </LinearLayout>
 
     <!-- Loading Overlay -->
     <FrameLayout

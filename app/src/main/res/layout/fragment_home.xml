@@ -17,4 +17,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/offlineContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="32dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieOffline"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/morty_crying" />
+
+        <TextView
+            android:id="@+id/txtOfflineFunny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Oh jeez, Rick! The internet is... it's gone! \n *heavy sobbing* \n How are we supposed to cook now??"
+            android:textColor="@color/darkBlue"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

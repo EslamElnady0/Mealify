@@ -20,8 +20,7 @@ public class NetworkObservation {
 
     private NetworkObservation(Context context) {
         connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        
-        // Initial check
+
         checkConnection();
 
         ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {

@@ -42,6 +42,7 @@ import java.util.Calendar;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
     private ProgressBar progressBar;
     private NestedScrollView contentScrollView;
     private TextView errorText;
@@ -59,7 +60,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
-
     private int mealId;
     private MealEntity currentMeal;
     private boolean isFavorite = false;
@@ -90,16 +90,43 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
 
-        presenter.getMealDetails(String.valueOf(mealId));
-        presenter.isMealFavorite(String.valueOf(mealId));
+        loadData();
+        setupNetworkMonitoring();
 
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
         });
+    }
+
+    private void loadData() {
+        if (presenter != null) {
+            presenter.getMealDetails(String.valueOf(mealId));
+            presenter.isMealFavorite(String.valueOf(mealId));
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected && currentMeal == null) {
+                                loadData();
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
+
 
         favButton.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
-                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService =
+                    com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;
@@ -128,8 +155,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
-                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService =
+                    com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;

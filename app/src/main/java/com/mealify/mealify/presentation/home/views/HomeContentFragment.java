@@ -82,12 +82,40 @@ public class HomeContentFragment extends Fragment implements HomeView {
         return view;
     }
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        presenter.getMealOfTheDay();
-        presenter.getCategories();
         setupCategoriesRecyclerView();
+        reloadData();
+        setupNetworkMonitoring();
+    }
+
+    private void reloadData() {
+        if (presenter != null) {
+            presenter.getMealOfTheDay();
+            presenter.getCategories();
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected) {
+                                reloadData();
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     private void setupShimmerLoaders() {
