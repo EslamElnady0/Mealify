@@ -49,4 +49,8 @@ public interface WeeklyPlanDao {
 
     @Query("SELECT DISTINCT dateString FROM weekly_plan_meals")
     Observable<List<String>> getAllPlannedDates();
+
+    @Transaction
+    @Query("SELECT * FROM weekly_plan_meals")
+    Observable<List<WeeklyPlanMealWithMeal>> getAllPlannedMeals();
 }

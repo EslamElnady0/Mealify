@@ -36,4 +36,7 @@ public interface FavouriteDao {
 
     @Query("SELECT COUNT(*) FROM favourites")
     Single<Integer> getFavouritesCount();
+
+    @Query("DELETE FROM favourites")
+    Completable deleteAllFavourites();
 }

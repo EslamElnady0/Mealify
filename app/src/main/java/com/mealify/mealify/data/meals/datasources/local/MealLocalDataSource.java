@@ -33,4 +33,8 @@ public class MealLocalDataSource {
     public Completable deleteMeal(MealEntity meal) {
         return mealDao.delete(meal);
     }
+
+    public Completable deleteAllMeals() {
+        return mealDao.deleteAllMeals();
+    }
 }

@@ -21,16 +21,27 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import com.mealify.mealify.data.favs.datasource.local.FavouriteLocalDataSource;
+import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 public class MealsRepo {
 
     private final MealRemoteDataSource remoteDataSource;
     private final MealLocalDataSource localDataSource;
+    private final FavouriteLocalDataSource favouriteLocalDataSource;
+    private final WeeklyPlanLocalDataSource weeklyPlanLocalDataSource;
 
     public MealsRepo(Context ctx) {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
         this.localDataSource = new MealLocalDataSource(ctx);
+        this.favouriteLocalDataSource = new FavouriteLocalDataSource(ctx);
+        this.weeklyPlanLocalDataSource = new WeeklyPlanLocalDataSource(ctx);
     }
 
     @SuppressLint("CheckResult")
@@ -122,5 +133,29 @@ public class MealsRepo {
                         generalResponse::onSuccess,
                         error -> generalResponse.onError(error.getMessage())
                 );
+    }
+
+    public Observable<List<MealEntity>> getAllLocalMeals() {
+        return localDataSource.getAllMeals();
+    }
+
+    public Observable<List<FavouriteWithMeal>> getAllLocalFavourites() {
+        return favouriteLocalDataSource.getAllFavourites();
+    }
+
+    public Observable<List<WeeklyPlanMealWithMeal>> getAllLocalWeeklyPlans() {
+        return weeklyPlanLocalDataSource.getAllPlannedMeals();
+    }
+
+    public Completable removeAllLocalMeals() {
+        return localDataSource.deleteAllMeals();
+    }
+
+    public Completable removeAllLocalFavourites() {
+        return favouriteLocalDataSource.deleteAllFavourites();
+    }
+
+    public Completable removeAllLocalWeeklyPlans() {
+        return weeklyPlanLocalDataSource.clearWeeklyPlan();
     }
 }

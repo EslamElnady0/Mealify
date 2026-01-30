@@ -56,4 +56,8 @@ public class WeeklyPlanLocalDataSource {
     public Observable<List<String>> getAllPlannedDates() {
         return weeklyPlanDao.getAllPlannedDates();
     }
+
+    public Observable<List<WeeklyPlanMealWithMeal>> getAllPlannedMeals() {
+        return weeklyPlanDao.getAllPlannedMeals();
+    }
 }

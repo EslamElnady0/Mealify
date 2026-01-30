@@ -27,4 +27,7 @@ public interface MealDao {
 
     @Delete
     Completable delete(MealEntity meal);
+
+    @Query("DELETE FROM meals")
+    Completable deleteAllMeals();
 }

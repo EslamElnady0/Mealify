@@ -39,4 +39,9 @@ public class FavouriteLocalDataSource {
     public Single<Integer> getFavouritesCount() {
         return favouriteDao.getFavouritesCount();
     }
+
+    public Completable deleteAllFavourites() {
+        return favouriteDao.deleteAllFavourites();
+    }
 }
+
