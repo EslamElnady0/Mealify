@@ -187,7 +187,8 @@ public class MealsRepo {
     public Completable uploadWeeklyPlanToFirebase(List<WeeklyPlanMealEntity> plans) {
         if (plans == null || plans.isEmpty()) return Completable.complete();
         return Observable.fromIterable(plans)
-                .flatMapCompletable(plan -> weeklyPlanRemoteDataSource.saveToWeeklyPlan(String.valueOf(plan.getPlanId()), plan))
+                .flatMapCompletable(plan -> weeklyPlanRemoteDataSource
+                        .saveToWeeklyPlan(String.valueOf(plan.getMealId()), plan))
                 .subscribeOn(Schedulers.io());
     }
 

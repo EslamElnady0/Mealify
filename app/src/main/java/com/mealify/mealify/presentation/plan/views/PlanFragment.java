@@ -264,7 +264,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
                             new DialogUtils.DialogCallback() {
                                 @Override
                                 public void onConfirm() {
-                                    presenter.deleteMealFromPlan(mealWithPlan.planEntry.getPlanId());
+                                    presenter.deleteMealFromPlan(Long.parseLong(mealWithPlan.planEntry.getMealId()));
                                 }
 
                                 @Override
@@ -317,7 +317,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
                     new DialogUtils.DialogCallback() {
                         @Override
                         public void onConfirm() {
-                            presenter.deleteMealFromPlan(snack.planEntry.getPlanId());
+                            presenter.deleteMealFromPlan(Long.parseLong(snack.planEntry.getMealId()));
                         }
 
                         @Override

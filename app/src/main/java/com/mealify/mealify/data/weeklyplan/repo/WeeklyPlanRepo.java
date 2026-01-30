@@ -119,13 +119,6 @@ public class WeeklyPlanRepo {
                 .subscribe();
     }
 
-    public void clearAllPlannedMeals() {
-        localDataSource.clearWeeklyPlan()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-    }
-
     @SuppressLint("CheckResult")
     public void getAllPlannedDates(GeneralResponse<List<String>> generalResponse) {
         localDataSource.getAllPlannedDates().subscribeOn(Schedulers.io())
