@@ -98,6 +98,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         });
 
         favButton.setOnClickListener(v -> {
+            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
+                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
+                DialogUtils.showGuestLoginDialog(getContext());
+                return;
+            }
             if (currentMeal != null) {
                 if (isFavorite) {
                     DialogUtils.showConfirmationDialog(
@@ -122,6 +128,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {
+            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
+                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
+                DialogUtils.showGuestLoginDialog(getContext());
+                return;
+            }
             if (currentMeal != null) {
                 showDatePicker();
             }

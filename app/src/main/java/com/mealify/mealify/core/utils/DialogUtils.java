@@ -2,6 +2,7 @@ package com.mealify.mealify.core.utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
+import com.mealify.mealify.presentation.auth.AuthActivity;
 
 public class DialogUtils {
 
@@ -160,17 +162,6 @@ public class DialogUtils {
         dialog.show();
     }
 
-    public interface DialogCallback {
-        void onConfirm();
-
-        void onCancel();
-    }
-
-    public interface AddMealOptionCallback {
-        void onGoToFavorites();
-        void onGoToSearch();
-    }
-
     public static void showAddMealOptionDialog(Context context, AddMealOptionCallback callback) {
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_option, null);
 
@@ -253,5 +244,44 @@ public class DialogUtils {
         });
 
         dialog.show();
+    }
+
+    public static void showGuestLoginDialog(Context context) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_guest_mode, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        Button btnLogin = dialogView.findViewById(R.id.btn_login);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+
+        btnLogin.setOnClickListener(v -> {
+            Intent intent = new android.content.Intent(context, AuthActivity.class);
+            context.startActivity(intent);
+            dialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    public interface DialogCallback {
+        void onConfirm();
+
+        void onCancel();
+    }
+
+    public interface AddMealOptionCallback {
+        void onGoToFavorites();
+
+        void onGoToSearch();
     }
 }
