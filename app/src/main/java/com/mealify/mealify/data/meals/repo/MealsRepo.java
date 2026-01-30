@@ -4,7 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
+import com.mealify.mealify.data.favs.datasource.local.FavouriteLocalDataSource;
+import com.mealify.mealify.data.favs.datasource.remote.FavouriteRemoteDataSource;
+import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
+import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.data.meals.datasources.local.MealLocalDataSource;
+import com.mealify.mealify.data.meals.datasources.remote.MealFirestoreRemoteDataSource;
 import com.mealify.mealify.data.meals.datasources.remote.MealRemoteDataSource;
 import com.mealify.mealify.data.meals.mapper.MealMapper;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
@@ -17,23 +22,18 @@ import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientsResponse;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
+import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
+import com.mealify.mealify.data.weeklyplan.datasource.remote.WeeklyPlanRemoteDataSource;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
-import com.mealify.mealify.data.favs.datasource.local.FavouriteLocalDataSource;
-import com.mealify.mealify.data.favs.datasource.remote.FavouriteRemoteDataSource;
-import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
-import com.mealify.mealify.data.meals.datasources.remote.MealFirestoreRemoteDataSource;
-import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanLocalDataSource;
-import com.mealify.mealify.data.weeklyplan.datasource.remote.WeeklyPlanRemoteDataSource;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
 
 public class MealsRepo {
 
@@ -189,5 +189,46 @@ public class MealsRepo {
         return Observable.fromIterable(plans)
                 .flatMapCompletable(plan -> weeklyPlanRemoteDataSource.saveToWeeklyPlan(String.valueOf(plan.getPlanId()), plan))
                 .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<MealEntity>> getMealsFromFirebase() {
+        return mealFirestoreRemoteDataSource.getMealsFromRemote()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<FavouriteEntity>> getFavouritesFromFirebase() {
+        return favouriteRemoteDataSource.getFavouritesFromRemote()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<WeeklyPlanMealEntity>> getWeeklyPlanFromFirebase() {
+        return weeklyPlanRemoteDataSource.getWeeklyPlanFromRemote()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Completable saveMealsToLocal(List<MealEntity> meals) {
+        if (meals == null || meals.isEmpty()) return Completable.complete();
+        return localDataSource.insertMeals(meals).subscribeOn(Schedulers.io());
+    }
+
+    public Completable saveFavouritesToLocal(List<FavouriteEntity> favourites) {
+        if (favourites == null || favourites.isEmpty()) return Completable.complete();
+        return favouriteLocalDataSource.insertFavourites(favourites).subscribeOn(Schedulers.io());
+    }
+
+    public Completable saveWeeklyPlanToLocal(List<WeeklyPlanMealEntity> plans) {
+        if (plans == null || plans.isEmpty()) return Completable.complete();
+        return weeklyPlanLocalDataSource.insertWeeklyPlan(plans).subscribeOn(Schedulers.io());
+    }
+
+    public Completable syncDataFromFirebase() {
+        return Completable.concatArray(
+                getMealsFromFirebase()
+                        .flatMapCompletable(this::saveMealsToLocal),
+                getFavouritesFromFirebase()
+                        .flatMapCompletable(this::saveFavouritesToLocal),
+                getWeeklyPlanFromFirebase()
+                        .flatMapCompletable(this::saveWeeklyPlanToLocal)
+        ).subscribeOn(Schedulers.io());
     }
 }

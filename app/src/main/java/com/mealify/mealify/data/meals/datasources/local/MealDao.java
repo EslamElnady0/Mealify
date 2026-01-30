@@ -19,6 +19,9 @@ public interface MealDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertMeal(MealEntity meal);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertMeals(List<MealEntity> meals);
+
     @Query("SELECT * FROM meals WHERE id = :mealId")
     Single<MealEntity> getMealById(String mealId);
 

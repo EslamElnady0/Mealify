@@ -21,6 +21,9 @@ public interface FavouriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(FavouriteEntity favourite);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertFavourites(List<FavouriteEntity> favourites);
+
     @Transaction
     @Query("SELECT * FROM favourites ORDER BY timestamp DESC")
     Observable<List<FavouriteWithMeal>> getAllFavouritesWithMeals();

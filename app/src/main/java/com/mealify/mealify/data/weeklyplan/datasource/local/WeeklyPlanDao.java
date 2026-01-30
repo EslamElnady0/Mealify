@@ -23,6 +23,9 @@ public interface WeeklyPlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable addMealToPlan(WeeklyPlanMealEntity planMeal);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertWeeklyPlan(List<WeeklyPlanMealEntity> plans);
+
     @Transaction
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString BETWEEN :startDate AND :endDate ORDER BY dateString, mealType")
     Observable<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate);

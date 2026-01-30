@@ -22,6 +22,10 @@ public class MealLocalDataSource {
         return mealDao.insertMeal(meal);
     }
 
+    public Completable insertMeals(List<MealEntity> meals) {
+        return mealDao.insertMeals(meals);
+    }
+
     public Single<MealEntity> getMealById(String mealId) {
         return mealDao.getMealById(mealId);
     }
