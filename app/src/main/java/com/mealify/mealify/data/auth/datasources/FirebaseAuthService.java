@@ -58,48 +58,60 @@ public class FirebaseAuthService implements AuthService {
 
     @Override
     public void login(String email, String password, GeneralResponse<String> generalResponse) {
+        CustomLogger.log("Attempting login for email: " + email, "AUTH_SERVICE");
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
+                        CustomLogger.log("Login successful: " + user.getUid(), "AUTH_SERVICE");
                         generalResponse.onSuccess(user.getUid());
                     } else {
+                        CustomLogger.log("Login failed: User not found", "AUTH_SERVICE");
                         generalResponse.onError("Login failed: User not found");
                     }
                 })
                 .addOnFailureListener(e -> {
+                    CustomLogger.log("Login failed: " + e.getMessage(), "AUTH_SERVICE");
                     generalResponse.onError(e.getMessage());
                 });
     }
 
     @Override
     public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
+        CustomLogger.log("Attempting registration for email: " + email, "AUTH_SERVICE");
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
+                        CustomLogger.log("Registration successful: " + user.getUid(), "AUTH_SERVICE");
                         generalResponse.onSuccess(user.getUid());
                     } else {
+                        CustomLogger.log("Registration failed: User not created", "AUTH_SERVICE");
                         generalResponse.onError("Registration failed: User not created");
                     }
                 })
                 .addOnFailureListener(e -> {
+                    CustomLogger.log("Registration failed: " + e.getMessage(), "AUTH_SERVICE");
                     generalResponse.onError(e.getMessage());
                 });
     }
 
     @Override
     public void signInAnonymously(GeneralResponse<String> generalResponse) {
+        CustomLogger.log("Attempting anonymous sign-in", "AUTH_SERVICE");
         firebaseAuth.signInAnonymously()
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
+                        CustomLogger.log("Anonymous sign-in successful: " + user.getUid(), "AUTH_SERVICE");
                         generalResponse.onSuccess("guest_" + user.getUid());
                     } else {
+                        CustomLogger.log("Anonymous sign-in failed: User not found", "AUTH_SERVICE");
                         generalResponse.onError("Anonymous sign-in failed: User not found");
                     }
                 })
                 .addOnFailureListener(e -> {
+                    CustomLogger.log("Anonymous sign-in failed: " + e.getMessage(), "AUTH_SERVICE");
                     generalResponse.onError(e.getMessage());
                 });
     }
@@ -184,6 +196,12 @@ public class FirebaseAuthService implements AuthService {
                     }
                 }
         );
+    }
+
+    @Override
+    public String getCurrentUserId() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        return user != null ? user.getUid() : null;
     }
 
     public FirebaseUser getCurrentUser() {

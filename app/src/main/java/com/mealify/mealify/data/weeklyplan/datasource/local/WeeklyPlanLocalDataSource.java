@@ -25,6 +25,10 @@ public class WeeklyPlanLocalDataSource {
         return weeklyPlanDao.addMealToPlan(mealEntity);
     }
 
+    public Completable insertWeeklyPlan(List<WeeklyPlanMealEntity> plans) {
+        return weeklyPlanDao.insertWeeklyPlan(plans);
+    }
+
     public Observable<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate) {
         return weeklyPlanDao.getWeekMeals(startDate, endDate);
     }
@@ -55,5 +59,9 @@ public class WeeklyPlanLocalDataSource {
 
     public Observable<List<String>> getAllPlannedDates() {
         return weeklyPlanDao.getAllPlannedDates();
+    }
+
+    public Observable<List<WeeklyPlanMealWithMeal>> getAllPlannedMeals() {
+        return weeklyPlanDao.getAllPlannedMeals();
     }
 }

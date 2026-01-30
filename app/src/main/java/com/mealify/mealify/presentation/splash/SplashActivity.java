@@ -2,28 +2,26 @@ package com.mealify.mealify.presentation.splash;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomLogger;
-import com.mealify.mealify.data.auth.datasources.PrefsDataSource;
+import com.mealify.mealify.data.auth.repo.AuthRepo;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.home.views.HomeActivity;
+import com.mealify.mealify.presentation.splash.presenter.SplashPresenter;
+import com.mealify.mealify.presentation.splash.presenter.SplashPresenterImpl;
+import com.mealify.mealify.presentation.splash.views.SplashView;
 
-import java.util.concurrent.TimeUnit;
+public class SplashActivity extends AppCompatActivity implements SplashView {
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-
-
-public class SplashActivity extends AppCompatActivity {
-
-    private final CompositeDisposable disposable = new CompositeDisposable();
+    private SplashPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +34,21 @@ public class SplashActivity extends AppCompatActivity {
             return insets;
         });
 
-        checkLoginStatus();
+        presenter = new SplashPresenterImpl(this, new AuthRepo(this));
+        
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            presenter.checkLoginStatus();
+        }, 2000);
     }
 
-    private void checkLoginStatus() {
-        PrefsDataSource prefsDataSource = new PrefsDataSource(this);
+    @Override
+    public void onUserAuthenticated(String userId) {
+        navigate(userId);
+    }
 
-        disposable.add(Observable.timer(3, TimeUnit.SECONDS)
-                .flatMap(aLong -> prefsDataSource.observeString("user_id", ""))
-                .take(1)
-                .subscribeOn(Schedulers.io())
-                .subscribe(userId -> {
-                    runOnUiThread(() -> navigate(userId));
-                }, throwable -> {
-                    CustomLogger.log("Splash Error: " + throwable.getMessage());
-                    runOnUiThread(() -> navigate(""));
-                }));
+    @Override
+    public void onUserNotAuthenticated() {
+        navigate(null);
     }
 
     private void navigate(String userId) {
@@ -64,11 +61,5 @@ public class SplashActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        disposable.clear();
     }
 }

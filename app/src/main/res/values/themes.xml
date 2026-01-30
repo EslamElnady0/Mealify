@@ -55,4 +55,19 @@
     <style name="ShapeAppearanceOverlay.App.Corner24dp" parent="">
         <item name="cornerSize">24dp</item>
     </style>
+
+    <style name="CircleAppearance" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/white</item>
+        <item name="android:alpha">1.0</item>
+        <item name="marginHorizontal">0dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.BottomNav.Indicator</item>
+    </style>
+
+    <style name="ShapeAppearance.BottomNav.Indicator" parent="ShapeAppearance.Material3.Corner.Full">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

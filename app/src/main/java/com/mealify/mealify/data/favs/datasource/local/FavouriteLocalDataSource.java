@@ -24,6 +24,10 @@ public class FavouriteLocalDataSource {
         return favouriteDao.insert(entity);
     }
 
+    public Completable insertFavourites(List<FavouriteEntity> favourites) {
+        return favouriteDao.insertFavourites(favourites);
+    }
+
     public Completable removeFromFavourites(String mealId) {
         return favouriteDao.deleteByMealId(mealId);
     }
@@ -35,4 +39,13 @@ public class FavouriteLocalDataSource {
     public Observable<List<FavouriteWithMeal>> getAllFavourites() {
         return favouriteDao.getAllFavouritesWithMeals();
     }
+
+    public Single<Integer> getFavouritesCount() {
+        return favouriteDao.getFavouritesCount();
+    }
+
+    public Completable deleteAllFavourites() {
+        return favouriteDao.deleteAllFavourites();
+    }
 }
+

@@ -20,9 +20,7 @@ import com.mealify.mealify.data.meals.model.meal.MealEntity;
                 @Index(value = {"dateString", "mealType"})}
 )
 public class WeeklyPlanMealEntity {
-    @PrimaryKey(autoGenerate = true)
-    private long planId;
-
+    @PrimaryKey
     @NonNull
     private String mealId;
 
@@ -37,6 +35,9 @@ public class WeeklyPlanMealEntity {
 
     private long addedAt;
 
+    public WeeklyPlanMealEntity() {
+    }
+
     public WeeklyPlanMealEntity(@NonNull String mealId, @NonNull String dateString,
                                 @NonNull DayOfWeek dayOfWeek, @NonNull WeeklyPlanMealType mealType, long addedAt) {
         this.mealId = mealId;
@@ -44,14 +45,6 @@ public class WeeklyPlanMealEntity {
         this.dayOfWeek = dayOfWeek;
         this.mealType = mealType;
         this.addedAt = addedAt;
-    }
-
-    public long getPlanId() {
-        return planId;
-    }
-
-    public void setPlanId(long planId) {
-        this.planId = planId;
     }
 
     @NonNull

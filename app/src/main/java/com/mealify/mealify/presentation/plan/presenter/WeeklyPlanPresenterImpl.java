@@ -1,6 +1,7 @@
 package com.mealify.mealify.presentation.plan.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
@@ -37,6 +38,7 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
 
     @Override
     public void deleteMealFromPlan(long planId) {
+        Log.i("TAG", "deleteMealFromPlan: " + planId);
         weeklyPlanRepo.deleteMealFromPlan(planId);
     }
 

@@ -119,13 +119,6 @@ public class WeeklyPlanRepo {
                 .subscribe();
     }
 
-    public void clearAllPlannedMeals() {
-        localDataSource.clearWeeklyPlan()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-    }
-
     @SuppressLint("CheckResult")
     public void getAllPlannedDates(GeneralResponse<List<String>> generalResponse) {
         localDataSource.getAllPlannedDates().subscribeOn(Schedulers.io())
@@ -134,5 +127,15 @@ public class WeeklyPlanRepo {
                     generalResponse.onError(error.getMessage());
                 });
 
+    }
+
+    @SuppressLint("CheckResult")
+    public void getPlannedMealsCount(GeneralResponse<Integer> generalResponse) {
+        localDataSource.getPlannedMealsCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(generalResponse::onSuccess, error -> {
+                    generalResponse.onError(error.getMessage());
+                });
     }
 }

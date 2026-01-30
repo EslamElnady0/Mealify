@@ -23,6 +23,9 @@ public interface WeeklyPlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable addMealToPlan(WeeklyPlanMealEntity planMeal);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertWeeklyPlan(List<WeeklyPlanMealEntity> plans);
+
     @Transaction
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString BETWEEN :startDate AND :endDate ORDER BY dateString, mealType")
     Observable<List<WeeklyPlanMealWithMeal>> getWeekMeals(String startDate, String endDate);
@@ -35,7 +38,7 @@ public interface WeeklyPlanDao {
     @Query("SELECT * FROM weekly_plan_meals WHERE dateString = :date AND mealType = :mealType Order By addedAt DESC LIMIT 1")
     Maybe<WeeklyPlanMealWithMeal> getMealByDateAndType(String date, WeeklyPlanMealType mealType);
 
-    @Query("DELETE FROM weekly_plan_meals WHERE planId = :id")
+    @Query("DELETE FROM weekly_plan_meals WHERE mealId = :id")
     Completable deleteMealById(long id);
 
     @Query("DELETE FROM weekly_plan_meals WHERE dateString = :date AND mealType = :mealType")
@@ -49,4 +52,8 @@ public interface WeeklyPlanDao {
 
     @Query("SELECT DISTINCT dateString FROM weekly_plan_meals")
     Observable<List<String>> getAllPlannedDates();
+
+    @Transaction
+    @Query("SELECT * FROM weekly_plan_meals")
+    Observable<List<WeeklyPlanMealWithMeal>> getAllPlannedMeals();
 }

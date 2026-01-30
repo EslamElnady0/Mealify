@@ -21,6 +21,9 @@ public interface FavouriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(FavouriteEntity favourite);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertFavourites(List<FavouriteEntity> favourites);
+
     @Transaction
     @Query("SELECT * FROM favourites ORDER BY timestamp DESC")
     Observable<List<FavouriteWithMeal>> getAllFavouritesWithMeals();
@@ -33,4 +36,10 @@ public interface FavouriteDao {
 
     @Query("DELETE FROM favourites WHERE mealId = :mealId")
     Completable deleteByMealId(String mealId);
+
+    @Query("SELECT COUNT(*) FROM favourites")
+    Single<Integer> getFavouritesCount();
+
+    @Query("DELETE FROM favourites")
+    Completable deleteAllFavourites();
 }

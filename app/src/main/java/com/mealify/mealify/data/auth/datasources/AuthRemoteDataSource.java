@@ -39,4 +39,8 @@ public class AuthRemoteDataSource {
         authService.signOut(generalResponse);
     }
 
+    public String getCurrentUserId() {
+        return authService.getCurrentUserId();
+    }
+
 }
