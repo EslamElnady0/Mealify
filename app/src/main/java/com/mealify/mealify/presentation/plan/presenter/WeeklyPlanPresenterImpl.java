@@ -13,15 +13,21 @@ import java.util.List;
 public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
     private PlanView view;
     private WeeklyPlanRepo weeklyPlanRepo;
+    private final com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService;
 
-    public WeeklyPlanPresenterImpl(Context ctx, PlanView view) {
+    public WeeklyPlanPresenterImpl(android.content.Context ctx, PlanView view) {
         this.weeklyPlanRepo = new WeeklyPlanRepo(ctx);
         this.view = view;
+        this.authService = com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(ctx);
     }
-
 
     @Override
     public void loadMealsForDate(String dateString) {
+        if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
+            view.setGuestMode(true);
+            return;
+        }
+        view.setGuestMode(false);
         weeklyPlanRepo.getMealsByDate(dateString,
                 new GeneralResponse<List<WeeklyPlanMealWithMeal>>() {
                     @Override
