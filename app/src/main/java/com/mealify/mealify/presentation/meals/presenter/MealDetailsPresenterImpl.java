@@ -4,12 +4,10 @@ import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.core.utils.NetworkObservation;
-import com.mealify.mealify.data.favs.repo.FavRepo;
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
-import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -18,17 +16,13 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private MealDetailsView view;
-    private MealsRepo mealsRepo;
-    private FavRepo favRepo;
-    private WeeklyPlanRepo weeklyPlanRepo;
-    private Context context;
+    private final MealsRepo mealsRepo;
+    private final Context context;
 
     public MealDetailsPresenterImpl(Context context, MealDetailsView view) {
         this.context = context;
         this.view = view;
         this.mealsRepo = new MealsRepo(context);
-        this.favRepo = new FavRepo(context);
-        this.weeklyPlanRepo = new WeeklyPlanRepo(context);
     }
 
     @Override
@@ -51,8 +45,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
     @Override
     public void isMealFavorite(String mealId) {
-
-        favRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
+        mealsRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
             @Override
             public void onSuccess(Boolean data) {
                 view.onIsFavoriteResult(data);
@@ -60,29 +53,28 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
             @Override
             public void onError(String errorMessage) {
-
+                // Ignore error for favorite check
             }
         });
     }
 
     @Override
     public void toggleFavorite(MealEntity meal) {
-
-        favRepo.isMealFavorite(meal.getId(), new GeneralResponse<Boolean>() {
+        mealsRepo.isMealFavorite(meal.getId(), new GeneralResponse<Boolean>() {
             @Override
             public void onSuccess(Boolean data) {
                 boolean isFav = data;
                 if (isFav) {
-                    favRepo.deleteMealFromFavorites(meal.getId());
+                    mealsRepo.deleteMealFromFavorites(meal.getId());
                 } else {
-                    favRepo.insertMealInFavorites(meal);
+                    mealsRepo.insertMealInFavorites(meal);
                 }
                 view.onToggleFavoriteSuccess(!isFav);
             }
 
             @Override
             public void onError(String errorMessage) {
-
+                // Handle error
             }
         });
     }
@@ -92,7 +84,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
         if (meal.planEntry.getMealType() == WeeklyPlanMealType.SNACK) {
             forceAddToWeeklyPlan(meal, null);
         } else {
-            weeklyPlanRepo.getMealByDateAndType(
+            mealsRepo.getMealByDateAndType(
                     meal.planEntry.getDateString(),
                     meal.planEntry.getMealType(), new GeneralResponse<WeeklyPlanMealWithMeal>() {
                         @Override
@@ -128,9 +120,9 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
         };
 
         if (oldMealId != null) {
-            weeklyPlanRepo.replaceMealInPlan(oldMealId, meal, callback);
+            mealsRepo.replaceMealInPlan(oldMealId, meal, callback);
         } else {
-            weeklyPlanRepo.addMealToPlan(meal, callback);
+            mealsRepo.addMealToPlan(meal, callback);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.fav.presenter;
 
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
+import com.mealify.mealify.data.models.meal.MealEntity;
 
 public interface FavsPresenter {
     void getFavouriteMeals();

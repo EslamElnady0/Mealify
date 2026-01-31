@@ -3,8 +3,8 @@ package com.mealify.mealify.presentation.search.presenter.area;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.country.CountryDto;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.country.CountryDto;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.area.SearchAreaView;
 
 import java.util.ArrayList;

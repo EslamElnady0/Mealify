@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 
 import java.util.ArrayList;
 import java.util.List;

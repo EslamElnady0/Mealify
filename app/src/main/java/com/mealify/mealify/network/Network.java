@@ -2,9 +2,9 @@ package com.mealify.mealify.network;
 
 import android.content.Context;
 
-import com.mealify.mealify.data.auth.datasources.AuthService;
-import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
-import com.mealify.mealify.data.meals.datasources.remote.MealService;
+import com.mealify.mealify.data.datasources.auth.remote.services.AuthService;
+import com.mealify.mealify.data.datasources.auth.remote.services.FirebaseAuthService;
+import com.mealify.mealify.data.datasources.meals.remote.service.MealService;
 
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import retrofit2.Retrofit;

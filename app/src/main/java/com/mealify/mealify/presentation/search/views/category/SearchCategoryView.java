@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.search.views.category;
 
-import com.mealify.mealify.data.meals.model.category.CategoryDto;
+import com.mealify.mealify.data.models.category.CategoryDto;
 
 import java.util.List;
 

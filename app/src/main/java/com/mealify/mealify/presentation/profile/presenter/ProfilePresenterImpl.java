@@ -3,14 +3,12 @@ package com.mealify.mealify.presentation.profile.presenter;
 import android.content.Context;
 import com.google.firebase.auth.FirebaseUser;
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.auth.repo.AuthRepo;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
 import android.annotation.SuppressLint;
-import com.mealify.mealify.data.favs.repo.FavRepo;
-import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.profile.views.ProfileView;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +21,6 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     private final Context context;
     private final ProfileView view;
     private final AuthRepo authRepo;
-    private final FavRepo favRepo;
-    private final WeeklyPlanRepo planRepo;
     private final MealsRepo mealsRepo;
 
     private int favoritesCount = 0;
@@ -34,8 +30,6 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         this.context = context;
         this.view = view;
         this.authRepo = new AuthRepo(context);
-        this.favRepo = new FavRepo(context);
-        this.planRepo = new WeeklyPlanRepo(context);
         this.mealsRepo = new MealsRepo(context);
     }
 
@@ -70,7 +64,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
             return;
         }
         view.toggleLoading(true);
-        favRepo.getFavouritesCount(new GeneralResponse<Integer>() {
+        mealsRepo.getFavouritesCount(new GeneralResponse<Integer>() {
             @Override
             public void onSuccess(Integer count) {
                 favoritesCount = count;
@@ -85,7 +79,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     }
 
     private void loadPlansCount() {
-        planRepo.getPlannedMealsCount(new GeneralResponse<Integer>() {
+        mealsRepo.getPlannedMealsCount(new GeneralResponse<Integer>() {
             @Override
             public void onSuccess(Integer count) {
                 plansCount = count;

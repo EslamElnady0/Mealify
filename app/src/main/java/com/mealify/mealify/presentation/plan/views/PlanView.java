@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.plan.views;
 
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
 

@@ -3,8 +3,8 @@ package com.mealify.mealify.presentation.search.presenter.name;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.name.SearchNameView;
 
 import java.util.List;

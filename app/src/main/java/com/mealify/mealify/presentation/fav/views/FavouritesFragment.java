@@ -22,8 +22,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.utils.DialogUtils;
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
-import com.mealify.mealify.data.favs.repo.FavRepo;
+import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.fav.presenter.FavsPresenter;
 import com.mealify.mealify.presentation.fav.presenter.FavsPresenterImpl;
@@ -56,7 +56,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new FavsPresenterImpl(new FavRepo(requireContext()), this, requireContext());
+        presenter = new FavsPresenterImpl(new MealsRepo(requireContext()), this, requireContext());
     }
 
     @Override

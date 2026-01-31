@@ -24,8 +24,8 @@ import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.utils.DialogUtils;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenter;
 import com.mealify.mealify.presentation.plan.presenter.WeeklyPlanPresenterImpl;
 

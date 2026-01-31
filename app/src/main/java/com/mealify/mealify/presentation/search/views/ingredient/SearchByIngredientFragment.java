@@ -21,8 +21,8 @@ import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.NetworkObservation;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
-import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.ingredient.IngredientDto;
 import com.mealify.mealify.presentation.search.presenter.ingredient.SearchIngredientPresenter;
 import com.mealify.mealify.presentation.search.presenter.ingredient.SearchIngredientPresenterImpl;
 

@@ -3,9 +3,9 @@ package com.mealify.mealify.presentation.search.presenter.searchresults;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.searchresults.MealSearchResultView;
 
 import java.util.ArrayList;

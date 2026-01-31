@@ -1,7 +1,7 @@
 package com.mealify.mealify.presentation.fav.views;
 
 
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
-import com.mealify.mealify.data.meals.model.meal.Ingredient;
+import com.mealify.mealify.data.models.meal.Ingredient;
 
 import java.util.ArrayList;
 import java.util.List;

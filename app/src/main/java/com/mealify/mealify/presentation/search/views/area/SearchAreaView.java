@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.search.views.area;
 
-import com.mealify.mealify.data.meals.model.country.CountryDto;
+import com.mealify.mealify.data.models.country.CountryDto;
 
 import java.util.List;
 

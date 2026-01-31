@@ -24,7 +24,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 import com.mealify.mealify.presentation.search.presenter.name.SearchNamePresenter;
 import com.mealify.mealify.presentation.search.presenter.name.SearchNamePresenterImpl;
 import com.mealify.mealify.presentation.search.views.searchresults.MealSearchResultAdapter;

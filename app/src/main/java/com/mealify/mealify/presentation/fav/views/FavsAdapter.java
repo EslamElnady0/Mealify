@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mealify.mealify.R;
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
 
 import java.util.ArrayList;
 import java.util.List;

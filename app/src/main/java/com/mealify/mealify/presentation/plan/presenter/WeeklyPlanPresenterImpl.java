@@ -4,31 +4,32 @@ import android.content.Context;
 import android.util.Log;
 
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
-import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.plan.views.PlanView;
 
 import java.util.List;
 
 public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
     private PlanView view;
-    private WeeklyPlanRepo weeklyPlanRepo;
-    private final com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService;
+    private final MealsRepo mealsRepo;
+    private final AuthRepo authRepo;
 
-    public WeeklyPlanPresenterImpl(android.content.Context ctx, PlanView view) {
-        this.weeklyPlanRepo = new WeeklyPlanRepo(ctx);
+    public WeeklyPlanPresenterImpl(Context ctx, PlanView view) {
+        this.mealsRepo = new MealsRepo(ctx);
         this.view = view;
-        this.authService = com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(ctx);
+        this.authRepo = new AuthRepo(ctx);
     }
 
     @Override
     public void loadMealsForDate(String dateString) {
-        if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
+        if (authRepo.getCurrentUser() != null && authRepo.getCurrentUser().isAnonymous()) {
             view.setGuestMode(true);
             return;
         }
         view.setGuestMode(false);
-        weeklyPlanRepo.getMealsByDate(dateString,
+        mealsRepo.getMealsByDate(dateString,
                 new GeneralResponse<List<WeeklyPlanMealWithMeal>>() {
                     @Override
                     public void onSuccess(List<WeeklyPlanMealWithMeal> data) {
@@ -45,12 +46,12 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
     @Override
     public void deleteMealFromPlan(long planId) {
         Log.i("TAG", "deleteMealFromPlan: " + planId);
-        weeklyPlanRepo.deleteMealFromPlan(planId);
+        mealsRepo.deleteMealFromPlan(planId);
     }
 
     @Override
     public void getAllPlannedDates() {
-        weeklyPlanRepo.getAllPlannedDates(new GeneralResponse<List<String>>() {
+        mealsRepo.getAllPlannedDates(new GeneralResponse<List<String>>() {
             @Override
             public void onSuccess(List<String> data) {
                 view.showPlannedDates(data);

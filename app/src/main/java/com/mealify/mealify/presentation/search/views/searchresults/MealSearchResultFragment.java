@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 import com.mealify.mealify.presentation.search.presenter.searchresults.MealSearchResultPresenter;
 import com.mealify.mealify.presentation.search.presenter.searchresults.MealSearchResultPresenterImpl;
 

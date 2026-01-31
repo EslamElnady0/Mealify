@@ -4,8 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.mealify.mealify.core.helper.CustomLogger;
-import com.mealify.mealify.data.auth.repo.AuthRepo;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.auth.register.views.RegisterView;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
