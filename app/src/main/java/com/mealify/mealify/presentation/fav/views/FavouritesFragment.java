@@ -188,10 +188,8 @@ public class FavouritesFragment extends Fragment implements FavsView {
 
     @Override
     public void setGuestMode(boolean isGuest) {
-        if (guestContainer != null)
-            guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
-        if (favoritesRecycler != null)
-            favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+        if (favoritesRecycler != null) favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (searchLayout != null) searchLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (headerLayout != null) headerLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (emptyView != null && isGuest) emptyView.setVisibility(View.GONE);

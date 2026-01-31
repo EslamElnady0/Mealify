@@ -86,7 +86,10 @@ public class SearchFragment extends Fragment {
                                 viewPager.setVisibility(View.GONE);
                                 offlineContainer.setVisibility(View.VISIBLE);
                             }
-                        })
+                        },
+                        throwable -> {
+                        }
+                )
         );
     }
 

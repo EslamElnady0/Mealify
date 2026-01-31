@@ -44,36 +44,43 @@ public class HomeFragment extends Fragment {
         homeContentContainer = view.findViewById(R.id.homeContentContainer);
         offlineContainer = view.findViewById(R.id.offlineContainer);
 
-        if (savedInstanceState == null) {
-            loadContentFragment();
-        }
-
+        loadContentFragment();
         setupNetworkMonitoring();
     }
 
     private void setupNetworkMonitoring() {
+        if (getContext() == null) return;
+
         disposables.add(
                 NetworkObservation.getInstance(requireContext())
                         .observeConnection()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(isConnected -> {
-                            if (isConnected) {
-                                homeContentContainer.setVisibility(View.VISIBLE);
-                                offlineContainer.setVisibility(View.GONE);
-                            } else {
-                                homeContentContainer.setVisibility(View.GONE);
-                                offlineContainer.setVisibility(View.VISIBLE);
+                            if (homeContentContainer != null && offlineContainer != null) {
+                                if (isConnected) {
+                                    homeContentContainer.setVisibility(View.VISIBLE);
+                                    offlineContainer.setVisibility(View.GONE);
+                                } else {
+                                    homeContentContainer.setVisibility(View.GONE);
+                                    offlineContainer.setVisibility(View.VISIBLE);
+                                }
                             }
+                        }, throwable -> {
+                            // Safe handling
                         })
         );
     }
 
     private void loadContentFragment() {
-        HomeContentFragment contentFragment = HomeContentFragment.newInstance();
+        if (!isAdded() || getContext() == null) return;
 
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.homeContentContainer, contentFragment);
-        transaction.commit();
+        Fragment existing = getChildFragmentManager().findFragmentById(R.id.homeContentContainer);
+        if (existing == null) {
+            HomeContentFragment contentFragment = HomeContentFragment.newInstance();
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.homeContentContainer, contentFragment);
+            transaction.commit();
+        }
     }
 
     @Override
