@@ -1,12 +1,12 @@
 package com.mealify.mealify.presentation.fav.presenter;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
+import android.annotation.SuppressLint;
+
 import com.mealify.mealify.data.repos.auth.AuthRepo;
 import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.fav.views.FavsView;
 
-import java.util.List;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class FavsPresenterImpl implements FavsPresenter {
 
@@ -21,37 +21,32 @@ public class FavsPresenterImpl implements FavsPresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getFavouriteMeals() {
         if (authRepo.getCurrentUser() != null && authRepo.getCurrentUser().isAnonymous()) {
             view.setGuestMode(true);
             return;
         }
         view.setGuestMode(false);
-        mealsRepo.getFavouriteMeals(new GeneralResponse<List<FavouriteWithMeal>>() {
-            @Override
-            public void onSuccess(List<FavouriteWithMeal> data) {
-                view.onFavsSuccess(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.onFavsFailure(errorMessage);
-            }
-        });
+        mealsRepo.getFavouriteMeals()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> view.onFavsSuccess(data),
+                        error -> view.onFavsFailure(error.getMessage())
+                );
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void removeFavouriteMeal(String mealId) {
-        mealsRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
-            @Override
-            public void onSuccess(Boolean isFav) {
-                mealsRepo.deleteMealFromFavorites(mealId);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.onFavsFailure("Meal is not favorite");
-            }
-        });
+        mealsRepo.isMealFavorite(mealId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isFav -> {
+                    if (isFav) {
+                        mealsRepo.deleteMealFromFavorites(mealId)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                    }
+                }, error -> view.onFavsFailure("Meal is not favorite"));
     }
 }

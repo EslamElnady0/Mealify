@@ -1,9 +1,7 @@
 package com.mealify.mealify.data.repos.meals;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.datasources.meals.local.MealLocalDataSource;
 import com.mealify.mealify.data.datasources.meals.remote.MealRemoteDataSource;
 import com.mealify.mealify.data.models.category.CategoryDto;
@@ -25,8 +23,8 @@ import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.List;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -41,153 +39,86 @@ public class MealsRepo {
         this.localDataSource = new MealLocalDataSource(ctx);
     }
 
-    @SuppressLint("CheckResult")
-    public void getRandomMeal(GeneralResponse<List<MealDto>> generalResponse) {
-        remoteDataSource.getRandomMeal()
+    // --- General Meal Methods ---
+
+    public Single<List<MealDto>> getRandomMeal() {
+        return remoteDataSource.getRandomMeal()
                 .subscribeOn(Schedulers.io())
-                .map(response -> response.meals)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(response -> response.meals);
     }
 
-    @SuppressLint("CheckResult")
-    public void getCategories(GeneralResponse<List<CategoryDto>> generalResponse) {
-        remoteDataSource.getCategories()
+    public Single<List<CategoryDto>> getCategories() {
+        return remoteDataSource.getCategories()
                 .subscribeOn(Schedulers.io())
-                .map(response -> response.categories)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(response -> response.categories);
     }
 
-    @SuppressLint("CheckResult")
-    public void getMealDetails(String mealId, GeneralResponse<MealEntity> generalResponse) {
-        remoteDataSource.getMealDetails(mealId)
+    public Single<MealEntity> getMealDetails(String mealId) {
+        return remoteDataSource.getMealDetails(mealId)
                 .subscribeOn(Schedulers.io())
-                .map(response -> MealMapper.toEntity(response.meals.get(0)))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(response -> MealMapper.toEntity(response.meals.get(0)));
     }
 
-    @SuppressLint("CheckResult")
-    public void listIngredients(GeneralResponse<List<IngredientDto>> generalResponse) {
-        remoteDataSource.listIngredients()
+    public Single<List<IngredientDto>> listIngredients() {
+        return remoteDataSource.listIngredients()
                 .subscribeOn(Schedulers.io())
-                .map(IngredientsResponse::getIngredients)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(IngredientsResponse::getIngredients);
     }
 
-    @SuppressLint("CheckResult")
-    public void listAreas(GeneralResponse<List<CountryDto>> generalResponse) {
-        remoteDataSource.listAreas()
+    public Single<List<CountryDto>> listAreas() {
+        return remoteDataSource.listAreas()
                 .subscribeOn(Schedulers.io())
-                .map(CountriesResponse::getMeals)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(CountriesResponse::getMeals);
     }
 
-    @SuppressLint("CheckResult")
-    public void getFilteredMeals(
-            FilterType filterType,
-            String query,
-            GeneralResponse<List<FilteredMeal>> generalResponse
-    ) {
-        remoteDataSource.getFilteredMeals(filterType, query)
+    public Single<List<FilteredMeal>> getFilteredMeals(FilterType filterType, String query) {
+        return remoteDataSource.getFilteredMeals(filterType, query)
                 .subscribeOn(Schedulers.io())
-                .map(FilteredMealsResponse::getMeals)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(FilteredMealsResponse::getMeals);
     }
 
-    @SuppressLint("CheckResult")
-    public void searchMealsByName(
-            String name,
-            GeneralResponse<List<FilteredMeal>> generalResponse
-    ) {
-        remoteDataSource.searchMealsByName(name)
+    public Single<List<FilteredMeal>> searchMealsByName(String name) {
+        return remoteDataSource.searchMealsByName(name)
                 .subscribeOn(Schedulers.io())
-                .map(response -> MealMapper.toFilteredMeals(response.meals))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .map(response -> MealMapper.toFilteredMeals(response.meals));
     }
 
+    // --- Favorites Methods ---
 
-    @SuppressLint("CheckResult")
-    public void insertMealInFavorites(MealEntity meal) {
-        localDataSource.insertMeal(meal)
+    public Completable insertMealInFavorites(MealEntity meal) {
+        return localDataSource.insertMeal(meal)
                 .andThen(remoteDataSource.saveMeal(meal.getId(), meal))
                 .andThen(localDataSource.addToFavourites(meal.getId()))
                 .andThen(remoteDataSource.saveToFavourites(meal.getId(), meal))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void deleteMealFromFavorites(String mealId) {
-        localDataSource.removeFromFavourites(mealId)
+    public Completable deleteMealFromFavorites(String mealId) {
+        return localDataSource.removeFromFavourites(mealId)
                 .andThen(remoteDataSource.deleteFromFavourites(mealId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void isMealFavorite(String mealId, GeneralResponse<Boolean> generalResponse) {
-        localDataSource.isFavourite(mealId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Single<Boolean> isMealFavorite(String mealId) {
+        return localDataSource.isFavourite(mealId)
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getFavouriteMeals(GeneralResponse<List<FavouriteWithMeal>> generalResponse) {
-        localDataSource.getAllFavourites()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Observable<List<FavouriteWithMeal>> getFavouriteMeals() {
+        return localDataSource.getAllFavourites()
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getFavouritesCount(GeneralResponse<Integer> generalResponse) {
-        localDataSource.getFavouritesCount()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Single<Integer> getFavouritesCount() {
+        return localDataSource.getFavouritesCount()
+                .subscribeOn(Schedulers.io());
     }
 
     // --- Weekly Plan Methods ---
 
-    @SuppressLint("CheckResult")
-    public void addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal, GeneralResponse<Boolean> generalResponse) {
-        addMealToPlanCompletable(planMealWithMeal)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> generalResponse.onSuccess(true),
-                        error -> generalResponse.onError(error.getMessage())
-                );
+    public Completable addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal) {
+        return addMealToPlanCompletable(planMealWithMeal)
+                .subscribeOn(Schedulers.io());
     }
 
     private Completable addMealToPlanCompletable(WeeklyPlanMealWithMeal planMealWithMeal) {
@@ -197,88 +128,63 @@ public class MealsRepo {
                 .andThen(remoteDataSource.saveToWeeklyPlan(planMealWithMeal.planEntry.getMealId(), planMealWithMeal.planEntry));
     }
 
-    @SuppressLint("CheckResult")
-    public void replaceMealInPlan(String oldMealId, WeeklyPlanMealWithMeal newMeal, GeneralResponse<Boolean> generalResponse) {
-        localDataSource.deleteMealByDateAndType(newMeal.planEntry.getDateString(), newMeal.planEntry.getMealType())
+    public Completable replaceMealInPlan(String oldMealId, WeeklyPlanMealWithMeal newMeal) {
+        return localDataSource.deleteMealByDateAndType(newMeal.planEntry.getDateString(), newMeal.planEntry.getMealType())
                 .andThen(remoteDataSource.deleteFromWeeklyPlan(oldMealId))
                 .andThen(addMealToPlanCompletable(newMeal))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> generalResponse.onSuccess(true),
-                        error -> generalResponse.onError(error.getMessage())
-                );
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getMealsByDate(String date, GeneralResponse<List<WeeklyPlanMealWithMeal>> generalResponse) {
-        localDataSource.getMealsByDate(date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Observable<List<WeeklyPlanMealWithMeal>> getMealsByDate(String date) {
+        return localDataSource.getMealsByDate(date)
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getMealByDateAndType(String date, WeeklyPlanMealType type, GeneralResponse<WeeklyPlanMealWithMeal> generalResponse) {
-        localDataSource.getMealByDateAndType(date, type)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        generalResponse::onSuccess,
-                        error -> generalResponse.onError(error.getMessage()),
-                        () -> generalResponse.onSuccess(null)
-                );
+    public Maybe<WeeklyPlanMealWithMeal> getMealByDateAndType(String date, WeeklyPlanMealType type) {
+        return localDataSource.getMealByDateAndType(date, type)
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void deleteMealFromPlan(long planId) {
-        localDataSource.deleteMealById(planId)
+    public Completable deleteMealFromPlan(long planId) {
+        return localDataSource.deleteMealById(planId)
                 .andThen(remoteDataSource.deleteFromWeeklyPlan(String.valueOf(planId)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getAllPlannedDates(GeneralResponse<List<String>> generalResponse) {
-        localDataSource.getAllPlannedDates()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Observable<List<String>> getAllPlannedDates() {
+        return localDataSource.getAllPlannedDates()
+                .subscribeOn(Schedulers.io());
     }
 
-    @SuppressLint("CheckResult")
-    public void getPlannedMealsCount(GeneralResponse<Integer> generalResponse) {
-        localDataSource.getPlannedMealsCount()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalResponse::onSuccess, error -> generalResponse.onError(error.getMessage()));
+    public Single<Integer> getPlannedMealsCount() {
+        return localDataSource.getPlannedMealsCount()
+                .subscribeOn(Schedulers.io());
     }
 
     // --- Local Storage Management ---
 
     public Observable<List<MealEntity>> getAllLocalMeals() {
-        return localDataSource.getAllMeals();
+        return localDataSource.getAllMeals().subscribeOn(Schedulers.io());
     }
 
     public Observable<List<FavouriteWithMeal>> getAllLocalFavourites() {
-        return localDataSource.getAllFavourites();
+        return localDataSource.getAllFavourites().subscribeOn(Schedulers.io());
     }
 
     public Observable<List<WeeklyPlanMealWithMeal>> getAllLocalWeeklyPlans() {
-        return localDataSource.getAllPlannedMeals();
+        return localDataSource.getAllPlannedMeals().subscribeOn(Schedulers.io());
     }
 
     public Completable removeAllLocalMeals() {
-        return localDataSource.deleteAllMeals();
+        return localDataSource.deleteAllMeals().subscribeOn(Schedulers.io());
     }
 
     public Completable removeAllLocalFavourites() {
-        return localDataSource.deleteAllFavourites();
+        return localDataSource.deleteAllFavourites().subscribeOn(Schedulers.io());
     }
 
     public Completable removeAllLocalWeeklyPlans() {
-        return localDataSource.clearWeeklyPlan();
+        return localDataSource.clearWeeklyPlan().subscribeOn(Schedulers.io());
     }
 
     public Completable uploadMealsToFirebase(List<MealEntity> meals) {

@@ -1,13 +1,12 @@
 package com.mealify.mealify.presentation.search.presenter.name;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.name.SearchNameView;
 
-import java.util.List;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class SearchNamePresenterImpl implements SearchNamePresenter {
     private SearchNameView view;
@@ -19,20 +18,20 @@ public class SearchNamePresenterImpl implements SearchNamePresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void searchMealsByName(String name) {
         view.toggleLoading(true);
-        mealsRepo.searchMealsByName(name, new GeneralResponse<List<FilteredMeal>>() {
-            @Override
-            public void onSuccess(List<FilteredMeal> data) {
-                view.toggleLoading(false);
-                view.showMeals(data);
-            }
-
-            @Override
-            public void onError(String message) {
-                view.toggleLoading(false);
-                view.showError(message);
-            }
-        });
+        mealsRepo.searchMealsByName(name)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleLoading(false);
+                            view.showMeals(data);
+                        },
+                        error -> {
+                            view.toggleLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 }

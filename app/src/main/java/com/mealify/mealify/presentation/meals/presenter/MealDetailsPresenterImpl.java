@@ -1,13 +1,13 @@
 package com.mealify.mealify.presentation.meals.presenter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.models.meal.MealEntity;
-import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -26,103 +26,85 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getMealDetails(String id) {
         view.toggleLoading(true);
-        mealsRepo.getMealDetails(id, new GeneralResponse<MealEntity>() {
-            @Override
-            public void onSuccess(MealEntity data) {
-                view.toggleLoading(false);
-                view.onSuccess(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-                view.onFailure(errorMessage);
-            }
-        });
+        mealsRepo.getMealDetails(id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleLoading(false);
+                            view.onSuccess(data);
+                        },
+                        error -> {
+                            view.toggleLoading(false);
+                            view.onFailure(error.getMessage());
+                        }
+                );
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void isMealFavorite(String mealId) {
-        mealsRepo.isMealFavorite(mealId, new GeneralResponse<Boolean>() {
-            @Override
-            public void onSuccess(Boolean data) {
-                view.onIsFavoriteResult(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                // Ignore error for favorite check
-            }
-        });
+        mealsRepo.isMealFavorite(mealId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> view.onIsFavoriteResult(data),
+                        error -> {}
+                );
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void toggleFavorite(MealEntity meal) {
-        mealsRepo.isMealFavorite(meal.getId(), new GeneralResponse<Boolean>() {
-            @Override
-            public void onSuccess(Boolean data) {
-                boolean isFav = data;
-                if (isFav) {
-                    mealsRepo.deleteMealFromFavorites(meal.getId());
-                } else {
-                    mealsRepo.insertMealInFavorites(meal);
-                }
-                view.onToggleFavoriteSuccess(!isFav);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                // Handle error
-            }
-        });
+        mealsRepo.isMealFavorite(meal.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isFav -> {
+                    if (isFav) {
+                        mealsRepo.deleteMealFromFavorites(meal.getId())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> view.onToggleFavoriteSuccess(false));
+                    } else {
+                        mealsRepo.insertMealInFavorites(meal)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> view.onToggleFavoriteSuccess(true));
+                    }
+                }, error -> {});
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void addToWeeklyPlan(WeeklyPlanMealWithMeal meal) {
         if (meal.planEntry.getMealType() == WeeklyPlanMealType.SNACK) {
             forceAddToWeeklyPlan(meal, null);
         } else {
-            mealsRepo.getMealByDateAndType(
-                    meal.planEntry.getDateString(),
-                    meal.planEntry.getMealType(), new GeneralResponse<WeeklyPlanMealWithMeal>() {
-                        @Override
-                        public void onSuccess(WeeklyPlanMealWithMeal existingMeal) {
-                            if (existingMeal != null) {
-                                view.showReplaceConfirmation(meal, existingMeal);
-                            } else {
-                                forceAddToWeeklyPlan(meal, null);
-                            }
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            view.onFailure(errorMessage + " fromGET");
-                        }
-                    }
-            );
+            mealsRepo.getMealByDateAndType(meal.planEntry.getDateString(), meal.planEntry.getMealType())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            existingMeal -> view.showReplaceConfirmation(meal, existingMeal),
+                            error -> view.onFailure(error.getMessage() + " fromGET"),
+                            () -> forceAddToWeeklyPlan(meal, null)
+                    );
         }
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal, String oldMealId) {
-        GeneralResponse<Boolean> callback = new GeneralResponse<Boolean>() {
-            @Override
-            public void onSuccess(Boolean data) {
-                view.onWeeklyPlanMealAdded("Meal added to weekly plan");
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.onFailure(errorMessage);
-            }
-        };
-
         if (oldMealId != null) {
-            mealsRepo.replaceMealInPlan(oldMealId, meal, callback);
+            mealsRepo.replaceMealInPlan(oldMealId, meal)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            () -> view.onWeeklyPlanMealAdded("Meal added to weekly plan"),
+                            error -> view.onFailure(error.getMessage())
+                    );
         } else {
-            mealsRepo.addMealToPlan(meal, callback);
+            mealsRepo.addMealToPlan(meal)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            () -> view.onWeeklyPlanMealAdded("Meal added to weekly plan"),
+                            error -> view.onFailure(error.getMessage())
+                    );
         }
     }
 

@@ -1,20 +1,22 @@
 package com.mealify.mealify.presentation.profile.presenter;
 
-import android.content.Context;
-import com.google.firebase.auth.FirebaseUser;
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.repos.auth.AuthRepo;
 import android.annotation.SuppressLint;
-import com.mealify.mealify.data.repos.meals.MealsRepo;
-import com.mealify.mealify.data.models.meal.MealEntity;
+import android.content.Context;
+
+import com.google.firebase.auth.FirebaseUser;
 import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.models.meal.MealEntity;
 import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.profile.views.ProfileView;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class ProfilePresenterImpl implements ProfilePresenter {
 
@@ -58,41 +60,36 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void loadStats() {
         FirebaseUser user = authRepo.getCurrentUser();
         if (user != null && user.isAnonymous()) {
             return;
         }
         view.toggleLoading(true);
-        mealsRepo.getFavouritesCount(new GeneralResponse<Integer>() {
-            @Override
-            public void onSuccess(Integer count) {
-                favoritesCount = count;
-                loadPlansCount();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-            }
-        });
+        mealsRepo.getFavouritesCount()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        count -> {
+                            favoritesCount = count;
+                            loadPlansCount();
+                        },
+                        error -> view.toggleLoading(false)
+                );
     }
 
+    @SuppressLint("CheckResult")
     private void loadPlansCount() {
-        mealsRepo.getPlannedMealsCount(new GeneralResponse<Integer>() {
-            @Override
-            public void onSuccess(Integer count) {
-                plansCount = count;
-                view.displayStats(favoritesCount, plansCount);
-                view.toggleLoading(false);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-            
-            }
-        });
+        mealsRepo.getPlannedMealsCount()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        count -> {
+                            plansCount = count;
+                            view.displayStats(favoritesCount, plansCount);
+                            view.toggleLoading(false);
+                        },
+                        error -> view.toggleLoading(false)
+                );
     }
 
     @Override
