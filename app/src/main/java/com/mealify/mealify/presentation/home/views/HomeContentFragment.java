@@ -23,7 +23,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.models.category.CategoryDto;
 import com.mealify.mealify.data.models.filteredmeals.FilterType;
@@ -223,7 +223,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
     @Override
     public void showError(String message) {
         if (isAdded() && getContext() != null) {
-            CustomToast.show(requireContext(), message);
+            CustomSnackbar.showFailure(getView(), message);
         }
     }
 

@@ -35,7 +35,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 .subscribe(userId -> {
                     if (view == null) return;
                     view.toggleLoading(false);
-                    view.onSuccessRegister(userId);
+                    view.onSuccessRegister("Registered successfully");
                 }, error -> {
                     if (view == null) return;
                     view.toggleLoading(false);
@@ -57,7 +57,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 .subscribe(() -> {
                     CustomLogger.log("Presenter: Data sync complete after Google Sign-In", "REGISTER_PRESENTER");
                     view.toggleLoading(false);
-                    view.onSuccessRegister(authRepo.getCurrentUserId());
+                    view.onSuccessRegister("Logged in successfully");
                 }, error -> {
                     CustomLogger.log("Presenter: Google Sign-In or Data sync failed: " + error.getMessage(), "REGISTER_PRESENTER");
                     view.toggleLoading(false);
@@ -73,7 +73,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userId -> {
                     view.toggleLoading(false);
-                    view.onSuccessRegister(userId);
+                    view.onSuccessRegister("Logged in anonymously");
                 }, error -> {
                     view.toggleLoading(false);
                     view.onFailureRegister(error.getMessage());

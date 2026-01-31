@@ -43,7 +43,7 @@ public class WeeklyPlanPresenterImpl implements WeeklyPlanPresenter {
         Log.i("TAG", "deleteMealFromPlan: " + planId);
         mealsRepo.deleteMealFromPlan(planId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribe(() -> view.onDeleteSuccess("Meal removed from plan"));
     }
 
     @Override

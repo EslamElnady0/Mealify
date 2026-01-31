@@ -6,10 +6,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.data.models.filteredmeals.FilterType;
 import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 import com.mealify.mealify.presentation.search.presenter.searchresults.MealSearchResultPresenter;
@@ -57,7 +56,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_meal_search_result, container, false);
     }
 
@@ -143,7 +142,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
 
     @Override
     public void showError(String errorMessage) {
-        CustomToast.show(requireContext(), errorMessage);
+        CustomSnackbar.showFailure(getView(), errorMessage);
     }
 
     @Override

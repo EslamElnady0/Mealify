@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.profile.presenter.ProfilePresenter;
@@ -135,6 +135,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
     public void onLogoutSuccess() {
         if (getContext() != null) {
             Intent intent = new Intent(getContext(), AuthActivity.class);
+            intent.putExtra("logout_success", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
@@ -143,7 +144,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void onLogoutError(String errorMessage) {
         if (getContext() != null) {
-            Toast.makeText(getContext(), "Logout failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+            CustomSnackbar.showFailure(getView(), "Logout failed: " + errorMessage);
         }
     }
 

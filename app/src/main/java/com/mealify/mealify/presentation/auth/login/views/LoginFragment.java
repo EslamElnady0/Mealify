@@ -17,7 +17,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.AuthValidator;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.presentation.auth.login.presenter.LoginPresenter;
 import com.mealify.mealify.presentation.auth.login.presenter.LoginPresenterImpl;
 import com.mealify.mealify.presentation.home.views.HomeActivity;
@@ -35,7 +35,8 @@ public class LoginFragment extends Fragment implements LoginView {
 
     private LoginPresenter presenter;
 
-    public LoginFragment() {}
+    public LoginFragment() {
+    }
 
     public static LoginFragment newInstance() {
         return new LoginFragment();
@@ -55,7 +56,7 @@ public class LoginFragment extends Fragment implements LoginView {
         super.onViewCreated(view, savedInstanceState);
 
         initViews(view);
-        presenter = new LoginPresenterImpl(requireContext(),this);
+        presenter = new LoginPresenterImpl(requireContext(), this);
         setupButtonListeners();
     }
 
@@ -110,13 +111,13 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onSuccessLogin(String message) {
-        CustomToast.show(getContext(), message);
-        navigateToHome();
+        navigateToHome(message);
     }
+
 
     @Override
     public void onFailureLogin(String errorMessage) {
-        CustomToast.show(getContext(), errorMessage);
+        CustomSnackbar.showFailure(getView(), errorMessage);
     }
 
     @Override
@@ -129,9 +130,11 @@ public class LoginFragment extends Fragment implements LoginView {
         signUpText.setEnabled(!isLoading);
     }
 
-    private void navigateToHome() {
+    private void navigateToHome(String message) {
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), HomeActivity.class);
+            intent.putExtra("login_success", true);
+            intent.putExtra("success_message", message);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             getActivity().finish();

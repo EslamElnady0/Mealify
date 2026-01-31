@@ -8,7 +8,6 @@ import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +22,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
@@ -158,7 +158,12 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
 
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        CustomSnackbar.showFailure(getView(), message);
+    }
+
+    @Override
+    public void onDeleteSuccess(String message) {
+        CustomSnackbar.showSuccess(getView(), message);
     }
 
     @Override

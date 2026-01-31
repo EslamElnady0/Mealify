@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
 import com.mealify.mealify.data.datasources.auth.remote.services.FirebaseAuthService;
@@ -63,11 +63,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private int mealId;
     private MealEntity currentMeal;
     private boolean isFavorite = false;
+    private View offlineContainer;
 
     public MealDetailsFragment() {
     }
-
-    private View offlineContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -273,12 +272,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         this.isFavorite = isFavorite;
         updateFavButton();
         String message = isFavorite ? "Added to favorites" : "Removed from favorites";
-        CustomToast.show(getContext(), message);
+        CustomSnackbar.showSuccess(getView(), message);
+
     }
 
     @Override
     public void onWeeklyPlanMealAdded(String message) {
-        CustomToast.show(getContext(), message);
+        CustomSnackbar.showSuccess(getView(), message);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -37,7 +37,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 .subscribe(() -> {
                     CustomLogger.log("Presenter: Data sync complete", "LOGIN_PRESENTER");
                     view.toggleLoading(false);
-                    view.onSuccessLogin(authRepo.getCurrentUserId());
+                    view.onSuccessLogin("Logged in successfully");
                 }, error -> {
                     CustomLogger.log("Presenter: Login or Data sync failed: " + error.getMessage(), "LOGIN_PRESENTER");
                     view.toggleLoading(false);
@@ -60,7 +60,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 .subscribe(() -> {
                     CustomLogger.log("Presenter: Data sync complete after Google Sign-In", "LOGIN_PRESENTER");
                     view.toggleLoading(false);
-                    view.onSuccessLogin(authRepo.getCurrentUserId());
+                    view.onSuccessLogin("Logged in successfully");
                 }, error -> {
                     CustomLogger.log("Presenter: Google Sign-In or Data sync failed: " + error.getMessage(), "LOGIN_PRESENTER");
                     view.toggleLoading(false);
@@ -78,7 +78,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 .subscribe(userId -> {
                     CustomLogger.log("Presenter: Anonymous sign-in success", "LOGIN_PRESENTER");
                     view.toggleLoading(false);
-                    view.onSuccessLogin(userId);
+                    view.onSuccessLogin("Logged in anonymously");
                 }, error -> {
                     CustomLogger.log("Presenter: Anonymous sign-in failed: " + error.getMessage(), "LOGIN_PRESENTER");
                     view.toggleLoading(false);

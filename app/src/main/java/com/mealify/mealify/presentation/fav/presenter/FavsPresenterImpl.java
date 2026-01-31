@@ -45,7 +45,7 @@ public class FavsPresenterImpl implements FavsPresenter {
                     if (isFav) {
                         mealsRepo.deleteMealFromFavorites(mealId)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe();
+                                .subscribe(() -> view.onDeleteSuccess("Meal removed from favorites"));
                     }
                 }, error -> view.onFavsFailure("Meal is not favorite"));
     }

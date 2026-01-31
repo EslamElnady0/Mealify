@@ -8,6 +8,7 @@ public interface PlanView {
     void showMeals(List<WeeklyPlanMealWithMeal> meals);
 
     void showError(String message);
+    void onDeleteSuccess(String message);
 
     void showPlannedDates(List<String> dates);
 

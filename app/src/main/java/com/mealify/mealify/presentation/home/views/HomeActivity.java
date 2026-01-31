@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.NetworkObservation;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -27,6 +28,11 @@ public class HomeActivity extends AppCompatActivity {
 
         offlineBanner = findViewById(R.id.offline_banner);
         setupNetworkMonitoring();
+        if (getIntent().getBooleanExtra("login_success", false)) {
+            String message = getIntent().getStringExtra("success_message");
+            CustomSnackbar.showSuccess(findViewById(android.R.id.content), message != null ? message : "Logged in successfully");
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

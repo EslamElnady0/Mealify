@@ -21,6 +21,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
 import com.mealify.mealify.data.repos.meals.MealsRepo;
@@ -183,13 +184,20 @@ public class FavouritesFragment extends Fragment implements FavsView {
 
     @Override
     public void onFavsFailure(String errorMessage) {
-        // Handle failure
+        CustomSnackbar.showFailure(getView(), errorMessage);
+    }
+
+    @Override
+    public void onDeleteSuccess(String message) {
+        CustomSnackbar.showSuccess(getView(), message);
     }
 
     @Override
     public void setGuestMode(boolean isGuest) {
-        if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
-        if (favoritesRecycler != null) favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (guestContainer != null)
+            guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+        if (favoritesRecycler != null)
+            favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (searchLayout != null) searchLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (headerLayout != null) headerLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
         if (emptyView != null && isGuest) emptyView.setVisibility(View.GONE);
