@@ -3,6 +3,7 @@ package com.mealify.mealify.presentation.meals.presenter;
 import android.content.Context;
 
 import com.mealify.mealify.core.response.GeneralResponse;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.meals.repo.MealsRepo;
@@ -11,13 +12,19 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMe
 import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 public class MealDetailsPresenterImpl implements MealDetailsPresenter {
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private MealDetailsView view;
     private MealsRepo mealsRepo;
     private FavRepo favRepo;
     private WeeklyPlanRepo weeklyPlanRepo;
+    private Context context;
 
     public MealDetailsPresenterImpl(Context context, MealDetailsView view) {
+        this.context = context;
         this.view = view;
         this.mealsRepo = new MealsRepo(context);
         this.favRepo = new FavRepo(context);
@@ -125,5 +132,27 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
         } else {
             weeklyPlanRepo.addMealToPlan(meal, callback);
         }
+    }
+
+    @Override
+    public void startNetworkMonitoring(String mealId) {
+        disposables.add(
+                NetworkObservation.getInstance(context)
+                        .observeConnection()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            view.toggleOffline(!isConnected);
+                            if (isConnected) {
+                                getMealDetails(mealId);
+                                isMealFavorite(mealId);
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroy() {
+        disposables.clear();
+        view = null;
     }
 }

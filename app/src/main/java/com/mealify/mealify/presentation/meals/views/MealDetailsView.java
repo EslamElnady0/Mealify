@@ -17,4 +17,6 @@ public interface MealDetailsView {
     void onWeeklyPlanMealAdded(String message);
 
     void showReplaceConfirmation(WeeklyPlanMealWithMeal newMeal, WeeklyPlanMealWithMeal existingMeal);
+
+    void toggleOffline(boolean isOffline);
 }

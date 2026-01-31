@@ -24,6 +24,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.data.meals.model.meal.MealDto;
@@ -33,10 +34,13 @@ import com.mealify.mealify.presentation.home.presenter.HomePresenterImpl;
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 
 public class HomeContentFragment extends Fragment implements HomeView {
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private HomePresenter presenter;
-
     private RecyclerView categoriesRecyclerView;
     private RecyclerView categoriesLoadingRecyclerView;
     private CategoryAdapter categoryAdapter;
@@ -47,7 +51,6 @@ public class HomeContentFragment extends Fragment implements HomeView {
     private TextView greetingText;
     private TextView browseCats;
     private NavController navController;
-
 
     public HomeContentFragment() {
 
@@ -85,13 +88,39 @@ public class HomeContentFragment extends Fragment implements HomeView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        presenter.getMealOfTheDay();
-        presenter.getCategories();
         setupCategoriesRecyclerView();
+        setupNetworkMonitoring();
+    }
+
+    private void reloadData() {
+        if (presenter != null && getContext() != null) {
+            presenter.getMealOfTheDay();
+            presenter.getCategories();
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        if (getContext() == null) return;
+        disposables.add(
+                NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected && getContext() != null) {
+                                reloadData();
+                            }
+                        }, throwable -> {
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     private void setupShimmerLoaders() {
-        // Setup shimmer for categories
         shimmerCategoryAdapter = new ShimmerCategoryAdapter();
         LinearLayoutManager shimmerLayoutManager = new LinearLayoutManager(
                 getContext(),
@@ -134,17 +163,15 @@ public class HomeContentFragment extends Fragment implements HomeView {
         category.setText(meal.category);
         area.setText(meal.area);
 
-        // Load image with Glide
         Glide.with(this)
                 .load(meal.thumbnail)
                 .apply(new RequestOptions()
-                        .placeholder(R.drawable.mealify_logo)
+                        .placeholder(R.drawable.shimmer_circle)
                         .error(R.drawable.mealify_logo))
                 .into(mealImage);
 
         mealOfTheDayCard.setVisibility(VISIBLE);
 
-        // Click listeners
         mealOfTheDayCard.setOnClickListener(v -> navigateToMealDetails(meal.id));
         viewDetailsButton.setOnClickListener(v -> navigateToMealDetails(meal.id));
     }
@@ -181,31 +208,41 @@ public class HomeContentFragment extends Fragment implements HomeView {
 
     @Override
     public void showMealOfTheDay(MealDto meal) {
-        bindMealOfTheDay(meal);
+        if (isAdded() && getContext() != null) {
+            bindMealOfTheDay(meal);
+        }
     }
 
     @Override
     public void showCategories(List<CategoryDto> categories) {
-        categoryAdapter.setCategories(categories);
+        if (isAdded() && categoryAdapter != null) {
+            categoryAdapter.setCategories(categories);
+        }
     }
 
     @Override
     public void showError(String message) {
-        CustomToast.show(requireContext(), message);
+        if (isAdded() && getContext() != null) {
+            CustomToast.show(requireContext(), message);
+        }
     }
 
     @Override
     public void toggleMealOfTheDayLoading(boolean isLoading) {
-        mealOfTheDayLoadingShimmer.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        mealOfTheDayCard.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        mealOfTheDayText.setVisibility(isLoading ? View.GONE : VISIBLE);
-        greetingText.setVisibility(isLoading ? View.GONE : VISIBLE);
+        if (isAdded() && mealOfTheDayLoadingShimmer != null) {
+            mealOfTheDayLoadingShimmer.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            mealOfTheDayCard.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            mealOfTheDayText.setVisibility(isLoading ? View.GONE : VISIBLE);
+            greetingText.setVisibility(isLoading ? View.GONE : VISIBLE);
+        }
     }
 
     @Override
     public void toggleCategoriesLoading(boolean isLoading) {
-        categoriesLoadingRecyclerView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        categoriesRecyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        browseCats.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        if (isAdded() && categoriesLoadingRecyclerView != null) {
+            categoriesLoadingRecyclerView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            categoriesRecyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            browseCats.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        }
     }
 }

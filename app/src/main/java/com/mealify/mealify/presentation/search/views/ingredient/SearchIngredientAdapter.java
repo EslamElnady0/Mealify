@@ -77,7 +77,7 @@ public class SearchIngredientAdapter extends RecyclerView.Adapter<SearchIngredie
 
             Glide.with(itemView.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.mealify_logo)
+                    .placeholder(R.drawable.shimmer_circle)
                     .into(ingredientImage);
         }
     }

@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.profile.presenter.ProfilePresenter;
 import com.mealify.mealify.presentation.profile.presenter.ProfilePresenterImpl;
 
 public class ProfileFragment extends Fragment implements ProfileView {
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
     private TextView usernameText;
     private TextView emailText;
     private TextView favCountText;
@@ -31,6 +33,8 @@ public class ProfileFragment extends Fragment implements ProfileView {
     private View profileImageContainer;
     private View dividerLine;
     private ProfilePresenter presenter;
+    private View offlineContainer;
+    private View profileContent;
     private View loadingOverlay;
 
     public ProfileFragment() {
@@ -67,6 +71,8 @@ public class ProfileFragment extends Fragment implements ProfileView {
         profileImageContainer = view.findViewById(R.id.profile_image_container);
         dividerLine = view.findViewById(R.id.divider_line);
         loadingOverlay = view.findViewById(R.id.loading_overlay);
+        offlineContainer = view.findViewById(R.id.offlineContainer);
+        profileContent = view.findViewById(R.id.profile_scroll_view);
 
         logoutBtn.setOnClickListener(v -> presenter.logout());
         loginBtn.setOnClickListener(v -> {
@@ -76,6 +82,33 @@ public class ProfileFragment extends Fragment implements ProfileView {
 
         presenter.loadUserData();
         presenter.loadStats();
+
+        setupNetworkMonitoring();
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected) {
+                                profileContent.setVisibility(View.VISIBLE);
+                                offlineContainer.setVisibility(View.GONE);
+                                presenter.loadUserData();
+                                presenter.loadStats();
+                            } else {
+                                profileContent.setVisibility(View.GONE);
+                                offlineContainer.setVisibility(View.VISIBLE);
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     @Override

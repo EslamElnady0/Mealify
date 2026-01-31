@@ -91,7 +91,7 @@
                 <FrameLayout
                     android:id="@+id/heroImageContainer"
                     android:layout_width="0dp"
-                    android:layout_height="400dp"
+                    android:layout_height="320dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -139,7 +139,7 @@
                             android:fontFamily="sans-serif-medium"
                             android:text="@string/featured"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -168,7 +168,7 @@
                             android:shadowRadius="8"
                             android:text="@string/cream_cheese_tart"
                             android:textColor="#FFFFFF"
-                            android:textSize="28sp"
+                            android:textSize="24sp"
                             android:textStyle="bold" />
 
                         <!-- Tags Container -->
@@ -205,7 +205,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/american"
                                     android:textColor="#DC2626"
-                                    android:textSize="13sp"
+                                    android:textSize="12sp"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
@@ -237,7 +237,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/starter"
                                     android:textColor="#2563EB"
-                                    android:textSize="13sp"
+                                    android:textSize="12sp"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
@@ -247,14 +247,14 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/viewDetailsButton"
                             android:layout_width="match_parent"
-                            android:layout_height="58dp"
-                            android:layout_marginTop="20dp"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="12dp"
                             android:fontFamily="sans-serif-medium"
                             android:letterSpacing="0.02"
                             android:text="@string/explore_recipe"
                             android:textAllCaps="false"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             app:backgroundTint="@color/primary"
                             app:cornerRadius="16dp"
@@ -272,16 +272,24 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Barrier for Featured Section -->
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/mealOfTheDayBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="mealOfTheDayLoading,mealOfTheDayCard" />
+
         <!-- Explore Section -->
         <LinearLayout
             android:id="@+id/exploreSection"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayCard">
+            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayBarrier">
 
             <TextView
                 android:id="@+id/browseCategoriesTitle"
@@ -290,7 +298,7 @@
                 android:letterSpacing="-0.015"
                 android:text="@string/explore_by_category"
                 android:textColor="#111827"
-                android:textSize="26sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView

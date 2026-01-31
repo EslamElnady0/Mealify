@@ -168,16 +168,15 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
 
     @Override
     public void setGuestMode(boolean isGuest) {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(() -> {
-                if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
-                if (calendarView != null) calendarView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (selectedDayText != null) selectedDayText.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (calendarIcon != null) calendarIcon.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (weeklyPlanLabel != null) weeklyPlanLabel.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (scrollView != null) scrollView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-            });
-        }
+        if (guestContainer != null)
+            guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+        if (calendarView != null) calendarView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (selectedDayText != null)
+            selectedDayText.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (calendarIcon != null) calendarIcon.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (weeklyPlanLabel != null)
+            weeklyPlanLabel.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (scrollView != null) scrollView.setVisibility(isGuest ? View.GONE : View.VISIBLE);
     }
 
     private void updateUIWithMeals(List<WeeklyPlanMealWithMeal> meals) {
@@ -226,11 +225,11 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
     private void breakFastSlotFilled(WeeklyPlanMealWithMeal meal) {
         setSlotFilled(breakfastSlot, meal);
     }
-    
+
     private void lunchSlotFilled(WeeklyPlanMealWithMeal meal) {
         setSlotFilled(lunchSlot, meal);
     }
-    
+
     private void dinnerSlotFilled(WeeklyPlanMealWithMeal meal) {
         setSlotFilled(dinnerSlot, meal);
     }
@@ -295,7 +294,7 @@ public class PlanFragment extends Fragment implements PlanView, SnacksAdapter.On
                         .error(R.drawable.mealify_logo)
                         .into(mealImage);
             }
-            
+
             if (removeButton != null) {
                 removeButton.setOnClickListener(v -> {
                     if (mealWithPlan.planEntry != null) {

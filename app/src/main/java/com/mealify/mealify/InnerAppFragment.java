@@ -58,5 +58,4 @@ public class InnerAppFragment extends Fragment {
             NavigationUI.setupWithNavController(bottomNavigationView, navController);
         }
     }
-
 }

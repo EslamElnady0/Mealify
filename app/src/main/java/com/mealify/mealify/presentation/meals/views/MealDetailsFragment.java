@@ -26,6 +26,7 @@ import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
+import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
@@ -59,13 +60,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
     private MealDetailsPresenter presenter;
-
     private int mealId;
     private MealEntity currentMeal;
     private boolean isFavorite = false;
 
     public MealDetailsFragment() {
     }
+
+    private View offlineContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,17 +91,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupRecyclerView();
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
-
-        presenter.getMealDetails(String.valueOf(mealId));
-        presenter.isMealFavorite(String.valueOf(mealId));
+        presenter.startNetworkMonitoring(String.valueOf(mealId));
 
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
         });
-
         favButton.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
-                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            FirebaseAuthService authService =
+                    FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;
@@ -128,8 +127,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService = 
-                com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            FirebaseAuthService authService =
+                    FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;
@@ -140,10 +139,19 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
+    }
+
     private void initViews(View view) {
         progressBar = view.findViewById(R.id.progressBar);
         errorText = view.findViewById(R.id.errorText);
         contentScrollView = view.findViewById(R.id.contentScrollView);
+        offlineContainer = view.findViewById(R.id.offlineContainer);
 
         // Header views
         View header = view.findViewById(R.id.mealHeader);
@@ -168,6 +176,20 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         stepAdapter = new StepAdapter();
         stepsRecycler.setAdapter(stepAdapter);
+    }
+
+    @Override
+    public void toggleOffline(boolean isOffline) {
+        if (isOffline) {
+            offlineContainer.setVisibility(View.VISIBLE);
+            contentScrollView.setVisibility(View.GONE);
+            favButton.setVisibility(View.GONE);
+            weeklyPlanBtn.setVisibility(View.GONE);
+        } else {
+            offlineContainer.setVisibility(View.GONE);
+            favButton.setVisibility(View.VISIBLE);
+            weeklyPlanBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

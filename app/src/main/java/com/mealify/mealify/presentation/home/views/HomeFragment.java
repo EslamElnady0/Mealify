@@ -1,19 +1,26 @@
 package com.mealify.mealify.presentation.home.views;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.NetworkObservation;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class HomeFragment extends Fragment {
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private View homeContentContainer;
+    private View offlineContainer;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -33,27 +40,52 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState == null) {
-            loadContentFragment();
-        }
+
+        homeContentContainer = view.findViewById(R.id.homeContentContainer);
+        offlineContainer = view.findViewById(R.id.offlineContainer);
+
+        loadContentFragment();
+        setupNetworkMonitoring();
+    }
+
+    private void setupNetworkMonitoring() {
+        if (getContext() == null) return;
+
+        disposables.add(
+                NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (homeContentContainer != null && offlineContainer != null) {
+                                if (isConnected) {
+                                    homeContentContainer.setVisibility(View.VISIBLE);
+                                    offlineContainer.setVisibility(View.GONE);
+                                } else {
+                                    homeContentContainer.setVisibility(View.GONE);
+                                    offlineContainer.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }, throwable -> {
+                            // Safe handling
+                        })
+        );
     }
 
     private void loadContentFragment() {
-        HomeContentFragment contentFragment = HomeContentFragment.newInstance();
-        
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.homeContentContainer, contentFragment);
-        transaction.commit();
+        if (!isAdded() || getContext() == null) return;
+
+        Fragment existing = getChildFragmentManager().findFragmentById(R.id.homeContentContainer);
+        if (existing == null) {
+            HomeContentFragment contentFragment = HomeContentFragment.newInstance();
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.homeContentContainer, contentFragment);
+            transaction.commit();
+        }
     }
 
-    public void switchToOfflineMode() {
-        // TODO: Create and load offline fragment
-        // OfflineFragment offlineFragment = OfflineFragment.newInstance();
-        // FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        // transaction.replace(R.id.homeContentContainer, offlineFragment);
-        // transaction.commit();
-    }
-    public void switchToOnlineMode() {
-        loadContentFragment();
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 }

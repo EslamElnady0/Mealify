@@ -13,11 +13,17 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.NetworkObservation;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class SearchFragment extends Fragment {
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
+    private View offlineContainer;
     private SearchPagerAdapter pagerAdapter;
 
     public SearchFragment() {
@@ -39,6 +45,7 @@ public class SearchFragment extends Fragment {
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
+        offlineContainer = view.findViewById(R.id.offlineContainer);
 
         pagerAdapter = new SearchPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
@@ -60,5 +67,35 @@ public class SearchFragment extends Fragment {
                             break;
                     }
                 }).attach();
+
+        setupNetworkMonitoring();
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                                    if (isConnected) {
+                                        tabLayout.setVisibility(View.VISIBLE);
+                                        viewPager.setVisibility(View.VISIBLE);
+                                        offlineContainer.setVisibility(View.GONE);
+                                    } else {
+                                        tabLayout.setVisibility(View.GONE);
+                                        viewPager.setVisibility(View.GONE);
+                                        offlineContainer.setVisibility(View.VISIBLE);
+                                    }
+                                },
+                                throwable -> {
+                                }
+                        )
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 }

@@ -75,7 +75,7 @@ public class SearchCategoryAdapter extends RecyclerView.Adapter<SearchCategoryAd
             Glide.with(itemView.getContext())
                     .load(category.thumbnail)
                     .circleCrop()
-                    .placeholder(R.drawable.mealify_logo)
+                    .placeholder(R.drawable.shimmer_circle)
                     .into(categoryImage);
         }
     }

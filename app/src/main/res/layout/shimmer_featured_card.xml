@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp">
+        android:layout_height="320dp">
 
         <!-- Image Shimmer -->
         <View
@@ -74,8 +74,8 @@
             <!-- Button Shimmer -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shimmer_button"
                 android:backgroundTint="#D1D5DB" />
 

@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
 import com.mealify.mealify.presentation.search.presenter.ingredient.SearchIngredientPresenter;
@@ -29,6 +30,7 @@ import java.util.List;
 
 public class SearchByIngredientFragment extends Fragment implements SearchIngredientView {
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
     private SearchIngredientPresenter presenter;
     private SearchIngredientAdapter adapter;
     private ProgressBar progressBar;
@@ -57,7 +59,33 @@ public class SearchByIngredientFragment extends Fragment implements SearchIngred
         setupPresenter();
         setupSearchListener();
 
-        presenter.getIngredients();
+        loadData();
+        setupNetworkMonitoring();
+    }
+
+    private void loadData() {
+        if (presenter != null) {
+            presenter.getIngredients();
+        }
+    }
+
+    private void setupNetworkMonitoring() {
+        disposables.add(
+                NetworkObservation.getInstance(requireContext())
+                        .observeConnection()
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            if (isConnected) {
+                                loadData();
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
     private void initViews(View view) {
