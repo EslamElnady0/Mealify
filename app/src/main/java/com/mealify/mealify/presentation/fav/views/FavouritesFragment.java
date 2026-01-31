@@ -1,5 +1,6 @@
 package com.mealify.mealify.presentation.fav.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,12 +17,14 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
 import com.mealify.mealify.data.favs.repo.FavRepo;
+import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.fav.presenter.FavsPresenter;
 import com.mealify.mealify.presentation.fav.presenter.FavsPresenterImpl;
 
@@ -38,7 +41,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
     private TextInputEditText searchInput;
     private TextView favoritesCount;
     private View guestContainer;
-    private com.google.android.material.button.MaterialButton loginBtn;
+    private MaterialButton loginBtn;
     private View searchLayout;
     private View headerLayout;
     private List<FavouriteWithMeal> allFavs = new ArrayList<>();
@@ -76,7 +79,7 @@ public class FavouritesFragment extends Fragment implements FavsView {
         headerLayout = view.findViewById(R.id.headerLayout);
 
         loginBtn.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(getContext(), com.mealify.mealify.presentation.auth.AuthActivity.class);
+            Intent intent = new Intent(getContext(), AuthActivity.class);
             startActivity(intent);
         });
 
@@ -185,14 +188,12 @@ public class FavouritesFragment extends Fragment implements FavsView {
 
     @Override
     public void setGuestMode(boolean isGuest) {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(() -> {
-                if (guestContainer != null) guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
-                if (favoritesRecycler != null) favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (searchLayout != null) searchLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (headerLayout != null) headerLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
-                if (emptyView != null && isGuest) emptyView.setVisibility(View.GONE);
-            });
-        }
+        if (guestContainer != null)
+            guestContainer.setVisibility(isGuest ? View.VISIBLE : View.GONE);
+        if (favoritesRecycler != null)
+            favoritesRecycler.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (searchLayout != null) searchLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (headerLayout != null) headerLayout.setVisibility(isGuest ? View.GONE : View.VISIBLE);
+        if (emptyView != null && isGuest) emptyView.setVisibility(View.GONE);
     }
 }

@@ -26,11 +26,13 @@ import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
+import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
 import com.mealify.mealify.data.meals.model.meal.MealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.network.NetworkObservation;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -40,9 +42,12 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import java.time.LocalDate;
 import java.util.Calendar;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
-    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private ProgressBar progressBar;
     private NestedScrollView contentScrollView;
     private TextView errorText;
@@ -97,8 +102,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             Navigation.findNavController(v).navigateUp();
         });
         favButton.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService =
-                    com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            FirebaseAuthService authService =
+                    FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;
@@ -127,8 +132,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         });
         weeklyPlanBtn.setOnClickListener(v -> {
-            com.mealify.mealify.data.auth.datasources.FirebaseAuthService authService =
-                    com.mealify.mealify.data.auth.datasources.FirebaseAuthService.getInstance(getContext());
+            FirebaseAuthService authService =
+                    FirebaseAuthService.getInstance(getContext());
             if (authService.getCurrentUser() != null && authService.getCurrentUser().isAnonymous()) {
                 DialogUtils.showGuestLoginDialog(getContext());
                 return;
@@ -148,9 +153,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private void setupNetworkMonitoring() {
         disposables.add(
-                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                NetworkObservation.getInstance(requireContext())
                         .observeConnection()
-                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(isConnected -> {
                             if (isConnected && currentMeal == null) {
                                 loadData();
