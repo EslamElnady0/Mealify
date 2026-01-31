@@ -8,7 +8,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +36,7 @@ public class SearchByNameFragment extends Fragment implements SearchNameView {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private SearchNamePresenter presenter;
     private MealSearchResultAdapter adapter;
-    private ProgressBar progressBar;
+    private LinearLayout shimmerViewContainer;
     private RecyclerView recyclerView;
     private TextInputEditText searchEditText;
     private View infoCard;
@@ -65,7 +67,7 @@ public class SearchByNameFragment extends Fragment implements SearchNameView {
     }
 
     private void initViews(View view) {
-        progressBar = view.findViewById(R.id.progressBar);
+        shimmerViewContainer = view.findViewById(R.id.shimmer_view_container);
         recyclerView = view.findViewById(R.id.resultsRecyclerView);
         searchEditText = view.findViewById(R.id.search_edit_text);
         infoCard = view.findViewById(R.id.info_card);
@@ -126,13 +128,21 @@ public class SearchByNameFragment extends Fragment implements SearchNameView {
         infoCard.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         noResultsLayout.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
+        shimmerViewContainer.clearAnimation();
+        shimmerViewContainer.setVisibility(View.GONE);
         adapter.setMeals(null);
     }
 
     @Override
     public void toggleLoading(boolean isLoading) {
-        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            shimmerViewContainer.setVisibility(View.VISIBLE);
+            Animation shimmer = AnimationUtils.loadAnimation(requireContext(), R.anim.shimmer_fade);
+            shimmerViewContainer.startAnimation(shimmer);
+        } else {
+            shimmerViewContainer.clearAnimation();
+            shimmerViewContainer.setVisibility(View.GONE);
+        }
         if (isLoading) {
             infoCard.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);

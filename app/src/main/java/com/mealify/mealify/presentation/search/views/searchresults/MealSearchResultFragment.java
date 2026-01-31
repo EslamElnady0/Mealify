@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,7 +36,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
     private String query;
     private MealSearchResultPresenter presenter;
     private MealSearchResultAdapter adapter;
-    private ProgressBar progressBar;
+    private LinearLayout shimmerViewContainer;
     private TextView headerText;
     private RecyclerView recyclerView;
     private TextInputEditText searchEditText;
@@ -73,7 +75,7 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
     }
 
     private void initViews(View view) {
-        progressBar = view.findViewById(R.id.progressBar);
+        shimmerViewContainer = view.findViewById(R.id.shimmer_view_container);
         headerText = view.findViewById(R.id.result_header_text);
         recyclerView = view.findViewById(R.id.resultsRecyclerView);
         searchEditText = view.findViewById(R.id.search_edit_text);
@@ -146,7 +148,14 @@ public class MealSearchResultFragment extends Fragment implements MealSearchResu
 
     @Override
     public void toggleLoading(boolean isLoading) {
-        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            shimmerViewContainer.setVisibility(View.VISIBLE);
+            Animation shimmer = AnimationUtils.loadAnimation(requireContext(), R.anim.shimmer_fade);
+            shimmerViewContainer.startAnimation(shimmer);
+        } else {
+            shimmerViewContainer.clearAnimation();
+            shimmerViewContainer.setVisibility(View.GONE);
+        }
         recyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
 }
