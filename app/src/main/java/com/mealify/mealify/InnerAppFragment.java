@@ -14,10 +14,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import com.mealify.mealify.network.NetworkObservation;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link InnerAppFragment#newInstance} factory method to

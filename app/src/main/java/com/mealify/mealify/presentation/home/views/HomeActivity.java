@@ -9,16 +9,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.mealify.mealify.R;
-
-import com.mealify.mealify.network.NetworkObservation;
+import com.mealify.mealify.core.utils.NetworkObservation;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private android.view.View offlineBanner;
     private final CompositeDisposable disposables = new CompositeDisposable();
+    private android.view.View offlineBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

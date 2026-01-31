@@ -272,16 +272,24 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Barrier for Featured Section -->
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/mealOfTheDayBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="mealOfTheDayLoading,mealOfTheDayCard" />
+
         <!-- Explore Section -->
         <LinearLayout
             android:id="@+id/exploreSection"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayCard">
+            app:layout_constraintTop_toBottomOf="@id/mealOfTheDayBarrier">
 
             <TextView
                 android:id="@+id/browseCategoriesTitle"

@@ -1,4 +1,4 @@
-package com.mealify.mealify.network;
+package com.mealify.mealify.core.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.profile.presenter.ProfilePresenter;
 import com.mealify.mealify.presentation.profile.presenter.ProfilePresenterImpl;
 
 public class ProfileFragment extends Fragment implements ProfileView {
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
     private TextView usernameText;
     private TextView emailText;
     private TextView favCountText;
@@ -33,8 +35,6 @@ public class ProfileFragment extends Fragment implements ProfileView {
     private ProfilePresenter presenter;
     private View offlineContainer;
     private View profileContent;
-    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
-
     private View loadingOverlay;
 
     public ProfileFragment() {
@@ -88,7 +88,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
 
     private void setupNetworkMonitoring() {
         disposables.add(
-                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                NetworkObservation.getInstance(requireContext())
                         .observeConnection()
                         .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
                         .subscribe(isConnected -> {

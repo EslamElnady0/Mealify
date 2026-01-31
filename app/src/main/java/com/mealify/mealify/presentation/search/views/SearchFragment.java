@@ -13,18 +13,18 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.utils.NetworkObservation;
 
-import com.mealify.mealify.network.NetworkObservation;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class SearchFragment extends Fragment {
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private View offlineContainer;
     private SearchPagerAdapter pagerAdapter;
-    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public SearchFragment() {
     }
@@ -77,19 +77,19 @@ public class SearchFragment extends Fragment {
                         .observeConnection()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(isConnected -> {
-                            if (isConnected) {
-                                tabLayout.setVisibility(View.VISIBLE);
-                                viewPager.setVisibility(View.VISIBLE);
-                                offlineContainer.setVisibility(View.GONE);
-                            } else {
-                                tabLayout.setVisibility(View.GONE);
-                                viewPager.setVisibility(View.GONE);
-                                offlineContainer.setVisibility(View.VISIBLE);
-                            }
-                        },
-                        throwable -> {
-                        }
-                )
+                                    if (isConnected) {
+                                        tabLayout.setVisibility(View.VISIBLE);
+                                        viewPager.setVisibility(View.VISIBLE);
+                                        offlineContainer.setVisibility(View.GONE);
+                                    } else {
+                                        tabLayout.setVisibility(View.GONE);
+                                        viewPager.setVisibility(View.GONE);
+                                        offlineContainer.setVisibility(View.VISIBLE);
+                                    }
+                                },
+                                throwable -> {
+                                }
+                        )
         );
     }
 

@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.utils.NetworkObservation;
 import com.mealify.mealify.data.meals.model.category.CategoryDto;
 import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
 import com.mealify.mealify.presentation.search.presenter.category.SearchCategoryPresenter;
@@ -29,6 +30,7 @@ import java.util.List;
 
 public class SearchByCategoryFragment extends Fragment implements SearchCategoryView {
 
+    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
     private SearchCategoryPresenter presenter;
     private SearchCategoryAdapter adapter;
     private ProgressBar progressBar;
@@ -47,8 +49,6 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_search_by_category, container, false);
     }
-
-    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class SearchByCategoryFragment extends Fragment implements SearchCategory
 
     private void setupNetworkMonitoring() {
         disposables.add(
-                com.mealify.mealify.network.NetworkObservation.getInstance(requireContext())
+                NetworkObservation.getInstance(requireContext())
                         .observeConnection()
                         .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
                         .subscribe(isConnected -> {

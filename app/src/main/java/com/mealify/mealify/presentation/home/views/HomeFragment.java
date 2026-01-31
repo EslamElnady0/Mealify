@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.mealify.mealify.R;
-import com.mealify.mealify.network.NetworkObservation;
+import com.mealify.mealify.core.utils.NetworkObservation;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
