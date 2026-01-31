@@ -75,7 +75,7 @@ public class SearchAreaAdapter extends RecyclerView.Adapter<SearchAreaAdapter.Ar
 
             Glide.with(itemView.getContext())
                     .load(area.getFlagUrl())
-                    .placeholder(R.drawable.globe_24dp)
+                    .placeholder(R.drawable.shimmer_circle)
                     .into(areaFlag);
         }
     }

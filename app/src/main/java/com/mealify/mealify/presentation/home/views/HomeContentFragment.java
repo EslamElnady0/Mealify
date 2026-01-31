@@ -166,7 +166,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
         Glide.with(this)
                 .load(meal.thumbnail)
                 .apply(new RequestOptions()
-                        .placeholder(R.drawable.mealify_logo)
+                        .placeholder(R.drawable.shimmer_circle)
                         .error(R.drawable.mealify_logo))
                 .into(mealImage);
 

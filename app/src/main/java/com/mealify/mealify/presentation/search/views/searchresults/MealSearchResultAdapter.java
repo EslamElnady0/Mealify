@@ -73,7 +73,7 @@ public class MealSearchResultAdapter extends RecyclerView.Adapter<MealSearchResu
             mealName.setText(meal.getStrMeal());
             Glide.with(itemView.getContext())
                     .load(meal.getStrMealThumb())
-                    .placeholder(R.drawable.mealify_logo)
+                    .placeholder(R.drawable.shimmer_rect)
                     .into(mealImage);
         }
     }
