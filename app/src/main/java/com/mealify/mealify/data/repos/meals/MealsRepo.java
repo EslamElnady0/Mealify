@@ -38,9 +38,7 @@ public class MealsRepo {
         this.remoteDataSource = new MealRemoteDataSource(ctx);
         this.localDataSource = new MealLocalDataSource(ctx);
     }
-
-    // --- General Meal Methods ---
-
+    
     public Single<List<MealDto>> getRandomMeal() {
         return remoteDataSource.getRandomMeal()
                 .subscribeOn(Schedulers.io())
@@ -83,8 +81,6 @@ public class MealsRepo {
                 .map(response -> MealMapper.toFilteredMeals(response.meals));
     }
 
-    // --- Favorites Methods ---
-
     public Completable insertMealInFavorites(MealEntity meal) {
         return localDataSource.insertMeal(meal)
                 .andThen(remoteDataSource.saveMeal(meal.getId(), meal))
@@ -113,8 +109,6 @@ public class MealsRepo {
         return localDataSource.getFavouritesCount()
                 .subscribeOn(Schedulers.io());
     }
-
-    // --- Weekly Plan Methods ---
 
     public Completable addMealToPlan(WeeklyPlanMealWithMeal planMealWithMeal) {
         return addMealToPlanCompletable(planMealWithMeal)
@@ -160,8 +154,6 @@ public class MealsRepo {
         return localDataSource.getPlannedMealsCount()
                 .subscribeOn(Schedulers.io());
     }
-
-    // --- Local Storage Management ---
 
     public Observable<List<MealEntity>> getAllLocalMeals() {
         return localDataSource.getAllMeals().subscribeOn(Schedulers.io());
