@@ -15,4 +15,6 @@ public interface AuthService {
     Completable signOut();
 
     String getCurrentUserId();
+
+    com.google.firebase.auth.FirebaseUser getCurrentUser();
 }

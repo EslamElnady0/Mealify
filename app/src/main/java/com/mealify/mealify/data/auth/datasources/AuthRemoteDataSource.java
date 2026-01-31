@@ -44,4 +44,8 @@ public class AuthRemoteDataSource {
         return authService.getCurrentUserId();
     }
 
+    public com.google.firebase.auth.FirebaseUser getCurrentUser() {
+        return authService.getCurrentUser();
+    }
+
 }

@@ -2,6 +2,7 @@ package com.mealify.mealify.data.auth.repo;
 
 import android.content.Context;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.mealify.mealify.data.auth.datasources.AuthRemoteDataSource;
 import com.mealify.mealify.data.auth.datasources.PrefsDataSource;
 
@@ -43,5 +44,9 @@ public class AuthRepo {
 
     public String getCurrentUserId() {
         return authRemoteDataSource.getCurrentUserId();
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return authRemoteDataSource.getCurrentUser();
     }
 }

@@ -3,7 +3,7 @@ package com.mealify.mealify.presentation.profile.presenter;
 import android.content.Context;
 import com.google.firebase.auth.FirebaseUser;
 import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
+import com.mealify.mealify.data.auth.repo.AuthRepo;
 import android.annotation.SuppressLint;
 import com.mealify.mealify.data.favs.repo.FavRepo;
 import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
@@ -22,7 +22,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
     private final Context context;
     private final ProfileView view;
-    private final FirebaseAuthService authService;
+    private final AuthRepo authRepo;
     private final FavRepo favRepo;
     private final WeeklyPlanRepo planRepo;
     private final MealsRepo mealsRepo;
@@ -33,7 +33,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     public ProfilePresenterImpl(Context context, ProfileView view) {
         this.context = context;
         this.view = view;
-        this.authService = FirebaseAuthService.getInstance(context);
+        this.authRepo = new AuthRepo(context);
         this.favRepo = new FavRepo(context);
         this.planRepo = new WeeklyPlanRepo(context);
         this.mealsRepo = new MealsRepo(context);
@@ -41,7 +41,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
     @Override
     public void loadUserData() {
-        FirebaseUser user = authService.getCurrentUser();
+        FirebaseUser user = authRepo.getCurrentUser();
         if (user != null) {
             if (user.isAnonymous()) {
                 view.setGuestMode(true);
@@ -65,7 +65,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
     @Override
     public void loadStats() {
-        FirebaseUser user = authService.getCurrentUser();
+        FirebaseUser user = authRepo.getCurrentUser();
         if (user != null && user.isAnonymous()) {
             return;
         }
@@ -124,7 +124,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         .andThen(mealsRepo.removeAllLocalFavourites())
         .andThen(mealsRepo.removeAllLocalWeeklyPlans())
         .andThen(mealsRepo.removeAllLocalMeals())
-        .andThen(authService.signOut())
+        .andThen(authRepo.logout())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(() -> {
