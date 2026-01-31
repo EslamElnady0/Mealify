@@ -2,9 +2,11 @@ package com.mealify.mealify.data.auth.repo;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
 import com.mealify.mealify.data.auth.datasources.AuthRemoteDataSource;
 import com.mealify.mealify.data.auth.datasources.PrefsDataSource;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 public class AuthRepo {
     private AuthRemoteDataSource authRemoteDataSource;
@@ -15,78 +17,28 @@ public class AuthRepo {
         this.prefsDataSource = new PrefsDataSource(context);
     }
 
-    public void login(String email, String password, GeneralResponse<String> generalResponse) {
-        authRemoteDataSource.login(email, password, new GeneralResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                generalResponse.onSuccess(data);
-                prefsDataSource.saveString("user_id", data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                generalResponse.onError(errorMessage);
-            }
-        });
+    public Single<String> login(String email, String password) {
+        return authRemoteDataSource.login(email, password)
+                .doOnSuccess(userId -> prefsDataSource.saveString("user_id", userId));
     }
 
-    public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
-        authRemoteDataSource.register(email, password, name, new GeneralResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                generalResponse.onSuccess(data);
-                prefsDataSource.saveString("user_id", data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                generalResponse.onError(errorMessage);
-            }
-        });
+    public Single<String> register(String email, String password, String name) {
+        return authRemoteDataSource.register(email, password, name)
+                .doOnSuccess(userId -> prefsDataSource.saveString("user_id", userId));
     }
 
-    public void googleSignIn(GeneralResponse<String> generalResponse) {
-        authRemoteDataSource.googleSignIn(new GeneralResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                generalResponse.onSuccess(data);
-                prefsDataSource.saveString("user_id", data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                generalResponse.onError(errorMessage);
-            }
-        });
+    public Single<String> googleSignIn() {
+        return authRemoteDataSource.googleSignIn()
+                .doOnSuccess(userId -> prefsDataSource.saveString("user_id", userId));
     }
 
-    public void signInAnonymously(GeneralResponse<String> generalResponse) {
-        authRemoteDataSource.signInAnonymously(new GeneralResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                generalResponse.onSuccess(data);
-                prefsDataSource.saveString("user_id", "guest_" + data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                generalResponse.onError(errorMessage);
-            }
-        });
+    public Single<String> signInAnonymously() {
+        return authRemoteDataSource.signInAnonymously()
+                .doOnSuccess(userId -> prefsDataSource.saveString("user_id", "guest_" + userId));
     }
 
-    public void logout(GeneralResponse<String> generalResponse) {
-        authRemoteDataSource.logout(new GeneralResponse<String>() {
-            @Override
-            public void onSuccess(String data) {
-                generalResponse.onSuccess(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                generalResponse.onError(errorMessage);
-            }
-        });
+    public Completable logout() {
+        return authRemoteDataSource.logout();
     }
 
     public String getCurrentUserId() {

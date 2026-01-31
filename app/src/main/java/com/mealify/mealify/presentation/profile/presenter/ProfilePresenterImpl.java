@@ -124,22 +124,12 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         .andThen(mealsRepo.removeAllLocalFavourites())
         .andThen(mealsRepo.removeAllLocalWeeklyPlans())
         .andThen(mealsRepo.removeAllLocalMeals())
+        .andThen(authService.signOut())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(() -> {
-            authService.signOut(new GeneralResponse<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    view.toggleLoading(false);
-                    view.onLogoutSuccess();
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    view.toggleLoading(false);
-                    view.onLogoutError(errorMessage);
-                }
-            });
+            view.toggleLoading(false);
+            view.onLogoutSuccess();
         }, error -> {
             view.toggleLoading(false);
             view.onLogoutError(error.getMessage());

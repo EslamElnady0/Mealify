@@ -23,9 +23,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.mealify.mealify.R;
 import com.mealify.mealify.core.helper.CustomLogger;
-import com.mealify.mealify.core.response.GeneralResponse;
 
 import java.util.concurrent.Executors;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 public class FirebaseAuthService implements AuthService {
     private static FirebaseAuthService instance;
@@ -57,88 +59,96 @@ public class FirebaseAuthService implements AuthService {
     }
 
     @Override
-    public void login(String email, String password, GeneralResponse<String> generalResponse) {
-        CustomLogger.log("Attempting login for email: " + email, "AUTH_SERVICE");
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        CustomLogger.log("Login successful: " + user.getUid(), "AUTH_SERVICE");
-                        generalResponse.onSuccess(user.getUid());
-                    } else {
-                        CustomLogger.log("Login failed: User not found", "AUTH_SERVICE");
-                        generalResponse.onError("Login failed: User not found");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    CustomLogger.log("Login failed: " + e.getMessage(), "AUTH_SERVICE");
-                    generalResponse.onError(e.getMessage());
-                });
+    public Single<String> login(String email, String password) {
+        return Single.create(emitter -> {
+            CustomLogger.log("Attempting login for email: " + email, "AUTH_SERVICE");
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(authResult -> {
+                        FirebaseUser user = authResult.getUser();
+                        if (user != null) {
+                            CustomLogger.log("Login successful: " + user.getUid(), "AUTH_SERVICE");
+                            emitter.onSuccess(user.getUid());
+                        } else {
+                            CustomLogger.log("Login failed: User not found", "AUTH_SERVICE");
+                            emitter.onError(new Exception("Login failed: User not found"));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        CustomLogger.log("Login failed: " + e.getMessage(), "AUTH_SERVICE");
+                        emitter.onError(e);
+                    });
+        });
     }
 
     @Override
-    public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
-        CustomLogger.log("Attempting registration for email: " + email, "AUTH_SERVICE");
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        CustomLogger.log("Registration successful: " + user.getUid(), "AUTH_SERVICE");
-                        generalResponse.onSuccess(user.getUid());
-                    } else {
-                        CustomLogger.log("Registration failed: User not created", "AUTH_SERVICE");
-                        generalResponse.onError("Registration failed: User not created");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    CustomLogger.log("Registration failed: " + e.getMessage(), "AUTH_SERVICE");
-                    generalResponse.onError(e.getMessage());
-                });
+    public Single<String> register(String email, String password, String name) {
+        return Single.create(emitter -> {
+            CustomLogger.log("Attempting registration for email: " + email, "AUTH_SERVICE");
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(authResult -> {
+                        FirebaseUser user = authResult.getUser();
+                        if (user != null) {
+                            CustomLogger.log("Registration successful: " + user.getUid(), "AUTH_SERVICE");
+                            emitter.onSuccess(user.getUid());
+                        } else {
+                            CustomLogger.log("Registration failed: User not created", "AUTH_SERVICE");
+                            emitter.onError(new Exception("Registration failed: User not created"));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        CustomLogger.log("Registration failed: " + e.getMessage(), "AUTH_SERVICE");
+                        emitter.onError(e);
+                    });
+        });
     }
 
     @Override
-    public void signInAnonymously(GeneralResponse<String> generalResponse) {
-        CustomLogger.log("Attempting anonymous sign-in", "AUTH_SERVICE");
-        firebaseAuth.signInAnonymously()
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        CustomLogger.log("Anonymous sign-in successful: " + user.getUid(), "AUTH_SERVICE");
-                        generalResponse.onSuccess("guest_" + user.getUid());
-                    } else {
-                        CustomLogger.log("Anonymous sign-in failed: User not found", "AUTH_SERVICE");
-                        generalResponse.onError("Anonymous sign-in failed: User not found");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    CustomLogger.log("Anonymous sign-in failed: " + e.getMessage(), "AUTH_SERVICE");
-                    generalResponse.onError(e.getMessage());
-                });
+    public Single<String> signInAnonymously() {
+        return Single.create(emitter -> {
+            CustomLogger.log("Attempting anonymous sign-in", "AUTH_SERVICE");
+            firebaseAuth.signInAnonymously()
+                    .addOnSuccessListener(authResult -> {
+                        FirebaseUser user = authResult.getUser();
+                        if (user != null) {
+                            CustomLogger.log("Anonymous sign-in successful: " + user.getUid(), "AUTH_SERVICE");
+                            emitter.onSuccess("guest_" + user.getUid());
+                        } else {
+                            CustomLogger.log("Anonymous sign-in failed: User not found", "AUTH_SERVICE");
+                            emitter.onError(new Exception("Anonymous sign-in failed: User not found"));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        CustomLogger.log("Anonymous sign-in failed: " + e.getMessage(), "AUTH_SERVICE");
+                        emitter.onError(e);
+                    });
+        });
     }
 
     @Override
-    public void signInWithGoogle(GeneralResponse<String> generalResponse) {
-        credentialManager.getCredentialAsync(
-                context,
-                credentialRequest,
-                new CancellationSignal(),
-                Executors.newSingleThreadExecutor(),
-                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
-                    @Override
-                    public void onResult(@NonNull GetCredentialResponse result) {
-                        handleSignIn(result.getCredential(), generalResponse);
-                    }
+    public Single<String> signInWithGoogle() {
+        return Single.create(emitter -> {
+            credentialManager.getCredentialAsync(
+                    context,
+                    credentialRequest,
+                    new CancellationSignal(),
+                    Executors.newSingleThreadExecutor(),
+                    new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                        @Override
+                        public void onResult(@NonNull GetCredentialResponse result) {
+                            handleSignIn(result.getCredential(), emitter);
+                        }
 
-                    @Override
-                    public void onError(@NonNull GetCredentialException e) {
-                        CustomLogger.log("Google Sign-In failed: " + e.getMessage());
-                        generalResponse.onError("Google Sign-In failed: " + e.getMessage());
+                        @Override
+                        public void onError(@NonNull GetCredentialException e) {
+                            CustomLogger.log("Google Sign-In failed: " + e.getMessage());
+                            emitter.onError(new Exception("Google Sign-In failed: " + e.getMessage()));
+                        }
                     }
-                }
-        );
+            );
+        });
     }
 
-    private void handleSignIn(Credential credential, GeneralResponse<String> generalResponse) {
+    private void handleSignIn(Credential credential, io.reactivex.rxjava3.core.SingleEmitter<String> emitter) {
         if (credential instanceof CustomCredential
                 && credential.getType().equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
 
@@ -146,14 +156,14 @@ public class FirebaseAuthService implements AuthService {
             GoogleIdTokenCredential googleIdTokenCredential =
                     GoogleIdTokenCredential.createFrom(credentialData);
 
-            firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken(), generalResponse);
+            firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken(), emitter);
         } else {
             CustomLogger.log("Credential is not of type Google ID!");
-            generalResponse.onError("Invalid credential type");
+            emitter.onError(new Exception("Invalid credential type"));
         }
     }
 
-    private void firebaseAuthWithGoogle(String idToken, GeneralResponse<String> generalResponse) {
+    private void firebaseAuthWithGoogle(String idToken, io.reactivex.rxjava3.core.SingleEmitter<String> emitter) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
@@ -161,41 +171,42 @@ public class FirebaseAuthService implements AuthService {
                         CustomLogger.log("signInWithCredential:success");
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
-                            generalResponse.onSuccess(user.getUid());
+                            emitter.onSuccess(user.getUid());
                         } else {
-                            generalResponse.onError("Google authentication failed: User not found");
+                            emitter.onError(new Exception("Google authentication failed: User not found"));
                         }
                     } else {
                         CustomLogger.log("signInWithCredential:failure " + task.getException());
-                        generalResponse.onError("Google authentication failed: " +
-                                (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
+                        emitter.onError(new Exception("Google authentication failed: " +
+                                (task.getException() != null ? task.getException().getMessage() : "Unknown error")));
                     }
                 });
     }
 
     @Override
-    public void signOut(GeneralResponse<String> generalResponse) {
+    public Completable signOut() {
+        return Completable.create(emitter -> {
+            firebaseAuth.signOut();
+            ClearCredentialStateRequest clearRequest = new ClearCredentialStateRequest();
+            credentialManager.clearCredentialStateAsync(
+                    clearRequest,
+                    new CancellationSignal(),
+                    Executors.newSingleThreadExecutor(),
+                    new CredentialManagerCallback<Void, ClearCredentialException>() {
+                        @Override
+                        public void onResult(@NonNull Void result) {
+                            CustomLogger.log("Credentials cleared successfully");
+                            emitter.onComplete();
+                        }
 
-        firebaseAuth.signOut();
-        ClearCredentialStateRequest clearRequest = new ClearCredentialStateRequest();
-        credentialManager.clearCredentialStateAsync(
-                clearRequest,
-                new CancellationSignal(),
-                Executors.newSingleThreadExecutor(),
-                new CredentialManagerCallback<Void, ClearCredentialException>() {
-                    @Override
-                    public void onResult(@NonNull Void result) {
-                        CustomLogger.log("Credentials cleared successfully");
-                        generalResponse.onSuccess("Signed out successfully");
+                        @Override
+                        public void onError(@NonNull ClearCredentialException e) {
+                            CustomLogger.log("Couldn't clear user credentials: " + e.getLocalizedMessage());
+                            emitter.onError(new Exception("Sign out failed: " + e.getMessage()));
+                        }
                     }
-
-                    @Override
-                    public void onError(@NonNull ClearCredentialException e) {
-                        CustomLogger.log("Couldn't clear user credentials: " + e.getLocalizedMessage());
-                        generalResponse.onError("Sign out failed: " + e.getMessage());
-                    }
-                }
-        );
+            );
+        });
     }
 
     @Override

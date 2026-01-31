@@ -1,17 +1,18 @@
 package com.mealify.mealify.data.auth.datasources;
 
-import com.mealify.mealify.core.response.GeneralResponse;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 public interface AuthService {
-    public void login(String email, String password, GeneralResponse<String> generalResponse);
+    Single<String> login(String email, String password);
 
-    public void register(String email, String password, String name, GeneralResponse<String> generalResponse);
+    Single<String> register(String email, String password, String name);
 
-    public void signInAnonymously(GeneralResponse<String> generalResponse);
+    Single<String> signInAnonymously();
 
-    public void signInWithGoogle(GeneralResponse<String> generalResponse);
+    Single<String> signInWithGoogle();
 
-    public void signOut(GeneralResponse<String> generalResponse);
+    Completable signOut();
 
-    public String getCurrentUserId();
+    String getCurrentUserId();
 }

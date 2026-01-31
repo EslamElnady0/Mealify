@@ -2,7 +2,8 @@ package com.mealify.mealify.data.auth.datasources;
 
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 public class AuthRemoteDataSource {
     private static AuthRemoteDataSource instance = null;
@@ -19,24 +20,24 @@ public class AuthRemoteDataSource {
         return instance;
     }
 
-    public void login(String email, String password, GeneralResponse<String> generalResponse) {
-        authService.login(email, password, generalResponse);
+    public Single<String> login(String email, String password) {
+        return authService.login(email, password);
     }
 
-    public void register(String email, String password, String name, GeneralResponse<String> generalResponse) {
-        authService.register(email, password, name, generalResponse);
+    public Single<String> register(String email, String password, String name) {
+        return authService.register(email, password, name);
     }
 
-    public void googleSignIn(GeneralResponse<String> generalResponse) {
-        authService.signInWithGoogle(generalResponse);
+    public Single<String> googleSignIn() {
+        return authService.signInWithGoogle();
     }
 
-    public void signInAnonymously(GeneralResponse<String> generalResponse) {
-        authService.signInAnonymously(generalResponse);
+    public Single<String> signInAnonymously() {
+        return authService.signInAnonymously();
     }
 
-    public void logout(GeneralResponse<String> generalResponse) {
-        authService.signOut(generalResponse);
+    public Completable logout() {
+        return authService.signOut();
     }
 
     public String getCurrentUserId() {
