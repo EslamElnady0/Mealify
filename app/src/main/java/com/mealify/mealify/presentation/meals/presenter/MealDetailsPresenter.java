@@ -13,4 +13,8 @@ public interface MealDetailsPresenter {
     void addToWeeklyPlan(WeeklyPlanMealWithMeal meal);
 
     void forceAddToWeeklyPlan(WeeklyPlanMealWithMeal meal, String oldMealId);
+    
+    void startNetworkMonitoring(String mealId);
+    
+    void onDestroy();
 }

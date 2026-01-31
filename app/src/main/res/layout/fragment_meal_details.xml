@@ -78,4 +78,34 @@
         app:layout_constraintStart_toStartOf="@+id/fav_btn"
         app:tint="@color/primary" />
 
+    <LinearLayout
+        android:id="@+id/offlineContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/background"
+        android:elevation="10dp"
+        android:padding="32dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/morty_crying" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Rick! Rick! The recipe is gone! \n *sobbing hysterically* \n We're stuck in the offline dimension without the instructions!! \n How are we going to cook this, Rick??"
+            android:textColor="@color/darkBlue"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

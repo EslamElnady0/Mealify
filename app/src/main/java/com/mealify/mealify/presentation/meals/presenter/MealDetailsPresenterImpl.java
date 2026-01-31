@@ -11,13 +11,20 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMe
 import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
 import com.mealify.mealify.presentation.meals.views.MealDetailsView;
 
+import com.mealify.mealify.network.NetworkObservation;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     private MealDetailsView view;
     private MealsRepo mealsRepo;
     private FavRepo favRepo;
     private WeeklyPlanRepo weeklyPlanRepo;
+    private Context context;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public MealDetailsPresenterImpl(Context context, MealDetailsView view) {
+        this.context = context;
         this.view = view;
         this.mealsRepo = new MealsRepo(context);
         this.favRepo = new FavRepo(context);
@@ -125,5 +132,27 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
         } else {
             weeklyPlanRepo.addMealToPlan(meal, callback);
         }
+    }
+
+    @Override
+    public void startNetworkMonitoring(String mealId) {
+        disposables.add(
+                NetworkObservation.getInstance(context)
+                        .observeConnection()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(isConnected -> {
+                            view.toggleOffline(!isConnected);
+                            if (isConnected) {
+                                getMealDetails(mealId);
+                                isMealFavorite(mealId);
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onDestroy() {
+        disposables.clear();
+        view = null;
     }
 }

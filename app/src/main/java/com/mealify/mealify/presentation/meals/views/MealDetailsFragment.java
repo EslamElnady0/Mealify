@@ -32,7 +32,6 @@ import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
 import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
-import com.mealify.mealify.network.NetworkObservation;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -42,12 +41,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import java.time.LocalDate;
 import java.util.Calendar;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
     private ProgressBar progressBar;
     private NestedScrollView contentScrollView;
     private TextView errorText;
@@ -72,6 +67,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     public MealDetailsFragment() {
     }
 
+    private View offlineContainer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,9 +91,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupRecyclerView();
 
         presenter = new MealDetailsPresenterImpl(getContext(), this);
-
-        loadData();
-        setupNetworkMonitoring();
+        presenter.startNetworkMonitoring(String.valueOf(mealId));
 
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigateUp();
@@ -144,36 +139,19 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         });
     }
 
-    private void loadData() {
-        if (presenter != null) {
-            presenter.getMealDetails(String.valueOf(mealId));
-            presenter.isMealFavorite(String.valueOf(mealId));
-        }
-    }
-
-    private void setupNetworkMonitoring() {
-        disposables.add(
-                NetworkObservation.getInstance(requireContext())
-                        .observeConnection()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(isConnected -> {
-                            if (isConnected && currentMeal == null) {
-                                loadData();
-                            }
-                        })
-        );
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        disposables.clear();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
     }
 
     private void initViews(View view) {
         progressBar = view.findViewById(R.id.progressBar);
         errorText = view.findViewById(R.id.errorText);
         contentScrollView = view.findViewById(R.id.contentScrollView);
+        offlineContainer = view.findViewById(R.id.offlineContainer);
 
         // Header views
         View header = view.findViewById(R.id.mealHeader);
@@ -198,6 +176,20 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         stepAdapter = new StepAdapter();
         stepsRecycler.setAdapter(stepAdapter);
+    }
+
+    @Override
+    public void toggleOffline(boolean isOffline) {
+        if (isOffline) {
+            offlineContainer.setVisibility(View.VISIBLE);
+            contentScrollView.setVisibility(View.GONE);
+            favButton.setVisibility(View.GONE);
+            weeklyPlanBtn.setVisibility(View.GONE);
+        } else {
+            offlineContainer.setVisibility(View.GONE);
+            favButton.setVisibility(View.VISIBLE);
+            weeklyPlanBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

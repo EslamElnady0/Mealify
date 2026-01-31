@@ -35,10 +35,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 
 public class HomeContentFragment extends Fragment implements HomeView {
-    private final io.reactivex.rxjava3.disposables.CompositeDisposable disposables = new io.reactivex.rxjava3.disposables.CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private HomePresenter presenter;
     private RecyclerView categoriesRecyclerView;
     private RecyclerView categoriesLoadingRecyclerView;
