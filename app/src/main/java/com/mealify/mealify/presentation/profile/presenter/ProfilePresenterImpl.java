@@ -1,30 +1,28 @@
 package com.mealify.mealify.presentation.profile.presenter;
 
-import android.content.Context;
-import com.google.firebase.auth.FirebaseUser;
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
 import android.annotation.SuppressLint;
-import com.mealify.mealify.data.favs.repo.FavRepo;
-import com.mealify.mealify.data.weeklyplan.repo.WeeklyPlanRepo;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.favs.model.fav.FavouriteWithMeal;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import android.content.Context;
+
+import com.google.firebase.auth.FirebaseUser;
+import com.mealify.mealify.data.models.fav.FavouriteWithMeal;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.profile.views.ProfileView;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class ProfilePresenterImpl implements ProfilePresenter {
 
     private final Context context;
     private final ProfileView view;
-    private final FirebaseAuthService authService;
-    private final FavRepo favRepo;
-    private final WeeklyPlanRepo planRepo;
+    private final AuthRepo authRepo;
     private final MealsRepo mealsRepo;
 
     private int favoritesCount = 0;
@@ -33,15 +31,13 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     public ProfilePresenterImpl(Context context, ProfileView view) {
         this.context = context;
         this.view = view;
-        this.authService = FirebaseAuthService.getInstance(context);
-        this.favRepo = new FavRepo(context);
-        this.planRepo = new WeeklyPlanRepo(context);
+        this.authRepo = new AuthRepo(context);
         this.mealsRepo = new MealsRepo(context);
     }
 
     @Override
     public void loadUserData() {
-        FirebaseUser user = authService.getCurrentUser();
+        FirebaseUser user = authRepo.getCurrentUser();
         if (user != null) {
             if (user.isAnonymous()) {
                 view.setGuestMode(true);
@@ -64,41 +60,36 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void loadStats() {
-        FirebaseUser user = authService.getCurrentUser();
+        FirebaseUser user = authRepo.getCurrentUser();
         if (user != null && user.isAnonymous()) {
             return;
         }
         view.toggleLoading(true);
-        favRepo.getFavouritesCount(new GeneralResponse<Integer>() {
-            @Override
-            public void onSuccess(Integer count) {
-                favoritesCount = count;
-                loadPlansCount();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-            }
-        });
+        mealsRepo.getFavouritesCount()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        count -> {
+                            favoritesCount = count;
+                            loadPlansCount();
+                        },
+                        error -> view.toggleLoading(false)
+                );
     }
 
+    @SuppressLint("CheckResult")
     private void loadPlansCount() {
-        planRepo.getPlannedMealsCount(new GeneralResponse<Integer>() {
-            @Override
-            public void onSuccess(Integer count) {
-                plansCount = count;
-                view.displayStats(favoritesCount, plansCount);
-                view.toggleLoading(false);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-            
-            }
-        });
+        mealsRepo.getPlannedMealsCount()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        count -> {
+                            plansCount = count;
+                            view.displayStats(favoritesCount, plansCount);
+                            view.toggleLoading(false);
+                        },
+                        error -> view.toggleLoading(false)
+                );
     }
 
     @Override
@@ -124,22 +115,12 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         .andThen(mealsRepo.removeAllLocalFavourites())
         .andThen(mealsRepo.removeAllLocalWeeklyPlans())
         .andThen(mealsRepo.removeAllLocalMeals())
+        .andThen(authRepo.logout())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(() -> {
-            authService.signOut(new GeneralResponse<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    view.toggleLoading(false);
-                    view.onLogoutSuccess();
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    view.toggleLoading(false);
-                    view.onLogoutError(errorMessage);
-                }
-            });
+            view.toggleLoading(false);
+            view.onLogoutSuccess();
         }, error -> {
             view.toggleLoading(false);
             view.onLogoutError(error.getMessage());

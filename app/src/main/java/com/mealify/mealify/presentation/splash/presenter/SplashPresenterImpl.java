@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.splash.presenter;
 
-import com.mealify.mealify.data.auth.repo.AuthRepo;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
 import com.mealify.mealify.presentation.splash.views.SplashView;
 
 public class SplashPresenterImpl implements SplashPresenter {

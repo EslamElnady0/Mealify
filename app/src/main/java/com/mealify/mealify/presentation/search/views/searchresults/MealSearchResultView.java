@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.search.views.searchresults;
 
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 
 import java.util.List;
 

@@ -41,7 +41,7 @@
         tools:layout="@layout/fragment_meal_search_result">
         <argument
             android:name="filterType"
-            app:argType="com.mealify.mealify.data.meals.model.filteredmeals.FilterType" />
+            app:argType="com.mealify.mealify.data.models.filteredmeals.FilterType" />
         <argument
             android:name="query"
             app:argType="string" />

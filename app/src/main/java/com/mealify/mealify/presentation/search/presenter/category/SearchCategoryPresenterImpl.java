@@ -1,14 +1,16 @@
 package com.mealify.mealify.presentation.search.presenter.category;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.category.CategoryDto;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.category.CategoryDto;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.category.SearchCategoryView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class SearchCategoryPresenterImpl implements SearchCategoryPresenter {
 
@@ -22,22 +24,22 @@ public class SearchCategoryPresenterImpl implements SearchCategoryPresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getCategories() {
         view.toggleLoading(true);
-        mealsRepo.getCategories(new GeneralResponse<List<CategoryDto>>() {
-            @Override
-            public void onSuccess(List<CategoryDto> data) {
-                view.toggleLoading(false);
-                allCategories = data;
-                view.showCategories(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-                view.showError(errorMessage);
-            }
-        });
+        mealsRepo.getCategories()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleLoading(false);
+                            allCategories = data;
+                            view.showCategories(data);
+                        },
+                        error -> {
+                            view.toggleLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 
     @Override

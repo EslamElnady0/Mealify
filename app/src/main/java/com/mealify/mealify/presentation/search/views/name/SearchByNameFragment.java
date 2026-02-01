@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
+import com.mealify.mealify.core.helper.CustomSnackbar;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
 import com.mealify.mealify.presentation.search.presenter.name.SearchNamePresenter;
 import com.mealify.mealify.presentation.search.presenter.name.SearchNamePresenterImpl;
 import com.mealify.mealify.presentation.search.views.searchresults.MealSearchResultAdapter;
@@ -167,7 +167,7 @@ public class SearchByNameFragment extends Fragment implements SearchNameView {
 
     @Override
     public void showError(String message) {
-        CustomToast.show(requireContext(), message);
+        CustomSnackbar.showFailure(getView(), message);
         noResultsLayout.setVisibility(View.VISIBLE);
         infoCard.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);

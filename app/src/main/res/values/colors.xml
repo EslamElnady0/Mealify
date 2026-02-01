@@ -11,4 +11,6 @@
     <color name="background">#f7fafc</color>
     <color name="grayWhitish">#CBD5E1</color>
     <color name="darkBlue">#0F172A</color>
+    <color name="error">#E53935</color>
+    <color name="errorAccent">#FFEBEE</color>
 </resources>

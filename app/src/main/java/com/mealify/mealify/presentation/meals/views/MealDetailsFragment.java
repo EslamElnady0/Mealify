@@ -1,5 +1,6 @@
 package com.mealify.mealify.presentation.meals.views;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -23,15 +27,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CalendarHelper;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
-import com.mealify.mealify.data.auth.datasources.FirebaseAuthService;
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.datasources.auth.remote.services.FirebaseAuthService;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.models.weeklyplan.DayOfWeek;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenter;
 import com.mealify.mealify.presentation.meals.presenter.MealDetailsPresenterImpl;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -63,11 +68,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private int mealId;
     private MealEntity currentMeal;
     private boolean isFavorite = false;
+    private View offlineContainer;
+    
+    private CalendarHelper calendarHelper;
+    private ActivityResultLauncher<String[]> calendarPermissionLauncher;
+    private String pendingMealName;
+    private String pendingMealDate;
 
     public MealDetailsFragment() {
     }
-
-    private View offlineContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,30 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         if (getArguments() != null) {
             mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
         }
+        
+        calendarHelper = new CalendarHelper(requireContext());
+        
+        calendarPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    Boolean readGranted = result.get(Manifest.permission.READ_CALENDAR);
+                    Boolean writeGranted = result.get(Manifest.permission.WRITE_CALENDAR);
+                    
+                    if (readGranted != null && writeGranted != null && readGranted && writeGranted) {
+                        if (pendingMealName != null && pendingMealDate != null) {
+                            calendarHelper.addMealToSystemCalendar(pendingMealName, pendingMealDate);
+                            pendingMealName = null;
+                            pendingMealDate = null;
+                        }
+                    } else {
+                        Toast.makeText(getContext(), 
+                                "Calendar permission denied. Meal saved to plan only.", 
+                                Toast.LENGTH_SHORT).show();
+                        pendingMealName = null;
+                        pendingMealDate = null;
+                    }
+                }
+        );
     }
 
     @Override
@@ -273,12 +306,26 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         this.isFavorite = isFavorite;
         updateFavButton();
         String message = isFavorite ? "Added to favorites" : "Removed from favorites";
-        CustomToast.show(getContext(), message);
+        CustomSnackbar.showSuccess(getView(), message);
+
     }
 
     @Override
     public void onWeeklyPlanMealAdded(String message) {
-        CustomToast.show(getContext(), message);
+        CustomSnackbar.showSuccess(getView(), message);
+        
+        if (pendingMealName != null && pendingMealDate != null) {
+            if (CalendarHelper.hasCalendarPermissions(requireContext())) {
+                calendarHelper.addMealToSystemCalendar(pendingMealName, pendingMealDate);
+                pendingMealName = null;
+                pendingMealDate = null;
+            } else {
+                calendarPermissionLauncher.launch(new String[]{
+                        Manifest.permission.READ_CALENDAR,
+                        Manifest.permission.WRITE_CALENDAR
+                });
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -341,6 +388,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                                     currentMeal,
                                     planEntry
                             );
+                            
+                            // Store pending data for calendar integration
+                            pendingMealName = currentMeal.getName();
+                            pendingMealDate = formattedDate;
+                            
                             presenter.addToWeeklyPlan(meal);
                         })
                         .setNegativeButton("Cancel", null);

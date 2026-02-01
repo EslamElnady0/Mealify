@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.search.presenter.searchresults;
 
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
 
 public interface MealSearchResultPresenter {
     void getFilteredMeals(FilterType filterType, String query);

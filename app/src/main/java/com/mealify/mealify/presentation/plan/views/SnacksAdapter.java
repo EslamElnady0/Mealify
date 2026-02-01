@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.mealify.mealify.R;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 
 import java.util.ArrayList;
 import java.util.List;

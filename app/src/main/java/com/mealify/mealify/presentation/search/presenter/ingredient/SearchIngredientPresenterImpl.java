@@ -1,14 +1,16 @@
 package com.mealify.mealify.presentation.search.presenter.ingredient;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.ingredient.IngredientDto;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.ingredient.SearchIngredientView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class SearchIngredientPresenterImpl implements SearchIngredientPresenter {
 
@@ -22,22 +24,22 @@ public class SearchIngredientPresenterImpl implements SearchIngredientPresenter 
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getIngredients() {
         view.toggleLoading(true);
-        mealsRepo.listIngredients(new GeneralResponse<List<IngredientDto>>() {
-            @Override
-            public void onSuccess(List<IngredientDto> data) {
-                view.toggleLoading(false);
-                allIngredients = data;
-                view.showIngredients(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-                view.showError(errorMessage);
-            }
-        });
+        mealsRepo.listIngredients()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleLoading(false);
+                            allIngredients = data;
+                            view.showIngredients(data);
+                        },
+                        error -> {
+                            view.toggleLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 
     @Override

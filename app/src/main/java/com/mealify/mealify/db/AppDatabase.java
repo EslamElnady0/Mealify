@@ -7,12 +7,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.mealify.mealify.data.favs.datasource.local.FavouriteDao;
-import com.mealify.mealify.data.favs.model.fav.FavouriteEntity;
-import com.mealify.mealify.data.meals.datasources.local.MealDao;
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.weeklyplan.datasource.local.WeeklyPlanDao;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealEntity;
+import com.mealify.mealify.data.datasources.meals.local.dao.FavouriteDao;
+import com.mealify.mealify.data.models.fav.FavouriteEntity;
+import com.mealify.mealify.data.datasources.meals.local.dao.MealDao;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.datasources.meals.local.dao.WeeklyPlanDao;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealEntity;
 
 @Database(
         entities = {

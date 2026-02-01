@@ -1,14 +1,12 @@
 package com.mealify.mealify.presentation.home.presenter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.category.CategoryDto;
-import com.mealify.mealify.data.meals.model.meal.MealDto;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.home.views.HomeView;
 
-import java.util.List;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class HomePresenterImpl implements HomePresenter {
 
@@ -21,38 +19,40 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getMealOfTheDay() {
         view.toggleMealOfTheDayLoading(true);
-        mealsRepo.getRandomMeal(new GeneralResponse<List<MealDto>>() {
-            @Override
-            public void onSuccess(List<MealDto> data) {
-                view.toggleMealOfTheDayLoading(false);
-                view.showMealOfTheDay(data.get(0));
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleMealOfTheDayLoading(false);
-                view.showError(errorMessage);
-            }
-        });
+        mealsRepo.getRandomMeal()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleMealOfTheDayLoading(false);
+                            if (data != null && !data.isEmpty()) {
+                                view.showMealOfTheDay(data.get(0));
+                            }
+                        },
+                        error -> {
+                            view.toggleMealOfTheDayLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getCategories() {
         view.toggleCategoriesLoading(true);
-        mealsRepo.getCategories(new GeneralResponse<List<CategoryDto>>() {
-            @Override
-            public void onSuccess(List<CategoryDto> data) {
-                view.toggleCategoriesLoading(false);
-                view.showCategories(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleCategoriesLoading(false);
-                view.showError(errorMessage);
-            }
-        });
+        mealsRepo.getCategories()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleCategoriesLoading(false);
+                            view.showCategories(data);
+                        },
+                        error -> {
+                            view.toggleCategoriesLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 }

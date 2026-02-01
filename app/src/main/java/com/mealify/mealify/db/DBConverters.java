@@ -5,9 +5,9 @@ import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mealify.mealify.data.meals.model.meal.Ingredient;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.DayOfWeek;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealType;
+import com.mealify.mealify.data.models.meal.Ingredient;
+import com.mealify.mealify.data.models.weeklyplan.DayOfWeek;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealType;
 
 import java.lang.reflect.Type;
 import java.util.List;

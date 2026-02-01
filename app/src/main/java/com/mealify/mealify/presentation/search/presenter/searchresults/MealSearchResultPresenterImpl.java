@@ -1,15 +1,17 @@
 package com.mealify.mealify.presentation.search.presenter.searchresults;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.mealify.mealify.core.response.GeneralResponse;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilteredMeal;
-import com.mealify.mealify.data.meals.repo.MealsRepo;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.filteredmeals.FilteredMeal;
+import com.mealify.mealify.data.repos.meals.MealsRepo;
 import com.mealify.mealify.presentation.search.views.searchresults.MealSearchResultView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class MealSearchResultPresenterImpl implements MealSearchResultPresenter {
 
@@ -23,22 +25,22 @@ public class MealSearchResultPresenterImpl implements MealSearchResultPresenter 
     }
 
     @Override
+    @SuppressLint("CheckResult")
     public void getFilteredMeals(FilterType filterType, String query) {
         view.toggleLoading(true);
-        mealsRepo.getFilteredMeals(filterType, query, new GeneralResponse<List<FilteredMeal>>() {
-            @Override
-            public void onSuccess(List<FilteredMeal> data) {
-                view.toggleLoading(false);
-                allMeals = data;
-                view.showSearchResults(data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                view.toggleLoading(false);
-                view.showError(errorMessage);
-            }
-        });
+        mealsRepo.getFilteredMeals(filterType, query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        data -> {
+                            view.toggleLoading(false);
+                            allMeals = data;
+                            view.showSearchResults(data);
+                        },
+                        error -> {
+                            view.toggleLoading(false);
+                            view.showError(error.getMessage());
+                        }
+                );
     }
 
     @Override

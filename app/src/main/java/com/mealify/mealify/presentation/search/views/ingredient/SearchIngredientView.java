@@ -1,6 +1,6 @@
 package com.mealify.mealify.presentation.search.views.ingredient;
 
-import com.mealify.mealify.data.meals.model.ingredient.IngredientDto;
+import com.mealify.mealify.data.models.ingredient.IngredientDto;
 
 import java.util.List;
 

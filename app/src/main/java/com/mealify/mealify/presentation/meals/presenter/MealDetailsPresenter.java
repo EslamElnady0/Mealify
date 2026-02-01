@@ -1,7 +1,7 @@
 package com.mealify.mealify.presentation.meals.presenter;
 
-import com.mealify.mealify.data.meals.model.meal.MealEntity;
-import com.mealify.mealify.data.weeklyplan.model.weeklyplan.WeeklyPlanMealWithMeal;
+import com.mealify.mealify.data.models.meal.MealEntity;
+import com.mealify.mealify.data.models.weeklyplan.WeeklyPlanMealWithMeal;
 
 public interface MealDetailsPresenter {
     void getMealDetails(String id);

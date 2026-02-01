@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mealify.mealify.InnerAppFragmentDirections;
 import com.mealify.mealify.R;
-import com.mealify.mealify.core.helper.CustomToast;
+import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.NetworkObservation;
-import com.mealify.mealify.data.meals.model.country.CountryDto;
-import com.mealify.mealify.data.meals.model.filteredmeals.FilterType;
+import com.mealify.mealify.data.models.country.CountryDto;
+import com.mealify.mealify.data.models.filteredmeals.FilterType;
 import com.mealify.mealify.presentation.search.presenter.area.SearchAreaPresenter;
 import com.mealify.mealify.presentation.search.presenter.area.SearchAreaPresenterImpl;
 
@@ -137,7 +137,7 @@ public class SearchByAreaFragment extends Fragment implements SearchAreaView {
 
     @Override
     public void showError(String message) {
-        CustomToast.show(getContext(), message);
+        CustomSnackbar.showFailure(getView(), message);
     }
 
     @Override

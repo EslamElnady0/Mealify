@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.mealify.mealify.R;
-import com.mealify.mealify.data.auth.repo.AuthRepo;
+import com.mealify.mealify.data.repos.auth.AuthRepo;
 import com.mealify.mealify.presentation.auth.AuthActivity;
 import com.mealify.mealify.presentation.home.views.HomeActivity;
 import com.mealify.mealify.presentation.splash.presenter.SplashPresenter;
