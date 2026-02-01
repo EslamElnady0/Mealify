@@ -1,5 +1,6 @@
 package com.mealify.mealify.presentation.meals.views;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -23,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mealify.mealify.R;
+import com.mealify.mealify.core.helper.CalendarHelper;
 import com.mealify.mealify.core.helper.CustomSnackbar;
 import com.mealify.mealify.core.utils.DialogUtils;
 import com.mealify.mealify.core.utils.MealDetailsUtils;
@@ -64,6 +69,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private MealEntity currentMeal;
     private boolean isFavorite = false;
     private View offlineContainer;
+    
+    private CalendarHelper calendarHelper;
+    private ActivityResultLauncher<String[]> calendarPermissionLauncher;
+    private String pendingMealName;
+    private String pendingMealDate;
 
     public MealDetailsFragment() {
     }
@@ -74,6 +84,30 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         if (getArguments() != null) {
             mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
         }
+        
+        calendarHelper = new CalendarHelper(requireContext());
+        
+        calendarPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    Boolean readGranted = result.get(Manifest.permission.READ_CALENDAR);
+                    Boolean writeGranted = result.get(Manifest.permission.WRITE_CALENDAR);
+                    
+                    if (readGranted != null && writeGranted != null && readGranted && writeGranted) {
+                        if (pendingMealName != null && pendingMealDate != null) {
+                            calendarHelper.addMealToSystemCalendar(pendingMealName, pendingMealDate);
+                            pendingMealName = null;
+                            pendingMealDate = null;
+                        }
+                    } else {
+                        Toast.makeText(getContext(), 
+                                "Calendar permission denied. Meal saved to plan only.", 
+                                Toast.LENGTH_SHORT).show();
+                        pendingMealName = null;
+                        pendingMealDate = null;
+                    }
+                }
+        );
     }
 
     @Override
@@ -279,7 +313,19 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     @Override
     public void onWeeklyPlanMealAdded(String message) {
         CustomSnackbar.showSuccess(getView(), message);
-
+        
+        if (pendingMealName != null && pendingMealDate != null) {
+            if (CalendarHelper.hasCalendarPermissions(requireContext())) {
+                calendarHelper.addMealToSystemCalendar(pendingMealName, pendingMealDate);
+                pendingMealName = null;
+                pendingMealDate = null;
+            } else {
+                calendarPermissionLauncher.launch(new String[]{
+                        Manifest.permission.READ_CALENDAR,
+                        Manifest.permission.WRITE_CALENDAR
+                });
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -342,6 +388,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                                     currentMeal,
                                     planEntry
                             );
+                            
+                            // Store pending data for calendar integration
+                            pendingMealName = currentMeal.getName();
+                            pendingMealDate = formattedDate;
+                            
                             presenter.addToWeeklyPlan(meal);
                         })
                         .setNegativeButton("Cancel", null);
